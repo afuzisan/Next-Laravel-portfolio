@@ -8,11 +8,9 @@ RUN apt-get update && apt-get install -y curl gnupg
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs
 
-# Tailwind CSSの初期設定
-RUN npx tailwindcss init
 
 # Gitをインストール（必要に応じて）
-RUN apt-get install -y git
+RUN apt-get update && apt-get install -y git
 
 # Yarnをインストール
 RUN npm install -g yarn
@@ -22,6 +20,8 @@ RUN npm install -g yarn
 
 # 作業ディレクトリを設定
 WORKDIR /var/www/client
+
+RUN chmod +x /
 
 # ポートの公開
 EXPOSE 3000
@@ -35,4 +35,5 @@ ENV NODE_ENV development
 
 # アプリケーションの起動コマンド
 CMD ["npm", "run", "dev"]
+
 

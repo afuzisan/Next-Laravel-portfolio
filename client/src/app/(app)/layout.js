@@ -14,7 +14,6 @@ const AppLayout = ({ children }) => {
     return (
         <div className="min-h-screen bg-gray-100">
             <Navigation user={user} />
-            aaaaa
             <main>{children}</main>
         </div>
     )
