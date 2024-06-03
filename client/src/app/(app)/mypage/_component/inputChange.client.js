@@ -16,6 +16,7 @@ const InputChange = ({ info = { placeholder: '入力欄', initialValue: '', type
             type={type}
             onChange={handleInputChange}
             value={inputValue}
+            className="w-5/12 h-8 p-2 m-1.5"
         />
     );
 };
