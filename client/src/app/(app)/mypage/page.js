@@ -14,7 +14,7 @@ const Dashboard = () => {
                     <div>１ページに表示する銘柄数の編集</div>
                     <div>パスワードリセットへのボタンリンク</div>
                     <div>アカウント削除</div>
-                    <div>チャート表示切り替え編集</div>
+                    <div>チャート表示切り替え編集aaa</div>
                 </div>
                 <div className="grid justify-center bg-white p-6">
                     <div>
