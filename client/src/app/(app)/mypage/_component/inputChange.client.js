@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 
-const InputChange = ({ info = { placeholder: '入力欄', initialValue: '', type: 'text' } }) => {
-    const { placeholder, initialValue,type } = info;
+const InputChange = ({ info = { placeholder: '入力欄', initialValue: '', type: 'text', cName: '' } }) => {
+    const { placeholder, initialValue, type, cName } = info;
     const [inputValue, setInputValue] = useState(initialValue);
 
     const handleInputChange = (event) => {
@@ -16,7 +16,7 @@ const InputChange = ({ info = { placeholder: '入力欄', initialValue: '', type
             type={type}
             onChange={handleInputChange}
             value={inputValue}
-            className="w-5/12 h-8 p-2 m-1.5"
+            className={cName}
         />
     );
 };

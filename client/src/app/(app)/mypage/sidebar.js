@@ -3,18 +3,38 @@ import Link from 'next/link'
 
 const Sidebar = () => {
     return (
-        <div className="grid p-6 justify-center bg-white justify-center" >
+        <div className="grid justify-center bg-white items-center py-6" >
             <Link
                 href="/mypage/linkedit"
-                className="text-sm text-gray-700 underline"
+                className="text-sm text-gray-700 underline py-2"
             >
                 投資系サイトへのリンク編集
             </Link>
-            <div>投資系サイトへのリンク編集</div>
-            <div>１ページに表示する銘柄数の編集</div>
-            <div>パスワードリセットへのボタンリンク</div>
-            <div>アカウント削除</div>
-            <div>チャート表示切り替え編集aaa</div>
+            <Link
+                href="/mypage/stocks"
+                className="text-sm text-gray-700 underline py-6"
+            >
+                １ページに表示する銘柄数の編集
+            </Link>
+            <Link
+                href="/mypage/chatswitch"
+                className="text-sm text-gray-700 underline py-6"
+            >
+                <div>チャート表示切り替え編集</div>
+            </Link>
+            <Link
+                href="/mypage/"
+                className="text-sm text-gray-700 underline py-6"
+            >
+                <div>パスワードリセットへのボタンリンク</div>
+            </Link>
+            <Link
+                href="/mypage/accountdelete"
+                className="text-sm text-gray-700 underline py-6"
+            >
+                <div>アカウント削除</div>
+            </Link>
+   
         </div>
     )
 }

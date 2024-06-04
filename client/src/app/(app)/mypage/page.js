@@ -10,7 +10,7 @@ export const metadata = {
 const Dashboard = () => {
     return (
         <>
-            <div className="py-6 grid--2 py-6 grid grid-flow-col grid-cols-[300px_1fr] gap-4">
+            <div className="py-6 grid--2 py-6 grid grid-flow-col grid-cols-[300px_1fr] gap-4 justify-center">
                 <Sidebar/>
                 <div className="grid justify-center bg-white p-6">
                     <div>
