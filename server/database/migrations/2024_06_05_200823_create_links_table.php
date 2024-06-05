@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('link_name');
             $table->text('link_memo')->nullable();
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 

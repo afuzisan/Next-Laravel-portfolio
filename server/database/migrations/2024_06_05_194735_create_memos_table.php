@@ -20,6 +20,7 @@ return new class extends Migration
             $table->timestamp('memo_at_create')->useCurrent();
             $table->timestamp('memo_at_edit')->nullable()->default(null)->useCurrentOnUpdate();
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 

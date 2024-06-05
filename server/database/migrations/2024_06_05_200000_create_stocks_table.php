@@ -20,6 +20,7 @@ return new class extends Migration
             $table->timestamp('stock_at_create')->useCurrent();
             $table->timestamp('stock_at_edit')->nullable()->default(null)->useCurrentOnUpdate();
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 
