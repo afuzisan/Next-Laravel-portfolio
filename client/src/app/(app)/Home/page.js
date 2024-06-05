@@ -8,10 +8,10 @@ const Dashboard = () => {
 
 /**
  * アイテムの詳細を表示する
- * @param {Object} item - アイテムオブジェクト
- * @param {string} item.date - 日付
- * @param {string} item.item - アイテム名
- * @param {string} item.chart - チャート
+ * @param {Object} item -アイテムオブジェクト
+ * @param {string} item.date -日付
+ * @param {string} item.item -アイテム名
+ * @param {string} item.chart -チャート
  */
 
 //TODO: この配列は後で、DBから取得したデータに置き換える。
