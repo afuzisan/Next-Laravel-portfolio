@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('links', function (Blueprint $table) {
-            $table->id('link_id');
-            $table->unsignedBigInteger('stock_id');
+            $table->id('link_url_id');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('memo_id');
+            $table->unsignedBigInteger('stock_id');
+            $table->foreign('user_id')->references('user_id')->on('user_tables')->onDelete('cascade');
+            $table->foreign('memo_id')->references('memo_id')->on('memo_tables')->onDelete('cascade');
+            $table->foreign('stock_id')->references('stock_id')->on('stock_tables')->onDelete('cascade');
             $table->string('link_url');
             $table->string('link_name');
             $table->text('link_memo')->nullable();
