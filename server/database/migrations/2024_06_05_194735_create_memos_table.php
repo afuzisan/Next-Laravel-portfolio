@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('memos', function (Blueprint $table) {
             $table->id('memo_id');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('user_id')->on('user_tables')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('stock_id');
             $table->text('memo');
             $table->timestamp('memo_at_create')->useCurrent();
