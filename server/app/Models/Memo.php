@@ -13,6 +13,6 @@ class Memo extends Model
     use SoftDeletes;
 
     public function allGet(){
-        return $this->all(); // すべてのメモを取得
+       
     }
 }
