@@ -1,7 +1,7 @@
 import { siteName } from "@/app/metadata_common.js"
 import InputChange from "./_component/inputChange.client.js"
 import Link from 'next/link'
-import Sidebar from '@@/mypage/sidebar.js'
+import Sidebar from '@@/mypage/sidebar'
 
 export const metadata = {
     title: `${siteName} - Dashboard`,

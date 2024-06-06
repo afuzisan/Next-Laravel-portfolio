@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Memo;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Throwable;
+use Illuminate\Support\Facades\Log; // Added this line
 
 class MemoController extends Controller
 {
@@ -13,7 +15,10 @@ class MemoController extends Controller
      */
     public function index()
     {
-        //
+        
+        $Memos = Memo::all();
+
+        return response()->json($Memos);
     }
 
     /**
