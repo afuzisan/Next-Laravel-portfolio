@@ -1,12 +1,12 @@
 import { siteName } from "@/app/metadata_common.js"
-import LinkComponent from '@/app/(app)/dashboard/_component/link.js';
+import LinkComponent from '@/app/(app)/dashboard/_component/link';
+import Home from './_component/axios.client';
 
 export const metadata = {
     title: `${siteName} - Dashboard`,
 }
 
 const Dashboard = () => {
-
     /**
      * アイテムの詳細を表示する
      * @param {Object} item - アイテムオブジェクト
@@ -29,42 +29,24 @@ const Dashboard = () => {
         { date: '日付10', stockName: '銘柄名10', stockCode: '証券コード10', links: [{ url: 'https://www.youtube.com/watch?v=2kOBH4A6m6U', name: '外部リンク_1' }, { url: 'https://www.youtube.com/watch?v=2kOBH4A6m6U', name: '外部name_1' }], chart: 'https://www.kabudragon.com/chart/s=4564', memo: 'メモ10' },
     ]
 
-    // const roop = (item) => {
-    //     return (
-    //         <>
-    //             <div className="grid grid-cols-3 gap-4">
-    //                 <span className="grid-item my-6">{item.date}</span>
-    //                 <span className="grid-item my-6">{item.stockName}</span>
-    //                 <span className="grid-item my-6">{item.stockCode}</span>
-    //             </div>
-    //             <div className="grid grid-cols-3 gap-4">
-    //                 <div className="grid-item my-6"><LinkComponent links={item.links} /></div>
-    //                 <div className="grid-item my-6"><img src={item.chart} /></div>
-    //                 <textarea className="grid-item my-6">{item.memo}</textarea>
-    //             </div>
-    //         </>
-
-    //     )
-    // }
-
-
     return (
         <>
             <div className="py-6">
+                <Home />
                 <div className="grid grid-cols-1 p-6 bg-white border-b border-gray-200">
                     {items.slice(0, 8).map(item => (
                         <>
                             <div className="grid grid-cols-6 border">
-                                <div className="col-span-2 ">
+                                <div className="col-span-5 ">
                                     <span className="grid-item px-6">{item.date}</span>
                                     <span className="grid-item px-6">{item.stockName}</span>
                                     <span className="grid-item px-6">{item.stockCode}</span>
                                 </div>
-                                <div className="col-span-4"> {/* 空のグリッドセル */}</div>
+                                <div className="col-span-1 "> {/* 空のグリッドセル */}</div>
                             </div>
-                            <div className="grid grid-cols-[1fr_2fr_2fr] gap-2 pb-4">
+                            <div className="grid grid-cols-[1fr_3fr_3fr] gap-2 pb-4 h-full">
                                 <div className="grid-item pt-4"><LinkComponent links={item.links} /></div>
-                                <div className="grid-item"><img src={item.chart} /></div>
+                                <div className="grid-item"><img src={item.chart} className="h-full w-full object-scale-down" /></div>
                                 <textarea className="grid-item my-1">{item.memo}</textarea>
                             </div>
                         </>
