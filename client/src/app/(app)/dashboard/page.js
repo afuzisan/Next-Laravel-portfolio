@@ -1,5 +1,6 @@
 import { siteName } from "@/app/metadata_common.js"
 import LinkComponent from '@/app/(app)/dashboard/_component/link';
+import ThemedInlineToolbarEditor from '../../../components/CustomLinkPluginEditor.client';
 import MyEditor from '../../../components/MyEditor.client';
 import Data from './_component/data.client'
 
@@ -47,6 +48,7 @@ const Dashboard = async() => {
                                 <div className="grid-item pt-4"><LinkComponent links={item.links} /></div>
                                 <div className="grid-item"><img src={item.chart} className="h-full w-full object-scale-down" /></div>
                                 <MyEditor />
+                                {/* <ThemedInlineToolbarEditor/> */}
                             </div>
                         </>
                     ))}
