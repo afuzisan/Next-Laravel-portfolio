@@ -29,14 +29,15 @@ import '@draft-js-plugins/anchor/lib/plugin.css';
 import createImagePlugin from '@draft-js-plugins/image';
 import '@draft-js-plugins/image/lib/plugin.css';
 import linkStyles from './linkStyles.module.css';
+import NextLink from 'next/link'; // Next.jsのLinkコンポーネントをインポート
 
 // Link コンポーネントをここに移動
 const Link = (props) => {
-  const {url} = props.contentState.getEntity(props.entityKey).getData();
+  const { url } = props.contentState.getEntity(props.entityKey).getData();
   return (
-    <a href={url}>
+    <NextLink href={url} className='text-blue-600 ' target="_blank">
       {props.children}
-    </a>
+    </NextLink>
   );
 };
 
@@ -70,7 +71,7 @@ const MyEditor = () => {
     EditorState.createEmpty()
   );
 
-  const [readonly, setReadOnly] = useState(false);
+  const [readonly, setReadOnly] = useState(true);
 
   useEffect(() => {
     const raw = localStorage.getItem('test');
@@ -125,37 +126,41 @@ const MyEditor = () => {
   }
 
   return (
-    <div>
-      <div>
-        {!readonly && <button onClick={saveContent}>保存</button>}
+    <div className='break-words overflow-y-auto h-80'>
+      <div className='border-b-4 pt-1 pr-1 pl-1 sticky top-0 bg-white'>
         {readonly ? (
-          <button onClick={() => setReadOnly(false)}>Edit</button>
+          <button onClick={() => setReadOnly(false)} className=" text-black font-bold">
+            編集
+          </button>
         ) : (
-          <button onClick={() => setReadOnly(true)}>ReadOnly</button>
+          <button onClick={() => { saveContent(); setReadOnly(true) }} className="text-black font-bold">保存</button>
         )}
       </div>
-      <Editor
-        editorState={editorState}
-        onChange={onChange}
-        plugins={plugins}
-        readOnly={readonly}
-        handleDroppedFiles={handleDroppedFiles}
-        decorators={[decorator]}
-      />
-      <InlineToolbar>
-        {(externalProps) => (
-          <>
-            <ItalicButton {...externalProps} />
-            <BoldButton {...externalProps} />
-            <UnderlineButton {...externalProps} />
-            <Separator {...externalProps} />
-            <HeadlineOneButton {...externalProps} />
-            <HeadlineTwoButton {...externalProps} />
-            <HeadlineThreeButton {...externalProps} />
-            <LinkButton {...externalProps} />
-          </>
-        )}
-      </InlineToolbar>
+      <div readonly className={readonly ? "p-1 bg-sky-500/50" : "p-1"}>
+        <Editor
+          editorState={editorState}
+          onChange={onChange}
+          plugins={plugins}
+          readOnly={readonly}
+          handleDroppedFiles={handleDroppedFiles}
+          decorators={[decorator]}
+        />
+        <InlineToolbar>
+          {(externalProps) => (
+            <>
+              <ItalicButton {...externalProps} />
+              <BoldButton {...externalProps} />
+              <UnderlineButton {...externalProps} />
+              <Separator {...externalProps} />
+              <HeadlineOneButton {...externalProps} />
+              <HeadlineTwoButton {...externalProps} />
+              <HeadlineThreeButton {...externalProps} />
+              <LinkButton {...externalProps} />
+            </>
+          )}
+        </InlineToolbar>
+
+      </div>
     </div>
   );
 };
