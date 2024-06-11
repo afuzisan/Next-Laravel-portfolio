@@ -45,7 +45,7 @@ const MyEditor = () => {
   const [plugins, InlineToolbar, LinkButton, linkPlugin, decorator] = useMemo(() => {
     const linkPlugin = createLinkPlugin({
       theme: linkStyles,
-      placeholder: 'http://...'
+      placeholder: 'https://...'
     });
     const imagePlugin = createImagePlugin();
     const inlineToolbarPlugin = createInlineToolbarPlugin({
@@ -133,10 +133,12 @@ const MyEditor = () => {
             編集
           </button>
         ) : (
-          <button onClick={() => { saveContent(); setReadOnly(true) }} className="text-black font-bold">保存</button>
+          <>
+            <button onClick={() => { saveContent(); setReadOnly(true) }} className="text-black font-bold">保存</button>
+          </>
         )}
       </div>
-      <div readonly className={readonly ? "p-1 bg-sky-500/50" : "p-1"}>
+      <div readonly className={readonly ? "p-1" : "p-1 bg-orange-50"}>
         <Editor
           editorState={editorState}
           onChange={onChange}
