@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('memos', function (Blueprint $table) {
-            $table->id('memo_id');
+            $table->id();
+            $table->text('memo');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unsignedBigInteger('stock_id');
-            $table->text('memo');
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('memo_categories')->onDelete('cascade');
+
             $table->timestamp('memo_at_create')->useCurrent();
             $table->timestamp('memo_at_edit')->nullable()->default(null)->useCurrentOnUpdate();
             $table->timestamps();

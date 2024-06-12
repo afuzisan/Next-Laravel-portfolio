@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stocks', function (Blueprint $table) {
+        Schema::create('memo_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('stock_code');
-            $table->string('stock_name');  
-            $table->timestamp('stock_at_create')->useCurrent();
-            $table->timestamp('stock_at_edit')->nullable()->default(null)->useCurrentOnUpdate();
+            $table->text('category_name');
+            $table->timestamp('category_at_create')->useCurrent();
+            $table->timestamp('category_at_edit')->nullable()->default(null)->useCurrentOnUpdate();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stocks');
+        Schema::dropIfExists('memo_categories');
     }
 };
