@@ -10,4 +10,10 @@ class Stock extends Model
 {
     use SoftDeletes;
     use HasFactory;
+
+    // ユーザーモデルとのリレーションを追加
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'stock_user');
+    }
 }
