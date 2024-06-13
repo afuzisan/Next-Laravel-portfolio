@@ -26,14 +26,4 @@ class Memo extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-
-    /**
-     * すべてのメモとそれに関連するカテゴリーとユーザー情報を取得する
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
-     */
-    public function allGet()
-    {
-        return self::with(['memoCategory', 'user'])->get();
-    }
 }

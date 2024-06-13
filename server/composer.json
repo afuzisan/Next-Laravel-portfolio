@@ -56,6 +56,7 @@
     },
     "config": {
         "optimize-autoloader": true,
+        "process-timeout": 2000,
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
