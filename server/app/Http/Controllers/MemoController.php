@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Memo;
+use App\Models\MemoCategory;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Throwable;
@@ -15,10 +17,16 @@ class MemoController extends Controller
      */
     public function index()
     {
-        
-        $Memos = Memo::all();
+        $user_id = 1; // 例としてユーザーID 100を使用
 
-        return response()->json($Memos);
+        $user = User::with(['memos.memoCategory', 'stocks.memos'])->find($user_id);
+
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json($user);
     }
 
     /**

@@ -2,13 +2,18 @@
 
 namespace Database\Factories;
 
+use App\Models\Memo;
+use App\Models\MemoCategory;
+use App\Models\Stock;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Memo>
- */
 class MemoFactory extends Factory
 {
+    // protected $model = Memo::class;
+
     /**
      * Define the model's default state.
      *
@@ -17,14 +22,15 @@ class MemoFactory extends Factory
     public function definition(): array
     {
         return [
-            'memo' => $this->faker->text(200), // ランダムなテキストを生成
-            'user_id' => \App\Models\User::inRandomOrder()->first()->id, // 既存のユーザーからランダムに1つ選ぶ
-            'category_id' => \App\Models\MemoCategory::inRandomOrder()->first()->id, // 既存のカテゴリからランダムに1つ選ぶ
-            'memo_at_create' => $this->faker->dateTime, // 作成日時を生成
-            'memo_at_edit' => $this->faker->dateTime, // 編集日時を生成
-            'created_at' => $this->faker->dateTime, // 作成日時を生成
-            'updated_at' => $this->faker->dateTime, // 更新日時を生成
-            'deleted_at' => $this->faker->optional()->dateTime, // 削除日時をオプショナルで生成
+            'user_id' => User::inRandomOrder()->first(),
+            'category_id' => MemoCategory::inRandomOrder()->first(),
+            'stock_id' => Stock::inRandomOrder()->first(),
+            'memo' => $this->faker->text,
+            'memo_at_create' => $this->faker->dateTime,
+            'memo_at_edit' => $this->faker->dateTime,
+            'created_at' => $this->faker->dateTime,
+            'updated_at' => $this->faker->dateTime,
+            'deleted_at' => $this->faker->optional()->dateTime,
         ];
     }
 }

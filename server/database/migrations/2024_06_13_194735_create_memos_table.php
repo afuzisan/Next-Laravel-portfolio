@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('memo_categories')->onDelete('cascade');
+            $table->unsignedBigInteger('stock_id'); // ストックIDを追加
+            $table->foreign('stock_id')->references('id')->on('stocks')->onDelete('cascade'); // 外部キー制約を追加
 
             $table->timestamp('memo_at_create')->useCurrent();
             $table->timestamp('memo_at_edit')->nullable()->default(null)->useCurrentOnUpdate();

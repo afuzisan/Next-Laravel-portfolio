@@ -16,4 +16,10 @@ class Stock extends Model
     {
         return $this->belongsToMany(User::class, 'stock_user');
     }
+
+    // メモモデルとのリレーションを追加
+    public function memos()
+    {
+        return $this->hasMany(Memo::class, 'stock_id');
+    }
 }

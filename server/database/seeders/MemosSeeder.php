@@ -14,6 +14,6 @@ class MemosSeeder extends Seeder
     public function run(): void
     {
         // メモデータを10件作成する
-        Memo::factory()->count(10)->create();
+        Memo::factory()->count(30)->create();
     }
 }

@@ -26,4 +26,12 @@ class Memo extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * このメモが属するストックを取得するリレーションシップ
+     */
+    public function stock()
+    {
+        return $this->belongsTo(Stock::class, 'stock_id');
+    }
 }

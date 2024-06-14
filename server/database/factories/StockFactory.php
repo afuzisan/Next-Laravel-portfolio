@@ -17,9 +17,11 @@ class StockFactory extends Factory
      */
     public function definition(): array
     {
+        $uniqueNumber = $this->faker->unique()->numberBetween(1000, 9999); // 4桁のユニークな数字を生成
+
         return [
-            'id' => $this->faker->unique()->numberBetween(1, 1000),
-            'stock_code' => $this->faker->unique()->numerify('####'),
+            'id' => $uniqueNumber,
+            'stock_code' => $uniqueNumber, // ユニークな数字を生成して設定
             'stock_name' => $this->faker->company,
             'stock_at_create' => $this->faker->dateTimeThisDecade(),
             'stock_at_edit' => $this->faker->dateTimeThisYear(),

@@ -24,10 +24,10 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->safeEmail,
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.H7rqKUNqXsH6ZgH./jmk/s0p90C0fW.', // password
             'remember_token' => Str::random(10),
         ];
     }
@@ -40,5 +40,13 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Configure the factory to have a default memo.
+     */
+    public function withMemo()
+    {
+        return $this->has(\App\Models\Memo::factory());
     }
 }

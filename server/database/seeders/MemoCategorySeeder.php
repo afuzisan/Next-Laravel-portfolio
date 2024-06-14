@@ -14,6 +14,6 @@ class MemoCategorySeeder extends Seeder
     public function run(): void
     {
         // データベースにシードデータを挿入する
-        MemoCategory::factory()->count(10)->create();
+        MemoCategory::factory()->count(20)->create();
     }
 }
