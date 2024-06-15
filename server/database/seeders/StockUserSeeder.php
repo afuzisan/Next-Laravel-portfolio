@@ -10,7 +10,9 @@ class StockUserSeeder extends Seeder
 {
     public function run()
     {
-        User::factory()->count(10)->create()->each(function ($user) {
+        // すべてのユーザーを取得
+        $users = User::all();
+        $users->each(function ($user) {
             // ランダムにStockを割り当てる
             $stocks = Stock::inRandomOrder()->take(rand(1, 5))->pluck('id');
             $user->stocks()->attach($stocks);

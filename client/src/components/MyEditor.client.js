@@ -41,7 +41,7 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = () => {
+const MyEditor = (text) => {
   const [plugins, InlineToolbar, LinkButton, linkPlugin, decorator] = useMemo(() => {
     const linkPlugin = createLinkPlugin({
       theme: linkStyles,
@@ -75,7 +75,8 @@ const MyEditor = () => {
 
   useEffect(() => {
     const raw = localStorage.getItem('test');
-    if (raw) {
+    console.log(text)
+    if (text) {
       const contentState = convertFromRaw(JSON.parse(raw));
       const newEditorState = EditorState.createWithContent(contentState, decorator);
       setEditorState(newEditorState);
