@@ -1,20 +1,20 @@
 'use client'
-import React, { useState } from 'react';
-import Link from 'next/link'; // Next.jsのLinkをインポート
+import React from 'react';
+import { useEditorContext } from './EditorContext.client';
 
-const MemoList = ({ memos }) => {
-    console.log(memos)
-    const memoChange = () =>{
-
-    }
-    const [categoryName,categoryNameState] = useState(memos.memo)
+const MemoList = ({ stock_id, memos }) => {
+    const { setEditorText } = useEditorContext();
+    const handleButtonClick = (categoryName) => {
+        setEditorText({stock_id: stock_id, categoryName: categoryName});
+    };
+    const uniqueCategoryNames = new Set(memos.filter(item => item.stock_id === stock_id).map(item => item.memo_category.category_name));
     return (
         <ul>
-
-                <li>
-                    <button onClick={categoryNameState}>{categoryName} </button>
-                </li>
-         
+            <li>
+                {Array.from(uniqueCategoryNames).map(categoryName => (
+                    <button onClick={() => handleButtonClick(categoryName)}>{categoryName}</button>
+                ))}
+            </li>
         </ul>
     );
 };

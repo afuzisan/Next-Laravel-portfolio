@@ -30,6 +30,7 @@ import createImagePlugin from '@draft-js-plugins/image';
 import '@draft-js-plugins/image/lib/plugin.css';
 import linkStyles from './linkStyles.module.css';
 import NextLink from 'next/link'; // Next.jsのLinkコンポーネントをインポート
+import { useEditorContext } from '../app/(app)/dashboard/_component/EditorContext.client';
 
 // Link コンポーネントをここに移動
 const Link = (props) => {
@@ -41,7 +42,9 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = (text) => {
+const MyEditor = () => {
+  const { editorText } = useEditorContext();
+
   const [plugins, InlineToolbar, LinkButton, linkPlugin, decorator] = useMemo(() => {
     const linkPlugin = createLinkPlugin({
       theme: linkStyles,
@@ -75,8 +78,7 @@ const MyEditor = (text) => {
 
   useEffect(() => {
     const raw = localStorage.getItem('test');
-    console.log(text)
-    if (text) {
+    if (raw) {
       const contentState = convertFromRaw(JSON.parse(raw));
       const newEditorState = EditorState.createWithContent(contentState, decorator);
       setEditorState(newEditorState);
