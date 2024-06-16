@@ -14,13 +14,11 @@ return new class extends Migration
         Schema::create('memos', function (Blueprint $table) {
             $table->id();
             $table->text('memo');
+            $table->string('memo_title', 255)->default('見出しを変更して下さい');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->references('id')->on('memo_categories')->onDelete('cascade');
-            $table->unsignedBigInteger('stock_id'); // ストックIDを追加
-            $table->foreign('stock_id')->references('id')->on('stocks')->onDelete('cascade'); // 外部キー制約を追加
-
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('stock_id'); 
+            $table->foreign('stock_id')->references('id')->on('stocks')->onDelete('cascade')->onUpdate('cascade'); 
             $table->timestamp('memo_at_create')->useCurrent();
             $table->timestamp('memo_at_edit')->nullable()->default(null)->useCurrentOnUpdate();
             $table->timestamps();

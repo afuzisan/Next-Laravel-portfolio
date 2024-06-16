@@ -22,10 +22,10 @@ class MemoFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::inRandomOrder()->first(),
-            'category_id' => MemoCategory::inRandomOrder()->first(),
-            'stock_id' => Stock::inRandomOrder()->first(),
             'memo' => $this->faker->text,
+            'memo_title' => $this->faker->sentence,
+            'user_id' => User::inRandomOrder()->first(),
+            'stock_id' => Stock::inRandomOrder()->first(),
             'memo_at_create' => $this->faker->dateTime,
             'memo_at_edit' => $this->faker->dateTime,
             'created_at' => $this->faker->dateTime,

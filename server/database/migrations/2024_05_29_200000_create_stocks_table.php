@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->string('stock_code')->unique()->default('0000');
-            $table->string('stock_name');  
+            $table->string('stock_code')->unique();
+            $table->string('stock_name')->nullable();
             $table->timestamp('stock_at_create')->useCurrent();
             $table->timestamp('stock_at_edit')->nullable()->default(null)->useCurrentOnUpdate();
             $table->timestamps();

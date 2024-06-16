@@ -5,16 +5,11 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\User;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected $model = User::class;
 
     /**
      * Define the model's default state.
@@ -26,27 +21,21 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
-            'email_verified_at' => now(),
-            'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.H7rqKUNqXsH6ZgH./jmk/s0p90C0fW.', // password
+            'password' => Hash::make('password'), // 実際のパスワードをハッシュ化
             'remember_token' => Str::random(10),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
-    }
 
     /**
-     * Configure the factory to have a default memo.
+     * 株式リレーションを含む
      */
-    public function withMemo()
+    public function withStocks($count = 2)
     {
-        return $this->has(\App\Models\Memo::factory());
+        return $this->hasAttached(
+            \App\Models\Stock::factory()->count($count),
+            [], // 中間テーブルの属性が必要な場合はここに追加
+            'stocks'
+        );
     }
 }

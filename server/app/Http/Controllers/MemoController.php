@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\Memo;
 use App\Models\MemoCategory;
 use App\Models\User;
@@ -19,7 +20,7 @@ class MemoController extends Controller
     {
         $user_id = 11; // 例としてユーザーID 100を使用
 
-        $user = User::with(['memos.memoCategory', 'stocks.memos'])->find($user_id);
+        $user = User::with(['stocks.memos'])->find($user_id);
 
 
         if (!$user) {
@@ -34,7 +35,6 @@ class MemoController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -42,7 +42,16 @@ class MemoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        DB::transaction(function () {
+            // Memoの作成と保存
+            $memo = new Memo([
+                'memo' => 'ここにメモの内容を入力',
+                'memo_title' => 'メモのタイトル',
+                'user_id' => 1,
+                'stock_id' => 1
+            ]);
+            $memo->save();
+        });
     }
 
     /**

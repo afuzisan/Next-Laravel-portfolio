@@ -11,12 +11,23 @@ class Memo extends Model
     use HasFactory;
     use SoftDeletes;
 
-    /**
-     * このメモが属するカテゴリーを取得するリレーションシップ
-     */
-    public function memoCategory()
+    protected static function booted()
     {
-        return $this->belongsTo(MemoCategory::class, 'category_id');
+        static::deleting(function ($memo) {
+            if ($stock = $memo->stock) {
+                $stock->users()->detach(); // stock_userの関連を削除
+            }
+        });
+
+        static::created(function ($memo) {
+            $user = User::find($memo->user_id); // Memoに関連付けられたユーザーを取得
+            $stock = Stock::find($memo->stock_id); // Memoに関連付けられたストックを取得
+
+            if ($user && $stock) {
+                // ユーザーとストックの関連を設定
+                $user->stocks()->syncWithoutDetaching([$stock->id]);
+            }
+        });
     }
 
     /**

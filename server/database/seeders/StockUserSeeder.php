@@ -15,7 +15,7 @@ class StockUserSeeder extends Seeder
         $users->each(function ($user) {
             // ランダムにStockを割り当てる
             $stocks = Stock::inRandomOrder()->take(rand(1, 5))->pluck('id');
-            $user->stocks()->attach($stocks);
+            $user->stocks()->sync($stocks);
         });
     }
 }

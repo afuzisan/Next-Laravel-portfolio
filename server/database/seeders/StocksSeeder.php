@@ -13,7 +13,6 @@ class StocksSeeder extends Seeder
      */
     public function run(): void
     {
-        // Stock モデルを使用して、データベースにレコードを挿入
-        Stock::factory()->count(8999)->create(); // 例えば50個の株式データを生成
+        Stock::factory()->count(9999)->create(); 
     }
 }

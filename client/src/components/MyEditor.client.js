@@ -42,7 +42,7 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = () => {
+const MyEditor = ({ index, memo }) => {
   const { editorText } = useEditorContext();
 
   const [plugins, InlineToolbar, LinkButton, linkPlugin, decorator] = useMemo(() => {
@@ -76,25 +76,46 @@ const MyEditor = () => {
 
   const [readonly, setReadOnly] = useState(true);
 
+  /********************************************** 
+   * TODO:データベースからデータを呼び出す処理を追加する
+   * TODO:function:useEffect
+  ***********************************************/
   useEffect(() => {
-    const raw = localStorage.getItem('test');
-    if (raw) {
-      const contentState = convertFromRaw(JSON.parse(raw));
-      const newEditorState = EditorState.createWithContent(contentState, decorator);
-      setEditorState(newEditorState);
-    }
+    // const raw = localStorage.getItem(`test${index}`);
+    // if (raw) {
+    const initialText = memo;
+    const contentState = ContentState.createFromText(initialText);
+    // const contentState = convertFromRaw(JSON.parse(raw));//ローカルストレージを使用する時
+    const newEditorState = EditorState.createWithContent(contentState, decorator);
+    setEditorState(newEditorState);
+    // }
   }, [decorator]);
-
+  /********************************************** 
+   * TODO:データベースに保存する処理を追加する
+   * TODO:function:saveContent
+  ***********************************************/
   const saveContent = () => {
     const contentState = editorState.getCurrentContent();
     const raw = convertToRaw(contentState);
-    localStorage.setItem('test', JSON.stringify(raw, null, 2));
+
+    //ここにデータベースに保存する処理を書く
+    localStorage.setItem(`test${index}`, JSON.stringify(raw, null, 2));
   };
 
   const onChange = (value) => {
     setEditorState(value);
   };
 
+  const replaceEditorContent = (newText) => {
+    const contentState = ContentState.createFromText(newText);
+    const newEditorState = EditorState.createWithContent(contentState, decorator);
+    setEditorState(newEditorState);
+  };
+
+  /***********************************
+   * TODO:ファイルのパスを取得してくる
+   * TODO:files
+   *************************************/
   const handleDroppedFiles = (selection, files) => {
     insertImage('logo192.png');
   };
@@ -132,12 +153,16 @@ const MyEditor = () => {
     <div className='break-words overflow-y-auto h-80'>
       <div className='border-b-4 pt-1 pr-1 pl-1 sticky top-0 bg-white'>
         {readonly ? (
-          <button onClick={() => setReadOnly(false)} className=" text-black font-bold">
-            編集
-          </button>
+          <>
+            <button onClick={() => setReadOnly(false)} className=" text-black font-bold">
+              編集
+            </button>
+            <button onClick={() => replaceEditorContent("新しいエディタの内容")}>内容を書き換え</button>
+          </>
         ) : (
           <>
             <button onClick={() => { saveContent(); setReadOnly(true) }} className="text-black font-bold">保存</button>
+
           </>
         )}
       </div>

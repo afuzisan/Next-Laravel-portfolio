@@ -10,6 +10,8 @@ use App\Models\Stock;
  */
 class StockFactory extends Factory
 {
+    private static $counter = 1;
+
     /**
      * Define the model's default state.
      *
@@ -17,11 +19,9 @@ class StockFactory extends Factory
      */
     public function definition(): array
     {
-        $uniqueNumber = $this->faker->unique()->numberBetween(1000, 9999); // 4桁のユニークな数字を生成
-
         return [
-            'id' => $uniqueNumber,
-            'stock_code' => $uniqueNumber, // ユニークな数字を生成して設定
+            'id' => self::$counter,
+            'stock_code' => self::$counter++, // 1から9999まで順番に増加
             'stock_name' => $this->faker->company,
             'stock_at_create' => $this->faker->dateTimeThisDecade(),
             'stock_at_edit' => $this->faker->dateTimeThisYear(),
@@ -29,5 +29,17 @@ class StockFactory extends Factory
             'updated_at' => now(),
             'deleted_at' => null,
         ];
+    }
+
+
+    /**
+     * メモリレーションを含む
+     */
+    public function withMemos($count = 5)
+    {
+        return $this->has(
+            \App\Models\Memo::factory()->count($count),
+            'memos'
+        );
     }
 }
