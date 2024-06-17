@@ -11,6 +11,15 @@ class Stock extends Model
     use SoftDeletes;
     use HasFactory;
 
+    protected $fillable =[
+
+    ];
+
+    protected $guarded = [
+        'stock_code',
+        'stock_name'
+    ];
+
     // ユーザーモデルとのリレーションを追加
     public function users()
     {

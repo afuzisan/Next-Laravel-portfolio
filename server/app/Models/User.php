@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Stock::class, 'stock_user');
     }
+
+    public function links()
+    {
+        return $this->hasMany(ExternalLink::class);
+    }
 }

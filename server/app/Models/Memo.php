@@ -11,6 +11,11 @@ class Memo extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $fillable = [
+        'memo',
+        'memo_title',
+    ];
+
     protected static function booted()
     {
         static::deleting(function ($memo) {
