@@ -42,7 +42,7 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ index, memo }) => {
+const MyEditor = ({ id, memo }) => {
   const { editorText } = useEditorContext();
 
   const [plugins, InlineToolbar, LinkButton, linkPlugin, decorator] = useMemo(() => {
@@ -81,11 +81,8 @@ const MyEditor = ({ index, memo }) => {
    * TODO:function:useEffect
   ***********************************************/
   useEffect(() => {
-    // const raw = localStorage.getItem(`test${index}`);
-    // if (raw) {
     const initialText = memo;
     const contentState = ContentState.createFromText(initialText);
-    // const contentState = convertFromRaw(JSON.parse(raw));//ローカルストレージを使用する時
     const newEditorState = EditorState.createWithContent(contentState, decorator);
     setEditorState(newEditorState);
     // }
@@ -99,7 +96,7 @@ const MyEditor = ({ index, memo }) => {
     const raw = convertToRaw(contentState);
 
     //ここにデータベースに保存する処理を書く
-    localStorage.setItem(`test${index}`, JSON.stringify(raw, null, 2));
+    localStorage.setItem(`test${id}`, JSON.stringify(raw, null, 2));
   };
 
   const onChange = (value) => {

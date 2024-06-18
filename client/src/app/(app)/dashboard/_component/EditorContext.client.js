@@ -6,8 +6,8 @@ const EditorContext = createContext();
 
 export const useEditorContext = () => useContext(EditorContext);
 
-export const EditorProvider = ({ children }) => {
-  const [editorText, setEditorText] = useState('');
+export const EditorProvider = ({ children, initialData }) => {
+  const [editorText, setEditorText] = useState(initialData || '');
 
   return (
     <EditorContext.Provider value={{ editorText, setEditorText }}>

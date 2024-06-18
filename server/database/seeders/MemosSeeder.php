@@ -2,17 +2,24 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Memo;
+use Illuminate\Support\Facades\Storage;
 
 class MemosSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        Memo::factory()->count(30)->create();
+        $userStocks = json_decode(Storage::disk('local')->get('user_stocks.json'), true);
+
+        foreach ($userStocks as $userId => $stocks) {
+            foreach ($stocks as $stockId) {
+                Memo::factory()->create([
+                    'user_id' => $userId,
+                    'stock_id' => $stockId
+                ]);
+            }
+        }
     }
 }
+
