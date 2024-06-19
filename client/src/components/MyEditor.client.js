@@ -30,7 +30,7 @@ import createImagePlugin from '@draft-js-plugins/image';
 import '@draft-js-plugins/image/lib/plugin.css';
 import linkStyles from './linkStyles.module.css';
 import NextLink from 'next/link'; // Next.jsのLinkコンポーネントをインポート
-import { useEditorContext } from '../app/(app)/dashboard/_component/EditorContext.client';
+import { useEditorContext,useIndexSave } from '../app/(app)/dashboard/_component/EditorContext.client';
 
 // Link コンポーネントをここに移動
 const Link = (props) => {
@@ -42,7 +42,8 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({initMemo}) => {
+const MyEditor = ({initMemo,index}) => {
+  const [indexSaveState, setIndexSave] = useIndexSave()
   const [editor, setEditor] = useEditorContext()
   console.log(editor)
 
@@ -94,6 +95,7 @@ const MyEditor = ({initMemo}) => {
   const saveContent = () => {
     const contentState = editor.getCurrentContent();
     const raw = convertToRaw(contentState);
+    console.log(indexSaveState , 'indexSaveState')
 
     //ここにデータベースに保存する処理を書く
     // localStorage.setItem(`test${id}`, JSON.stringify(raw, null, 2));
