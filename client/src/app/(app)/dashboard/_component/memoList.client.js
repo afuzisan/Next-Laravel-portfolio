@@ -1,16 +1,20 @@
 'use client'
-import React from 'react';
+import { React } from 'react';
 import { useEditorContext } from './EditorContext.client';
+import { EditorState, ContentState } from 'draft-js';
 
-const MemoList = ({ memo_title }) => {
-    const { setEditorText } = useEditorContext();
-    const handleButtonClick = (memo_title) => {
-        setEditorText({ memo_title });
+const MemoList = ({title,memo}) => {
+    const [editor, setEditor] = useEditorContext()
+    const handleButtonClick = () => {
+        const rawText = memo;
+        const contentState = ContentState.createFromText(rawText);
+        const editorState = EditorState.createWithContent(contentState);
+        setEditor(editorState);
     };
     return (
         <ul>
             <li>
-                <button onClick={() => handleButtonClick(memo_title)}>{memo_title}</button>
+                <button onClick={() => handleButtonClick()}>{title}</button>
             </li>
         </ul>
     );

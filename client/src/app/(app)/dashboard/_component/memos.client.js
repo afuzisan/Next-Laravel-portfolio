@@ -5,31 +5,24 @@ import MemoList from './memoList.client';
 import MyEditor from '@/components/MyEditor.client'
 import { EditorProvider, useEditorContext } from './EditorContext.client';
 
-const Memos = ({ memos }) => {
-    const initialData = {
-        id: memos && memos.length > 0 && memos[0] ? memos[0].id : "Undefined or empty memos array",
-        memo: memos && memos.length > 0 && memos[0] ? memos[0].memo : "Undefined or empty memos array"
-    }
+const Memos = ({memos}) => {
+
     return (
-        <EditorProvider initialData={initialData}>
+        <EditorProvider>
             <MemoContent memos={memos} />
         </EditorProvider>
     )
 }
 
-const MemoContent = ({ memos }) => {
-
-    const { editorText, setEditorText } = useEditorContext();
-    console.log(editorText);
+const MemoContent = ({ memos, index }) => {
     return (
         <>
             <div className="grid-item p-4 overflow-y-auto h-80 break-words">
-                {memos.map(memo => (
-                    <MemoList memo_title={memo.memo_title} />
-
+                {memos.map((memo) => (
+                    <MemoList title={memo.memo_title} memo={memo.memo}/>
                 ))}
             </div>
-            {memos.length > 0 && memos[0] ? <MyEditor id={editorText.id} memo={editorText.memo} /> : null}
+            {memos.length > 0 && memos[0] ? <MyEditor initMemo={memos[0].memo} /> : null}
         </>
     );
 }

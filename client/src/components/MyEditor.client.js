@@ -42,8 +42,9 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ id, memo }) => {
-  const { editorText } = useEditorContext();
+const MyEditor = ({initMemo}) => {
+  const [editor, setEditor] = useEditorContext()
+  console.log(editor)
 
   const [plugins, InlineToolbar, LinkButton, linkPlugin, decorator] = useMemo(() => {
     const linkPlugin = createLinkPlugin({
@@ -70,9 +71,9 @@ const MyEditor = ({ id, memo }) => {
     ];
   }, []);
 
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
+  // const [editorState, setEditorState] = useState(() =>
+  //   EditorState.createEmpty()
+  // );
 
   const [readonly, setReadOnly] = useState(true);
 
@@ -81,32 +82,31 @@ const MyEditor = ({ id, memo }) => {
    * TODO:function:useEffect
   ***********************************************/
   useEffect(() => {
-    const initialText = memo;
+    const initialText = typeof initMemo === 'string' ? initMemo : '';
     const contentState = ContentState.createFromText(initialText);
     const newEditorState = EditorState.createWithContent(contentState, decorator);
-    setEditorState(newEditorState);
-    // }
-  }, [decorator]);
+    setEditor(newEditorState);
+  }, [decorator, initMemo]);
   /********************************************** 
    * TODO:データベースに保存する処理を追加する
    * TODO:function:saveContent
   ***********************************************/
   const saveContent = () => {
-    const contentState = editorState.getCurrentContent();
+    const contentState = editor.getCurrentContent();
     const raw = convertToRaw(contentState);
 
     //ここにデータベースに保存する処理を書く
-    localStorage.setItem(`test${id}`, JSON.stringify(raw, null, 2));
+    // localStorage.setItem(`test${id}`, JSON.stringify(raw, null, 2));
   };
 
   const onChange = (value) => {
-    setEditorState(value);
+    setEditor(value);
   };
 
   const replaceEditorContent = (newText) => {
     const contentState = ContentState.createFromText(newText);
     const newEditorState = EditorState.createWithContent(contentState, decorator);
-    setEditorState(newEditorState);
+    setEditor(newEditorState);
   };
 
   /***********************************
@@ -118,14 +118,14 @@ const MyEditor = ({ id, memo }) => {
   };
 
   const insertImage = (url) => {
-    const contentState = editorState.getCurrentContent();
+    const contentState = editor.getCurrentContent();
     const contentStateWithEntity = contentState.createEntity(
       'image',
       'IMMUTABLE',
       { src: url }
     );
     const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-    const newEditorState = EditorState.set(editorState, {
+    const newEditorState = EditorState.set(editor, {
       currentContent: contentStateWithEntity,
     });
     onChange(
@@ -165,7 +165,7 @@ const MyEditor = ({ id, memo }) => {
       </div>
       <div readonly className={readonly ? "p-1" : "p-1 bg-orange-50"}>
         <Editor
-          editorState={editorState}
+          editorState={editor}
           onChange={onChange}
           plugins={plugins}
           readOnly={readonly}

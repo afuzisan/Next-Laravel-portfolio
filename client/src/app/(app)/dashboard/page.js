@@ -35,7 +35,7 @@ const Dashboard = async () => {
                                 <div className="grid-item p-4">
                                     <img src={`https://www.kabudragon.com/chart/s=${stock.stock_code}`} className="h-full w-full object-scale-down" />
                                 </div>
-                                <Memos memos={stock.memos} />
+                                <Memos memos={stock.memos} index={index} />
 
                             </div >
                         </>
