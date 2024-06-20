@@ -29,7 +29,6 @@ export default class ThemedInlineToolbarEditor extends Component {
 
   onChange = (editorState) => {
     this.setState({ editorState });
-    console.log(editorStateToHtml(editorState));
   }
 
   focus = () => this.editor.focus();

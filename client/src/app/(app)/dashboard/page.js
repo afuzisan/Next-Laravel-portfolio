@@ -1,9 +1,6 @@
 import { siteName } from "@/app/metadata_common.js"
-import LinkComponent from '@/app/(app)/dashboard/_component/link';
-import MemoList from './_component/memoList.client';
-import ThemedInlineToolbarEditor from '../../../components/CustomLinkPluginEditor.client';
 import Memos from '@@/(app)/dashboard/_component/memos.client';
-import Data from './_component/data.client'
+// import {DataFetcher} from './_component/DataFetcher.client'
 
 
 export const metadata = {

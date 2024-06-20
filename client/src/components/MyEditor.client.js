@@ -45,7 +45,7 @@ const Link = (props) => {
 const MyEditor = ({initMemo,index}) => {
   const [indexSaveState, setIndexSave] = useIndexSave()
   const [editor, setEditor] = useEditorContext()
-  console.log(editor)
+
 
   const [plugins, InlineToolbar, LinkButton, linkPlugin, decorator] = useMemo(() => {
     const linkPlugin = createLinkPlugin({
@@ -95,7 +95,7 @@ const MyEditor = ({initMemo,index}) => {
   const saveContent = () => {
     const contentState = editor.getCurrentContent();
     const raw = convertToRaw(contentState);
-    console.log(indexSaveState , 'indexSaveState')
+
 
     //ここにデータベースに保存する処理を書く
     // localStorage.setItem(`test${id}`, JSON.stringify(raw, null, 2));

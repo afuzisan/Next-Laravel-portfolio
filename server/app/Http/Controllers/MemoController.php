@@ -8,6 +8,7 @@ use App\Models\MemoCategory;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Throwable;
 use Illuminate\Support\Facades\Log; // Added this line
 
@@ -18,7 +19,8 @@ class MemoController extends Controller
      */
     public function index()
     {
-        $user_id = 1; // 例としてユーザーID 100を使用
+        // $user_id = Auth::id(); 
+        $user_id = 1;
 
         $user = User::with(['stocks.memos'])->find($user_id);
 
@@ -28,6 +30,20 @@ class MemoController extends Controller
         }
 
         return response()->json($user);
+    }
+
+    public function memo(Request $request){
+        $id = $request->query('id');
+        // 特定のメモ情報を取得
+        $memo = null;
+        if ($id) {
+            $memo = Memo::select('memo')->find($id);
+            if (!$memo) {
+                return response()->json(['message' => 'Memo not found'], 404);
+            }
+        }
+        $response = $memo;
+        return response()->json($response);
     }
 
     /**

@@ -6,7 +6,6 @@ export const metadata = {
 }
 
 const Dashboard = () => {
-console.log(InputChange)
     return (
         <>
             <div>

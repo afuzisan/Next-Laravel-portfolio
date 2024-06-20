@@ -1,9 +1,11 @@
 'use client'
 
-import React, { memo, useState } from 'react'
-import MemoList from './memoList.client';
+import React from 'react'
+import MemoList from './memoList';
 import MyEditor from '@/components/MyEditor.client'
 import { EditorProvider, useEditorContext, useIndexSave } from './EditorContext.client';
+import Text from './text.client'
+
 
 const Memos = ({ memos }) => {
 
@@ -24,24 +26,29 @@ function getTextFromEditorState(editorState) {
 const MemoContent = ({ memos }) => {
     const [indexSaveState, setIndexSave] = useIndexSave()
     const [editor, setEditor] = useEditorContext();
-    console.log(memos);
-    console.log(indexSaveState)
-    // map関数を使用して、各memoに対してエディタのテキストを設定
-    const updatedMemos = memos.map((memo, index) => {
-        const text = getTextFromEditorState(editor);
-        return { ...memo, index: index, memo: text };
-    });
     
-    console.log(updatedMemos);
+    const updatedMemos = memos.map((memo, index) => {
+        if (index === indexSaveState) {
+            const text = getTextFromEditorState(editor); // 現在のeditorからテキストを取得
+
+            return { ...memo, index: index, memo: text }; // テキストでメモを更新
+        }
+
+        return { ...memo, index: index }; // 更新しない場合は元のメモをそのまま返す
+    });
+    console.log(updatedMemos)
+
 
     return (
         <>
             <div className="grid-item p-4 overflow-y-auto h-80 break-words">
                 {updatedMemos.map((memo) => (
-                    <MemoList title={memo.memo_title} memo={memo.memo} index={memo.index} />
+                    <MemoList title={memo.memo_title} id={memo.id}/>
                 ))}
             </div>
             {updatedMemos.length > 0 && updatedMemos[0] ? <MyEditor initMemo={memos[indexSaveState].memo} index={updatedMemos[indexSaveState].index} /> : null}
+            <Text url="http://localhost:8080/api/dashboard/reviews"/>
+
         </>
     );
 }
