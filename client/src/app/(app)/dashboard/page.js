@@ -63,6 +63,7 @@ async function fetchCsrfToken() {
 const initFetch = async () => {
     const result = await fetch('http://server:80/api/dashboard/reviews');
 
+
     return result.json();
 }
 

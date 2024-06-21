@@ -45,11 +45,11 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ initMemo,csrfToken }) => {
+const MyEditor = ({ initMemo }) => {
 
 
 
-
+  const [indexSaveState, setIndexSave] = useIndexSave()
   const [editor, setEditor] = useEditorContext()
   const [plugins, InlineToolbar, LinkButton, linkPlugin, decorator] = useMemo(() => {
     const linkPlugin = createLinkPlugin({
@@ -102,9 +102,10 @@ const MyEditor = ({ initMemo,csrfToken }) => {
     const url = 'http://localhost:8080/api/dashboard/memoUpdate';
 
     try {
+      console.log(indexSaveState)
       const response = await laravelAxios.post(url, JSON.stringify({
         memo: JSON.stringify(raw),
-        memo_id: 3
+        memo_id: indexSaveState
       }), {
         headers: {
           'Content-Type': 'application/json'

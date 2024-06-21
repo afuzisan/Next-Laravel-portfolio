@@ -9,7 +9,8 @@ import '@draft-js-plugins/image/lib/plugin.css';
 import { useEditorContext, useIndexSave } from '../_component/EditorContext.client';
 
 const MemoList = ({ title, id }) => {
-    const [editor, setEditor] = useEditorContext()
+    const [, setEditor] = useEditorContext()
+    const [, setIndexSave] = useIndexSave()
 
     const fetchData = async () => {
         function findLinkEntities(contentBlock, callback, contentState) {
@@ -35,6 +36,7 @@ const MemoList = ({ title, id }) => {
 
         try {
             console.log(id)
+            setIndexSave(id)
             const response = await fetch(`http://localhost:8080/api/dashboard/memo?id=${id}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
