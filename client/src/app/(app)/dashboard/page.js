@@ -8,9 +8,13 @@ export const metadata = {
 }
 
 const Dashboard = async () => {
+
     let result;
+    let csrfToken;
     try {
         result = await initFetch();
+        csrfToken = await fetchCsrfToken()
+
     } catch (error) {
         console.error('Failed to fetch data:', error);
         // 適切なエラーハンドリングをここに追加
@@ -22,7 +26,7 @@ const Dashboard = async () => {
             <div className="py-6">
                 <div className="grid grid-cols-1 p-6 bg-white border-b border-gray-200">
 
-                    {result.stocks.slice(0, 8).map((stock,index) => (
+                    {result.stocks.slice(0, 8).map((stock, index) => (
                         <>
                             <div className="grid grid-cols-6 border">
                                 <div className="col-span-5 ">
@@ -39,7 +43,7 @@ const Dashboard = async () => {
                                 <div className="grid-item p-4">
                                     <img src={`https://www.kabudragon.com/chart/s=${stock.stock_code}`} className="h-full w-full object-scale-down" />
                                 </div>
-                                <Memos memos={stock.memos} />
+                                <Memos memos={stock.memos} csrfToken={csrfToken}/>
 
                             </div >
                         </>
@@ -51,9 +55,14 @@ const Dashboard = async () => {
     )
 }
 
+async function fetchCsrfToken() {
+    const res = await fetch('http://server:80/csrf-token');
+    const data = await res.json();
+    return data.csrfToken;
+}
 const initFetch = async () => {
     const result = await fetch('http://server:80/api/dashboard/reviews');
-    console.log(result)
+
     return result.json();
 }
 

@@ -31,16 +31,11 @@ import '@draft-js-plugins/image/lib/plugin.css';
 import linkStyles from './linkStyles.module.css';
 import NextLink from 'next/link'; // Next.jsのLinkコンポーネントをインポート
 import { useEditorContext, useIndexSave } from '../app/(app)/dashboard/_component/EditorContext.client';
+import laravelAxios from '@/lib/laravelAxios';
 
 
 
-async function fetchCsrfToken() {
-  const res = await fetch('http://localhost:8080/csrf-token');
-  const data = await res.json();
-  return data.csrfToken;
-}
 
-// Link コンポーネン��をここに移動
 const Link = (props) => {
   const { url } = props.contentState.getEntity(props.entityKey).getData();
   return (
@@ -50,10 +45,12 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ initMemo }) => {
+const MyEditor = ({ initMemo,csrfToken }) => {
+
+
+
+
   const [editor, setEditor] = useEditorContext()
-
-
   const [plugins, InlineToolbar, LinkButton, linkPlugin, decorator] = useMemo(() => {
     const linkPlugin = createLinkPlugin({
       theme: linkStyles,
@@ -100,33 +97,28 @@ const MyEditor = ({ initMemo }) => {
    * TODO:function:saveContent
   ***********************************************/
   const saveContent = async () => {
-
-    const csrfToken = await fetchCsrfToken();
-    console.log(csrfToken)
-
     const contentState = editor.getCurrentContent();
     const raw = convertToRaw(contentState);
-
     const url = 'http://localhost:8080/api/dashboard/memoUpdate';
 
     try {
-      const response = await fetch(url, {
-        method: 'POST',
+      const response = await laravelAxios.post(url, JSON.stringify({
+        memo: JSON.stringify(raw),
+        memo_id: 3
+      }), {
         headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': '1LPgnQIWMUpqMYfnqBD5PAJoFXDlnnJ38Su48l8L'
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ memo: raw })
+        withCredentials: true,
       });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const responseData = await response.json();
+      const responseData = response.data;
       console.log('Saved successfully:', responseData);
     } catch (error) {
       console.error('Failed to save content:', error);
+      if (error.response) {
+        console.error('Error data:', error.response.data);
+      }
     }
   };
 

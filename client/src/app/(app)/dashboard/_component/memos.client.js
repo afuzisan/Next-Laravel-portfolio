@@ -1,17 +1,17 @@
 'use client'
 
-import React from 'react'
+import {React,useState,useEffect} from 'react'
 import MemoList from './memoList';
 import MyEditor from '@/components/MyEditor.client'
 import { EditorProvider, useEditorContext, useIndexSave } from './EditorContext.client';
 import Text from './text.client'
 
 
-const Memos = ({ memos }) => {
+const Memos = ({ memos,csrfToken }) => {
 
     return (
         <EditorProvider>
-            <MemoContent memos={memos} />
+            <MemoContent memos={memos} csrfToken={csrfToken}/>
         </EditorProvider>
     )
 }
@@ -23,7 +23,9 @@ function getTextFromEditorState(editorState) {
     const text = blocks.map(block => block.getText()).join('\n');
     return text;
 }
-const MemoContent = ({ memos }) => {
+
+const MemoContent = ({ memos,csrfToken }) => {
+
     const [indexSaveState, setIndexSave] = useIndexSave()
     const [editor, setEditor] = useEditorContext();
     
@@ -37,7 +39,7 @@ const MemoContent = ({ memos }) => {
         return { ...memo, index: index }; // 更新しない場合は元のメモをそのまま返す
     });
 
-
+    console.log(csrfToken)
     return (
         <>
             <div className="grid-item p-4 overflow-y-auto h-80 break-words">
@@ -45,7 +47,7 @@ const MemoContent = ({ memos }) => {
                     <MemoList title={memo.memo_title} id={memo.id}/>
                 ))}
             </div>
-            {updatedMemos.length > 0 && updatedMemos[0] ? <MyEditor initMemo={memos[indexSaveState].memo} index={updatedMemos[indexSaveState].index} /> : null}
+            {updatedMemos.length > 0 && updatedMemos[0] ? <MyEditor initMemo={memos[indexSaveState].memo} index={updatedMemos[indexSaveState].index} csrfToken={csrfToken}/> : null}
             <Text url="http://localhost:8080/api/dashboard/reviews"/>
 
         </>

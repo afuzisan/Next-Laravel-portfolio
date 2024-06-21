@@ -47,18 +47,24 @@ class MemoController extends Controller // Changed this line
         return response()->json($response);
     }
 
-    public function memoUpdate(Request $request, Memo $memo)
+    public function memoUpdate(Request $request)
     {
-        // リクエストからデータを検証し、取得
-        $validated = $request->validate([
-            'memo' => 'string',
-        ]);
+        // リクエストから memo_id を取得
+        $memoId = $request->input('memo_id');
+        $newContent = $request->input('memo');
 
-        // Memoモデルの属性を更新
-        $memo->update($validated);
+        // memo_id に基づいて Memo オブジェクトを取得
+        $memo = Memo::find($memoId);
 
-        // 更新後のMemoをレスポンスとして返す
-        return response()->json($memo);
+        if ($memo) {
+            // メモの内容を更新
+            $memo->memo = $newContent;
+            $memo->save();
+
+            return response()->json(['message' => 'Memo updated successfully', 'memo' => $memo]);
+        } else {
+            return response()->json(['message' => 'Memo not found'], 404);
+        }
     }
 
     /**
