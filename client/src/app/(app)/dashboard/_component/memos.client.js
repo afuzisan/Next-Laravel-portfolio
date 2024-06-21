@@ -36,7 +36,6 @@ const MemoContent = ({ memos }) => {
 
         return { ...memo, index: index }; // 更新しない場合は元のメモをそのまま返す
     });
-    console.log(updatedMemos)
 
 
     return (

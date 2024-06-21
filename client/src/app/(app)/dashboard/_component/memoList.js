@@ -1,29 +1,10 @@
 import {
     EditorState,
-    convertFromRaw,
-    convertToRaw,
-    AtomicBlockUtils,
     ContentState,
-    Modifier,
-    Entity,
     CompositeDecorator,
 } from 'draft-js';
-import Editor from '@draft-js-plugins/editor';
-import createInlineToolbarPlugin, {
-    Separator,
-} from '@draft-js-plugins/inline-toolbar';
 import '@draft-js-plugins/inline-toolbar/lib/plugin.css';
-import {
-    ItalicButton,
-    BoldButton,
-    UnderlineButton,
-    HeadlineOneButton,
-    HeadlineTwoButton,
-    HeadlineThreeButton,
-} from '@draft-js-plugins/buttons';
-import createLinkPlugin from '@draft-js-plugins/anchor';
 import '@draft-js-plugins/anchor/lib/plugin.css';
-import createImagePlugin from '@draft-js-plugins/image';
 import '@draft-js-plugins/image/lib/plugin.css';
 import { useEditorContext, useIndexSave } from '../_component/EditorContext.client';
 
@@ -53,6 +34,7 @@ const MemoList = ({ title, id }) => {
         };
 
         try {
+            console.log(id)
             const response = await fetch(`http://localhost:8080/api/dashboard/memo?id=${id}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -85,3 +67,4 @@ const MemoList = ({ title, id }) => {
     );
 };
 export default MemoList
+

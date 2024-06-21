@@ -8,7 +8,14 @@ export const metadata = {
 }
 
 const Dashboard = async () => {
-    const result = await initFetch()
+    let result;
+    try {
+        result = await initFetch();
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        // 適切なエラーハンドリングをここに追加
+        return <div>Error loading data</div>;
+    }
 
     return (
         <>
@@ -46,6 +53,7 @@ const Dashboard = async () => {
 
 const initFetch = async () => {
     const result = await fetch('http://server:80/api/dashboard/reviews');
+    console.log(result)
     return result.json();
 }
 

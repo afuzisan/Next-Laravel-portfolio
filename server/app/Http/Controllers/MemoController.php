@@ -4,22 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Memo;
-use App\Models\MemoCategory;
 use App\Models\User;
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller; // Added this line
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
 use Illuminate\Support\Facades\Log; // Added this line
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // Added this line
 
-class MemoController extends Controller
+class MemoController extends Controller // Changed this line
 {
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $user_id = Auth::id(); 
+
         $user_id = 1;
 
         $user = User::with(['stocks.memos'])->find($user_id);
@@ -44,6 +45,20 @@ class MemoController extends Controller
         }
         $response = $memo;
         return response()->json($response);
+    }
+
+    public function memoUpdate(Request $request, Memo $memo)
+    {
+        // リクエストからデータを検証し、取得
+        $validated = $request->validate([
+            'memo' => 'string',
+        ]);
+
+        // Memoモデルの属性を更新
+        $memo->update($validated);
+
+        // 更新後のMemoをレスポンスとして返す
+        return response()->json($memo);
     }
 
     /**

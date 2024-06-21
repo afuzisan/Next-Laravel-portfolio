@@ -30,9 +30,17 @@ import createImagePlugin from '@draft-js-plugins/image';
 import '@draft-js-plugins/image/lib/plugin.css';
 import linkStyles from './linkStyles.module.css';
 import NextLink from 'next/link'; // Next.jsのLinkコンポーネントをインポート
-import { useEditorContext,useIndexSave } from '../app/(app)/dashboard/_component/EditorContext.client';
+import { useEditorContext, useIndexSave } from '../app/(app)/dashboard/_component/EditorContext.client';
 
-// Link コンポーネントをここに移動
+
+
+async function fetchCsrfToken() {
+  const res = await fetch('http://localhost:8080/csrf-token');
+  const data = await res.json();
+  return data.csrfToken;
+}
+
+// Link コンポーネン��をここに移動
 const Link = (props) => {
   const { url } = props.contentState.getEntity(props.entityKey).getData();
   return (
@@ -42,8 +50,7 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({initMemo,index}) => {
-  const [indexSaveState, setIndexSave] = useIndexSave()
+const MyEditor = ({ initMemo }) => {
   const [editor, setEditor] = useEditorContext()
 
 
@@ -92,13 +99,35 @@ const MyEditor = ({initMemo,index}) => {
    * TODO:データベースに保存する処理を追加する
    * TODO:function:saveContent
   ***********************************************/
-  const saveContent = () => {
+  const saveContent = async () => {
+
+    const csrfToken = await fetchCsrfToken();
+    console.log(csrfToken)
+
     const contentState = editor.getCurrentContent();
     const raw = convertToRaw(contentState);
 
+    const url = 'http://localhost:8080/api/dashboard/memoUpdate';
 
-    //ここにデータベースに保存する処理を書く
-    // localStorage.setItem(`test${id}`, JSON.stringify(raw, null, 2));
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '1LPgnQIWMUpqMYfnqBD5PAJoFXDlnnJ38Su48l8L'
+        },
+        body: JSON.stringify({ memo: raw })
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const responseData = await response.json();
+      console.log('Saved successfully:', responseData);
+    } catch (error) {
+      console.error('Failed to save content:', error);
+    }
   };
 
   const onChange = (value) => {

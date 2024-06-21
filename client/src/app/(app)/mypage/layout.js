@@ -1,10 +1,7 @@
 'use client'
 
 import { useAuth } from '@/hooks/auth'
-import Navigation from '@/app/(app)/Navigation'
 import Loading from '@/app/(app)/Loading'
-import { siteName } from "@/app/metadata_common.js"
-import InputChange from "@@/mypage/_component/inputChange.client"
 import Sidebar from '@@/mypage/sidebar'
 
 const AppLayout = ({ children }) => {
