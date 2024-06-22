@@ -88,7 +88,8 @@ const MyEditor = ({ initMemo }) => {
   ***********************************************/
   useEffect(() => {
     const initialText = typeof initMemo === 'string' ? initMemo : '';
-    const contentState = ContentState.createFromText(initialText);
+    const editorState = JSON.parse(initialText);
+    const contentState = convertFromRaw(editorState);
     const newEditorState = EditorState.createWithContent(contentState, decorator);
     setEditor(newEditorState);
   }, [decorator, initMemo]);

@@ -54,7 +54,7 @@ const MemoList = ({ title, id }) => {
             const newEditorState = EditorState.createWithContent(contentState, decorator); // EditorStateを作成
 
             // EditorStateからテキストを抽出
-            const plainText = newEditorState.getCurrentContent().getPlainText('\n');
+            newEditorState.getCurrentContent().getPlainText('\n');
             setEditor(newEditorState); // EditorStateを設定
         } catch (error) {
             console.error('Fetch error:', error);
