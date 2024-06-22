@@ -4,7 +4,6 @@ import { React, useState, useEffect } from 'react'
 import MemoList from './memoList';
 import MyEditor from '@/components/MyEditor.client'
 import { EditorProvider, useEditorContext, useIndexSave } from './EditorContext.client';
-import Text from './text.client'
 
 
 const Memos = ({ memos, csrfToken }) => {
@@ -21,7 +20,7 @@ function getTextFromEditorState(editorState) {
 
     // ブロックからテキストを抽出して結合
     const text = blocks.map(block => block.getText()).join('\n');
-    return text;
+    return JSON.stringify(text);
 }
 
 const MemoContent = ({ memos, csrfToken }) => {
@@ -46,7 +45,7 @@ const MemoContent = ({ memos, csrfToken }) => {
                 ))}
             </div>
             {updatedMemos.length > 0 && updatedMemos[0] ? <MyEditor initMemo={memos[0].memo} csrfToken={csrfToken} /> : null}
-            <Text url="http://localhost:8080/api/dashboard/reviews" />
+
 
         </>
     );
