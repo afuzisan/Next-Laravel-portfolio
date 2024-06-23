@@ -45,7 +45,7 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ initMemo }) => {
+const MyEditor = ({ initMemo, initId}) => {
 
 
 
@@ -88,6 +88,7 @@ const MyEditor = ({ initMemo }) => {
     const editorState = JSON.parse(initialText);
     const contentState = convertFromRaw(editorState);
     const newEditorState = EditorState.createWithContent(contentState, decorator);
+    setIndexSave(initId)
     setEditor(newEditorState);
   }, [decorator, initMemo]);
   /********************************************** 

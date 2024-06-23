@@ -46,7 +46,7 @@ const MemoContent = ({ memos, csrfToken }) => {
                     </div>
                 ))}
             </div>
-            {updatedMemos.length > 0 && updatedMemos[0] ? <MyEditor initMemo={memos[0].memo} csrfToken={csrfToken} /> : null}
+            {updatedMemos.length > 0 && updatedMemos[0] ? <MyEditor initMemo={memos[0].memo} initId={updatedMemos[0].id} /> : null}
 
 
         </>
