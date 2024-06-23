@@ -76,9 +76,6 @@ const MyEditor = ({ initMemo }) => {
     ];
   }, []);
 
-  // const [editorState, setEditorState] = useState(() =>
-  //   EditorState.createEmpty()
-  // );
 
   const [readonly, setReadOnly] = useState(true);
 
@@ -103,7 +100,6 @@ const MyEditor = ({ initMemo }) => {
     const url = 'http://localhost:8080/api/dashboard/memoUpdate';
 
     try {
-      console.log(indexSaveState)
       const response = await laravelAxios.post(url, JSON.stringify({
         memo: JSON.stringify(raw),
         memo_id: indexSaveState
@@ -188,7 +184,7 @@ const MyEditor = ({ initMemo }) => {
           </>
         )}
       </div>
-      <div readonly className={readonly ? "p-1" : "p-1 bg-orange-50"}>
+      <div readOnly className={readonly ? "p-1" : "p-1 bg-orange-50"}>
         <Editor
           editorState={editor}
           onChange={onChange}

@@ -41,7 +41,9 @@ const MemoContent = ({ memos, csrfToken }) => {
         <>
             <div className="grid-item p-4 overflow-y-auto h-80 break-words">
                 {updatedMemos.map((memo) => (
-                    <MemoList title={memo.memo_title} id={memo.id} />
+                    <div key={memo.id}>
+                        <MemoList title={memo.memo_title} id={memo.id} />
+                    </div>
                 ))}
             </div>
             {updatedMemos.length > 0 && updatedMemos[0] ? <MyEditor initMemo={memos[0].memo} csrfToken={csrfToken} /> : null}

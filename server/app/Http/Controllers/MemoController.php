@@ -23,7 +23,7 @@ class MemoController extends Controller // Changed this line
 
         $user_id = 1;
 
-        $user = User::with(['stocks.memos'])->find($user_id);
+        $user = User::with(['stocks.memos', 'links'])->find($user_id);
 
 
         if (!$user) {

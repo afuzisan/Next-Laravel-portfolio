@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/hooks/auth'
 import Loading from '@/app/(app)/Loading'
-import Sidebar from '@@/mypage/sidebar'
+import Sidebar from '@@/(app)/mypage/sidebar.js'
 
 const AppLayout = ({ children }) => {
     const { user } = useAuth({ middleware: 'auth' })

@@ -1,5 +1,5 @@
 import { siteName } from "@/app/metadata_common.js"
-import InputChange from "@@/mypage/_component/inputChange.client"
+import InputChange from "@@/(app)/mypage/_component/inputChange.client"
 import TestData from '@/app/(app)/mypage/linkedit/testData'
 
 export const metadata = {
