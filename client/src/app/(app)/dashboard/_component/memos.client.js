@@ -35,18 +35,19 @@ const MemoContent = ({ memos, csrfToken }) => {
         return { ...memo, memo: text }; // テキストでメモを更新
 
     });
-
+console.log(updatedMemos)
+console.log(memos)
 
     return (
         <>
             <div className="grid-item p-4 overflow-y-auto h-80 break-words">
-                {updatedMemos.map((memo) => (
+                {memos.map((memo) => (
                     <div key={memo.id}>
                         <MemoList title={memo.memo_title} id={memo.id} />
                     </div>
                 ))}
             </div>
-            {updatedMemos.length > 0 && updatedMemos[0] ? <MyEditor initMemo={memos[0].memo} initId={updatedMemos[0].id} /> : null}
+            {memos.length > 0 && memos[0] ? <MyEditor initMemo={memos[0].memo} initId={memos[0].id} /> : null}
 
 
         </>
