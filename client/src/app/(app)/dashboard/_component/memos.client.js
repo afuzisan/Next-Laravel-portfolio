@@ -26,17 +26,15 @@ function getTextFromEditorState(editorState) {
 const MemoContent = ({ memos, csrfToken }) => {
 
 
-    const [editor, setEditor] = useEditorContext();
+    // const [editor, setEditor] = useEditorContext();
 
-    const updatedMemos = memos.map((memo) => {
+    // const updatedMemos = memos.map((memo) => {
 
-        const text = getTextFromEditorState(editor); // 現在のeditorからテキストを取得
+    //     const text = getTextFromEditorState(editor); // 現在のeditorからテキストを取得
 
-        return { ...memo, memo: text }; // テキストでメモを更新
+    //     return { ...memo, memo: text }; // テキストでメモを更新
 
-    });
-console.log(updatedMemos)
-console.log(memos)
+    // });
 
     return (
         <>
