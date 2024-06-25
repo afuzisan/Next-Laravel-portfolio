@@ -22,4 +22,3 @@ const InputChange = ({ info = { placeholder: '入力欄', initialValue: '', type
 };
 
 export default InputChange;
-

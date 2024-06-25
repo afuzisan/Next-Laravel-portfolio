@@ -9,7 +9,6 @@ const Dashboard = () => {
     return (
         <>
             <div>
-                aaaaaaaaa
                 <InputChange info = {{ placeholder: '入力欄', initialValue: '', type: 'text' }} />
             </div>
         </>

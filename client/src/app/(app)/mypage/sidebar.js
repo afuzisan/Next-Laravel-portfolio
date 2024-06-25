@@ -2,16 +2,9 @@ import React from 'react'
 import Link from 'next/link'
 
 const Sidebar = () => {
-    <div className="grid justify-center bg-white items-center py-6" >
-
-
-
-
-
-
-    </div>
+    <div className="grid justify-center bg-white items-center py-6 " ></div>
     return (
-        <div className="bg-background text-foreground rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-background text-foreground rounded-lg overflow-hidden">
             <div className="p-6 max-h-[500px] overflow-auto">
                 <div className="grid">
                     <Link href="/mypage/linkedit" className="flex items-center gap-4 hover:bg-gray-100 transition duration-300 p-2 rounded-lg">
