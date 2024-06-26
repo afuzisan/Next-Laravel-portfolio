@@ -2,41 +2,43 @@ import React from 'react'
 import { Button } from "@@/(app)/mypage/linkedit/_component/Button"
 import Link from "next/link"
 
-const YouLinks = () => {
+const YouLinks = ({ data }) => {
+    console.log(data)
+
+    const linkReplace = (data) => {
+        return data.replace('[code]', 9997)
+    }
+
     return (
         <>
             <h3 className="text-lg font-semibold">あなたのリンク</h3>
             <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <LinkIcon className="w-5 h-5 text-muted-foreground" />
-                        <div>
-                            <div><Link href="/mypage/" className="hover:font-bold text-sky-700">Example Website</Link></div>
-                            <div><Link href="/mypage/" className="hover:font-bold text-sky-700">https://example.com</Link></div>
-                            <div className="text-muted-foreground">https://[code].com</div>
+                <div className="items-center justify-between">
+                    <div className="items-center gap-4">
+                        <div className="flex  flex-col">
+                            {data.map((item, index) => (
+                                <div key={index} className="flex gap-2 p-4">
+                                    <div className="flex flex-col space-y-1 flex-1">
+                                        <Link href={linkReplace(item.url)} title={linkReplace(item.url)} className="hover:font-bold text-sky-700 break-all">
+                                            {item.site_name}
+                                        </Link>
+                                        <div>
+                                            <Link href={linkReplace(item.url)} title={linkReplace(item.url)} className="hover:font-bold text-sky-700 break-all" style={{ width: '400px' }}>
+                                                {item.url}
+                                            </Link>
+                                        </div>
+                                    </div>
+                                    <Button variant="ghost" size="icon" className="text-muted-foreground ml-auto flex-shrink-0">
+                                        <TrashIcon className="w-5 h-5" />
+                                        <span className="sr-only">Delete</span>
+                                    </Button>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground">
-                        <TrashIcon className="w-5 h-5" />
-                        <span className="sr-only">Delete</span>
-                    </Button>
-                </div>
-                <div className="flex items-center justify-between ">
-                    <div className="flex items-center gap-2">
-                        <LinkIcon className="w-5 h-5 text-muted-foreground" />
-                        <div>
-                            <div><Link href="/mypage/" className="hover:font-bold text-sky-700">Example Website</Link></div>
-                            <div><Link href="/mypage/" className="hover:font-bold text-sky-700">https://example.com</Link></div>
-                            <div className="text-muted-foreground">https://[code].com</div>
-                        </div>
-                    </div>
-                    <Button variant="ghost" size="icon" className="text-muted-foreground">
-                        <TrashIcon className="w-5 h-5" />
-                        <span className="sr-only">Delete</span>
-                    </Button>
+
                 </div>
             </div>
-
         </>
     )
 }

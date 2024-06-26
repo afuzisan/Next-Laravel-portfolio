@@ -11,6 +11,7 @@
     "draft-js": "^0.11.7",
     "draft-js-export-html": "^1.4.1",
     "immutable": "3.x",
+    "next-auth": "^4.24.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-draft-wysiwyg": "^1.15.0"
