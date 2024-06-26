@@ -17,16 +17,14 @@ const YouLinks = ({ data }) => {
                     <div className="items-center gap-4">
                         <div className="flex  flex-col">
                             {data.map((item, index) => (
-                                <div key={index} className="flex gap-2 p-4">
+                                <div key={index} className="flex gap-2 p-2">
                                     <div className="flex flex-col space-y-1 flex-1">
-                                        <Link href={linkReplace(item.url)} title={linkReplace(item.url)} className="hover:font-bold text-sky-700 break-all">
+                                        <Link href={linkReplace(item.url)} title={linkReplace(item.url)} className="hover:bg-gray-100 break-all transition duration-300 p-2 rounded-lg">
                                             {item.site_name}
-                                        </Link>
-                                        <div>
-                                            <Link href={linkReplace(item.url)} title={linkReplace(item.url)} className="hover:font-bold text-sky-700 break-all" style={{ width: '400px' }}>
+                                            <div>
                                                 {item.url}
-                                            </Link>
-                                        </div>
+                                            </div>
+                                        </Link>
                                     </div>
                                     <Button variant="ghost" size="icon" className="text-muted-foreground ml-auto flex-shrink-0">
                                         <TrashIcon className="w-5 h-5" />
