@@ -14,5 +14,5 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::get('dashboard/reviews',[MemoController::class,'index']);
 Route::get('dashboard/memo',[MemoController::class,'memo']);
 Route::post('dashboard/memoUpdate',[MemoController::class,'memoUpdate']);
-Route::post('dashboard/externallinks',[ExternalLinkController::class,'index']);
+Route::get('mypage/externallinks',[ExternalLinkController::class,'index']);
 

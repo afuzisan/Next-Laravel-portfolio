@@ -8,12 +8,10 @@ use Illuminate\Http\Request;
 
 class ExternalLinkController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $user = ExternalLink::all();
+        return response()->json($user);
     }
 
     /**
