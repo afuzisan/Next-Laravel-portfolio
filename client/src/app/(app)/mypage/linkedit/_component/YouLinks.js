@@ -10,7 +10,11 @@ const YouLinks = ({ data }) => {
 
     return (
         <>
-            <h3 className="text-lg font-semibold">あなたのリンク</h3>
+            <div className="flex items-center">
+                <h3 className="text-lg font-semibold ml-4">あなたのリンク</h3>
+                <input type="number" value="7203" className='mt-1 block shadow-sm border-gray-300 rounded-md text-right ml-auto w-20' />
+
+            </div>
             <div className="space-y-2">
                 <div className="items-center justify-between">
                     <div className="items-center gap-4">
