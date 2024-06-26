@@ -3,7 +3,6 @@ import { Button } from "@@/(app)/mypage/linkedit/_component/Button"
 import Link from "next/link"
 
 const YouLinks = ({ data }) => {
-    console.log(data)
 
     const linkReplace = (data) => {
         return data.replace('[code]', 9997)
@@ -19,11 +18,12 @@ const YouLinks = ({ data }) => {
                             {data.map((item, index) => (
                                 <div key={index} className="flex gap-2 p-2">
                                     <div className="flex flex-col space-y-1 flex-1">
-                                        <Link href={linkReplace(item.url)} title={linkReplace(item.url)} className="hover:bg-gray-100 break-all transition duration-300 p-2 rounded-lg">
-                                            {item.site_name}
-                                            <div>
-                                                {item.url}
+                                        <Link href={linkReplace(item.url)} title={linkReplace(item.url)} target="_blank" className="hover:bg-gray-100 break-all transition duration-300 p-2 rounded-lg">
+                                            <div className="flex items-center">
+                                                <img src={`http://www.google.com/s2/favicons?domain=${item.url}`} alt={item.site_name} className="w-4 h-4 mr-2" />
+                                                <div>{item.site_name}</div>
                                             </div>
+                                            <div>{item.url}</div>
                                         </Link>
                                     </div>
                                     <Button variant="ghost" size="icon" className="text-muted-foreground ml-auto flex-shrink-0">
@@ -38,26 +38,6 @@ const YouLinks = ({ data }) => {
                 </div>
             </div>
         </>
-    )
-}
-
-function LinkIcon(props) {
-    return (
-        <svg
-            {...props}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-        </svg>
     )
 }
 

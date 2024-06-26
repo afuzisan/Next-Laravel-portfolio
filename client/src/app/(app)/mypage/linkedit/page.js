@@ -30,8 +30,9 @@ const Component = () => {
             <div className="w-full">
                 <div className="grid gap-4 grid-cols-1  xl:grid-cols-[1fr_550px] xl:grid-cols-3">
                     <LinkForm />
+                    <Select />
                     <div className="border rounded-lg p-4 space-y-4 col-span-1 mr-3.5">
-                        <Select />
+                        
                         {data !== null && <YouLinks data={data} />}
                     </div>
                 </div>

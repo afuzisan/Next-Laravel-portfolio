@@ -28,7 +28,7 @@ const Sidebar = () => {
                             <BarChartIcon className="h-6 w-6" />
                         </div>
                         <div>
-                            <div>チャートの表示切り替え</div>
+                            <div>チャートの表示設定</div>
                         </div>
                     </Link>
                     <Link href="/mypage/" className="flex items-center gap-4 hover:bg-gray-100 transition duration-300 p-2 rounded-lg">
