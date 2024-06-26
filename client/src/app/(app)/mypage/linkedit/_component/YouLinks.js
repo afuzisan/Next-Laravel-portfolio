@@ -1,19 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from "@@/(app)/mypage/linkedit/_component/Button"
 import Link from "next/link"
 
 const YouLinks = ({ data }) => {
+    const [inputValue, setInputValue] = useState(7203);
 
     const linkReplace = (data) => {
-        return data.replace('[code]', 9997)
+        return data.replace('[code]', inputValue);
     }
 
     return (
         <>
             <div className="flex items-center">
                 <h3 className="text-lg font-semibold ml-4">あなたのリンク</h3>
-                <input type="number" value="7203" className='mt-1 block shadow-sm border-gray-300 rounded-md text-right ml-auto w-20' />
-
+                <input 
+                    type="number" 
+                    value={inputValue} 
+                    onChange={(e) => setInputValue(e.target.value)} 
+                    className='mt-1 block shadow-sm border-gray-300 rounded-md text-right ml-auto w-20' 
+                />
             </div>
             <div className="space-y-2">
                 <div className="items-center justify-between">
