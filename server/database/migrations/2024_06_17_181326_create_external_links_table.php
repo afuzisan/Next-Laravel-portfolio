@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('url', 255)->default('https://kabutan.jp/stock/finance?code=[code]');
             $table->string('site_name', 255)->default('株探');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade')->default(1)->nullable();
             $table->timestamp('link_at_create')->useCurrent();
             $table->timestamp('link_at_edit')->nullable()->default(null)->useCurrentOnUpdate();
             $table->timestamps();

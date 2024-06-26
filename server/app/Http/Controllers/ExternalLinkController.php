@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\ExternalLink;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ExternalLinkController extends Controller
 {
@@ -17,9 +20,22 @@ class ExternalLinkController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
+    public function create(Request $request)
+    {       
+        $url = $request->input('url'); 
+        $site_name = $request->input('site_name'); 
+        $user_id = Auth::id(); 
+
+        // データベースに保存
+        DB::table('external_links')->insert([
+            'url' => $url,
+            'site_name' => $site_name,
+            'user_id' => $user_id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json(['url' => $url, 'site_name' => $site_name]); // 'url'をJSONで返す
     }
 
     /**

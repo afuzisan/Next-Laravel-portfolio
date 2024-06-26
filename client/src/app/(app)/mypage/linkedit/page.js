@@ -28,11 +28,10 @@ const Component = () => {
     return (
         <div className="flex flex-col items-center justify-start bg-background">
             <div className="w-full">
+                    <Select />
                 <div className="grid gap-4 grid-cols-1  xl:grid-cols-[1fr_550px] xl:grid-cols-3">
                     <LinkForm />
-                    <Select />
                     <div className="border rounded-lg p-4 space-y-4 col-span-1 mr-3.5">
-                        
                         {data !== null && <YouLinks data={data} />}
                     </div>
                 </div>

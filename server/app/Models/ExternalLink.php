@@ -11,6 +11,7 @@ class ExternalLink extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $table = 'external_links';
     protected $fillable = [
         'url',
         'site_name',
