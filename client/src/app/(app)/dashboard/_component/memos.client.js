@@ -6,11 +6,11 @@ import MyEditor from '@/components/MyEditor.client'
 import { EditorProvider, useEditorContext, useIndexSave } from './EditorContext.client';
 
 
-const Memos = ({ memos, csrfToken }) => {
+const Memos = ({ memos }) => {
 
     return (
         <EditorProvider>
-            <MemoContent memos={memos} csrfToken={csrfToken} />
+            <MemoContent memos={memos} />
         </EditorProvider>
     )
 }
@@ -23,7 +23,7 @@ function getTextFromEditorState(editorState) {
     return JSON.stringify(text);
 }
 
-const MemoContent = ({ memos, csrfToken }) => {
+const MemoContent = ({ memos }) => {
 
 
     // const [editor, setEditor] = useEditorContext();

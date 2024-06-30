@@ -21,10 +21,10 @@ class ExternalLinkController extends Controller
      * Show the form for creating a new resource.
      */
     public function create(Request $request)
-    {       
-        $url = $request->input('url'); 
-        $site_name = $request->input('site_name'); 
-        $user_id = Auth::id(); 
+    {
+        $url = $request->input('url');
+        $site_name = $request->input('site_name');
+        $user_id = Auth::id();
 
         // データベースに保存
         DB::table('external_links')->insert([
@@ -73,8 +73,10 @@ class ExternalLinkController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ExternalLink $externalLink)
+    public function destroy(Request $request)
     {
-        //
+        $id = $request->input('id');
+        DB::table('external_links')->where('id', $id)->delete();
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }

@@ -21,7 +21,7 @@ class MemoController extends Controller // Changed this line
     public function index(Request $request)
     {
 
-        $user_id = 1;
+        $user_id = Auth::id();
 
         $user = User::with(['stocks.memos', 'links'])->find($user_id);
 
@@ -33,7 +33,8 @@ class MemoController extends Controller // Changed this line
         return response()->json($user);
     }
 
-    public function memo(Request $request){
+    public function memo(Request $request)
+    {
         $id = $request->query('id');
         // 特定のメモ情報を取得
         $memo = null;

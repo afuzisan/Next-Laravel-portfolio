@@ -49,7 +49,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function memos()
     {
-        return $this->hasMany(Memo::class);
+        return $this->hasManyThrough(Memo::class, Stock::class);
     }
 
     public function stocks()

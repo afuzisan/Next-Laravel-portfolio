@@ -16,5 +16,6 @@ Route::get('dashboard/memo',[MemoController::class,'memo']);
 Route::post('dashboard/memoUpdate',[MemoController::class,'memoUpdate']);
 Route::get('mypage/externallinks',[ExternalLinkController::class,'index']);
 Route::post('mypage/externallinks/create', [ExternalLinkController::class, 'create']);
+Route::post('mypage/externallinks/delete', [ExternalLinkController::class, 'destroy']);
 
 
