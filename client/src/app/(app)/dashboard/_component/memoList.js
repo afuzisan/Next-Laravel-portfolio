@@ -29,7 +29,7 @@ const MemoList = ({ title, id }) => {
     const LinkComponent = (props) => {
         const { url } = props.contentState.getEntity(props.entityKey).getData();
         return (
-            <Link href={url} className='text-blue-600' target="_blank" passHref>
+            <Link href={url} className='text-blue-600' target="_blank" passHref >
                 {props.children}
             </Link>
         );
@@ -64,7 +64,7 @@ const MemoList = ({ title, id }) => {
     return (
         <ul>
             <li>
-                <button onClick={() => fetchData()}>{title}</button>
+                <button className="text-left" onClick={() => fetchData()}>{title} </button>
             </li>
         </ul>
     );

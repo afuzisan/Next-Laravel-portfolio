@@ -25,22 +25,11 @@ function getTextFromEditorState(editorState) {
 
 const MemoContent = ({ memos }) => {
 
-
-    // const [editor, setEditor] = useEditorContext();
-
-    // const updatedMemos = memos.map((memo) => {
-
-    //     const text = getTextFromEditorState(editor); // 現在のeditorからテキストを取得
-
-    //     return { ...memo, memo: text }; // テキストでメモを更新
-
-    // });
-
     return (
         <>
-            <div className="grid-item p-4 overflow-y-auto h-80 break-words">
+            <div className="grid-item p-4 overflow-y-auto h-80 " style={{ lineBreak: 'anywhere' }}>
                 {memos.map((memo) => (
-                    <div key={memo.id}>
+                    <div key={memo.id} className='py-2 duration-300 ease-in-out hover:bg-gray-200 p-2 rounded-lg'>
                         <MemoList title={memo.memo_title} id={memo.id} />
                     </div>
                 ))}

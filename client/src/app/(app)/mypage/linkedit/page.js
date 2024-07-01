@@ -8,12 +8,12 @@ import { useEffect, useState } from "react"
 
 const Component = () => {
     const [data, setData] = useState(null)
+    const [fetchTrigger, setFetchTrigger] = useState(false)
 
     const fetchData = () => {
         laravelAxios.get('http://localhost:8080/api/mypage/externallinks', { cache: 'no-store' })
             .then(response => {
                 setData(response.data)
-                console.log("Data fetched:", response.data) // データ取得の確認
             })
             .catch(error => {
                 console.error(error)
@@ -22,17 +22,16 @@ const Component = () => {
 
     useEffect(() => {
         fetchData()
-    }, []) 
-    console.log(data) // データが正しく取得されているか確認するために追加
+    }, [fetchTrigger]) 
 
     return (
         <div className="flex flex-col items-center justify-start bg-background">
             <div className="w-full">
                     <Select />
                 <div className="grid gap-4 grid-cols-1  xl:grid-cols-[1fr_550px] xl:grid-cols-3">
-                    <LinkForm />
+                    <LinkForm onRefetch={() => setFetchTrigger(!fetchTrigger)}/>
                     <div className="border rounded-lg p-4 space-y-4 col-span-1 mr-3.5">
-                        {data !== null && <YouLinks data={data} />}
+                        {data !== null && <YouLinks data={data} onRefetch={() => setFetchTrigger(!fetchTrigger)} />}
                     </div>
                 </div>
             </div>

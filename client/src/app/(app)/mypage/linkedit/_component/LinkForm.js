@@ -4,23 +4,28 @@ import { Input } from "@@/(app)/mypage/linkedit/_component/Input"
 import { Button } from "@@/(app)/mypage/linkedit/_component/Button"
 import laravelAxios from '@/lib/laravelAxios';
 
-const LinkForm = () => {
+const LinkForm = ({ onRefetch }) => {
     const [url, setUrl] = useState('');
     const [site_name, setName] = useState('');
 
+
+
     const handleSubmit = async (e) => {
-        console.log(e)
         e.preventDefault();
-        console.log("URL:", url); // デバッグ用
-        console.log("Name:", site_name); // デバッグ用
-        const response = await laravelAxios.post('http://localhost:8080/api/mypage/externallinks/create', {
-            url,
-            site_name
-        }, {
-            withCredentials: true
-        });
-        console.log("Response:", response); // デバッグ用
-    } 
+        try {
+            const response = await laravelAxios.post('http://localhost:8080/api/mypage/externallinks/create', {
+                url,
+                site_name
+            }, {
+                withCredentials: true
+            });
+            onRefetch();
+            setUrl('');
+            setName('');
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
 
     return (
         <form className="space-y-4 col-span-1 mr-3.5" onSubmit={handleSubmit}>

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import  DeleteButton  from "@@/(app)/mypage/linkedit/_component/DeleteButton"
 import Link from "next/link"
 
-const YouLinks = ({ data }) => {
+const YouLinks = ({ data, onRefetch }) => {
     const [inputValue, setInputValue] = useState(7203);
 
     const linkReplace = (data) => {
@@ -35,7 +35,7 @@ const YouLinks = ({ data }) => {
                                             <div>{item.url}</div>
                                         </Link>
                                     </div>
-                                    <DeleteButton id={item.id}/>
+                                    <DeleteButton id={item.id} onRefetch={onRefetch}/>
                                 </div>
                             ))}
                         </div>

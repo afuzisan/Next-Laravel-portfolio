@@ -8,4 +8,13 @@ module.exports = {
     };
     return config
   },
+  async redirects() {
+    return [
+      {
+        source: '/mypage',
+        destination: '/mypage/linkedit',
+        permanent: true,
+      },
+    ]
+  }
 }

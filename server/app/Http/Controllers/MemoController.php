@@ -9,28 +9,29 @@ use Illuminate\Routing\Controller; // Added this line
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
-use Illuminate\Support\Facades\Log; // Added this line
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // Added this line
+use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-class MemoController extends Controller // Changed this line
+class MemoController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        $user_id = Auth::id(); // 認証されたユーザーのIDを取得
 
-        $user_id = Auth::id();
-
-        $user = User::with(['stocks.memos', 'links'])->find($user_id);
-
+        $user = User::with(['stocks' => function($query) use ($user_id) {
+            $query->where('user_id', $user_id)->with(['memos' => function($query) use ($user_id) {
+                $query->where('user_id', $user_id); // memosをuser_idでフィルタリング
+            }]);
+        }, 'links'])->find($user_id); 
 
         if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(['message' => 'User not found'], 404); // ユーザーが見つからない場合のエラーレスポンス
         }
 
-        return response()->json($user);
+        return response()->json($user); // ユーザー情報をJSON形式で返す
     }
 
     public function memo(Request $request)

@@ -13,8 +13,9 @@ class ExternalLinkController extends Controller
 {
     public function index()
     {
-        $user = ExternalLink::all();
-        return response()->json($user);
+        $user = Auth::id(); // セミコロンを追加
+        $externalLink = ExternalLink::where('user_id', $user)->get(); 
+        return response()->json($externalLink); 
     }
 
     /**

@@ -43,15 +43,14 @@ const MemoFetch = () => {
                         </div>
                         <div className="col-span-1 "> {/* 空のグリッドセル */}</div>
                     </div>
-                    <div className="grid grid-cols-[1fr_3fr_1fr_3fr] h-full">
-                        <div className="grid-item p-4 overflow-y-auto h-80 break-words">
+                    <div className="grid grid-cols-[1fr_1fr_3fr_3fr] h-full">
+                        <div className="grid-item p-2 overflow-y-auto h-80 whitespace-break-spaces">
                             <LinkComponent links={result.links} stock={stock.stock_code} />
                         </div>
-                        <div className="grid-item p-4">
+                        <Memos memos={stock.memos}/>
+                        <div className="grid-item p-2">
                             <img src={`https://www.kabudragon.com/chart/s=${stock.stock_code}`} className="h-full w-full object-scale-down" />
                         </div>
-                        <Memos memos={stock.memos}/>
-
                     </div >
                 </>
             ))}

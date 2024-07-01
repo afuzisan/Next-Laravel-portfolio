@@ -4,21 +4,23 @@ import laravelAxios from '@/lib/laravelAxios'
 
 
 
-const DeleteButton = ({ id }) => {
+const DeleteButton = ({ id, onRefetch }) => {
 
-    const handleDelete = async () => { 
+    const handleDelete = async () => {
         console.log(id)
         try {
-            await laravelAxios.post('http://localhost:8080/api/mypage/externallinks/delete', { 
+            await laravelAxios.post('http://localhost:8080/api/mypage/externallinks/delete', {
                 'id': id
             })
+            onRefetch()
+                        
         } catch (error) {
             console.error(error);
         }
     }
 
     return (
-        <Button variant="ghost" size="icon" onClick={handleDelete} className="text-muted-foreground ml-auto flex-shrink-0">
+        <Button variant="ghost" size="icon" onClick={handleDelete} className="text-muted-foreground ml-auto flex-shrink-0 hover:bg-gray-200">
             <TrashIcon className="w-5 h-5" />
             <span className="sr-only">Delete</span>
         </Button>
