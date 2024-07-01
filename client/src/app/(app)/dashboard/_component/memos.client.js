@@ -27,9 +27,9 @@ const MemoContent = ({ memos }) => {
 
     return (
         <>
-            <div className="grid-item p-4 overflow-y-auto h-80 " style={{ lineBreak: 'anywhere' }}>
+            <div className="grid-item p-2 overflow-y-auto h-80 " style={{ lineBreak: 'anywhere' }}>
                 {memos.map((memo) => (
-                    <div key={memo.id} className='py-2 duration-300 ease-in-out hover:bg-gray-200 p-2 rounded-lg'>
+                    <div key={memo.id} className='py-2 duration-300 ease-in-out hover:bg-gray-100 p-2 rounded-lg'>
                         <MemoList title={memo.memo_title} id={memo.id} />
                     </div>
                 ))}

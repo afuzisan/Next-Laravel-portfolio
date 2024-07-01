@@ -15,6 +15,7 @@ const AppLayout = ({ children }) => {
         <div className="min-h-screen bg-gray-100 max-w-screen-2xl bg-white" style={{ margin: '0px auto' }}>
             <Navigation user={user} />
             <main>{children}</main>
+            
         </div>
     )
 }

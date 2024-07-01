@@ -13,10 +13,8 @@ const MemoFetch = () => {
         const fetchData = async () => {
             try {
                 const data = await initFetch();
-                console.log(data)
                 setResult(data);
             } catch (error) {
-                console.error('Failed to fetch data:', error);
                 setError(error);
             }
         };
@@ -33,9 +31,9 @@ const MemoFetch = () => {
 
     return (
         <>
-            {result.stocks.slice(0, 8).map((stock, index) => (
-                <>
-                    <div className="grid grid-cols-6 border ">
+            {result.stocks.slice(0, 6).map((stock, index) => (
+                <React.Fragment key={stock.stock_code}>
+                    <div className="grid grid-cols-6 border px-3 py-2">
                         <div className="col-span-5 ">
                             <span className="grid-item px-6">{stock.stock_at_edit}</span>
                             <span className="grid-item px-6">{stock.stock_name}</span>
@@ -48,11 +46,11 @@ const MemoFetch = () => {
                             <LinkComponent links={result.links} stock={stock.stock_code} />
                         </div>
                         <Memos memos={stock.memos}/>
-                        <div className="grid-item p-2">
+                        <div className="grid-item pl-2">
                             <img src={`https://www.kabudragon.com/chart/s=${stock.stock_code}`} className="h-full w-full object-scale-down" />
                         </div>
                     </div >
-                </>
+                </React.Fragment>
             ))}
         </>
     )

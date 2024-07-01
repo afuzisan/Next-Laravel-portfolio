@@ -45,7 +45,7 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ initMemo, initId}) => {
+const MyEditor = ({ initMemo, initId }) => {
 
 
 
@@ -169,23 +169,23 @@ const MyEditor = ({ initMemo, initId}) => {
   }
 
   return (
-    <div className='break-words overflow-y-auto h-80'>
-      <div className='border-b-4 pt-1 pr-1 pl-1 sticky top-0 bg-white'>
+    <div className='break-words overflow-y-auto h-80 border-l border-r'>
+      <div className='border-b-2 pt-2 pr-1 sticky top-0 bg-white '>
         {readonly ? (
           <>
-            <button onClick={() => setReadOnly(false)} className=" text-black font-bold">
+            <button onClick={() => setReadOnly(false)} className="text-black p-2">
               編集
             </button>
-            <button onClick={() => replaceEditorContent("新しいエディタの内容")}>内容を書き換え</button>
+            {/* <button onClick={() => replaceEditorContent("新しいエディタの内容")}>テンプレート</button> */}
           </>
         ) : (
           <>
-            <button onClick={() => { saveContent(); setReadOnly(true) }} className="text-black font-bold">保存</button>
+            <button onClick={() => { saveContent(); setReadOnly(true) }} className="text-black p-2">保存</button>
 
           </>
         )}
       </div>
-      <div readOnly className={readonly ? "p-1" : "p-1 bg-orange-50"}>
+      <div readOnly className={readonly ? "p-2" : "p-2 bg-orange-50"}>
         <Editor
           editorState={editor}
           onChange={onChange}
