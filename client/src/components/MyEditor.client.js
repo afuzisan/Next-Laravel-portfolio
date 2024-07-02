@@ -170,18 +170,24 @@ const MyEditor = ({ initMemo, initId }) => {
 
   return (
     <div className='break-words overflow-y-auto h-80 border-l border-r'>
-      <div className='border-b-2 pt-2 pr-1 sticky top-0 bg-white '>
+      <div className='border-b-2 pr-1 pl-1 sticky top-0 bg-white flex justify-between'>
         {readonly ? (
           <>
+            <div>
+              <button onClick={() => setReadOnly(false)} className="text-black p-2">
+                メモを編集
+              </button>
+              {/* <button onClick={() => replaceEditorContent("新しいエディタの内容")}>テンプレート</button> */}
+            </div>
             <button onClick={() => setReadOnly(false)} className="text-black p-2">
-              編集
+              メモを削除
             </button>
-            {/* <button onClick={() => replaceEditorContent("新しいエディタの内容")}>テンプレート</button> */}
           </>
         ) : (
           <>
-            <button onClick={() => { saveContent(); setReadOnly(true) }} className="text-black p-2">保存</button>
-
+            <div>
+              <button onClick={() => { saveContent(); setReadOnly(true) }} className="text-black p-2">保存</button>
+            </div>
           </>
         )}
       </div>
