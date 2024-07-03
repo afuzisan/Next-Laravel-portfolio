@@ -89,6 +89,30 @@ class MemoController extends Controller
     }
 
     /**
+    * 銘柄削除
+    */
+    public function stockDelete(Request $request)
+    {
+        $stockNumber = $request->input('stockNumber');
+        $userId = Auth::id();
+
+        $deletedRows = Memo::where('stock_id', $stockNumber)
+                           ->where('user_id', $userId)
+                           ->delete();
+
+        if ($deletedRows) {
+            DB::table('stock_user')
+                ->where('stock_id', $stockNumber)
+                ->where('user_id', $userId)
+                ->delete();
+
+            return response()->json(['message' => 'Stock deleted successfully']);
+        } else {
+            return response()->json(['message' => 'Stock not found'], 404);
+        }
+    }
+    
+    /**
      * Show the form for creating a new resource.
      */
     public function create()

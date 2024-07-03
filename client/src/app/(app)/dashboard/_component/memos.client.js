@@ -34,9 +34,11 @@ const MemoContent = ({ memos }) => {
                         <button className="text-black p-2">編集</button>
                     </div>
                     {memos.map((memo) => (
-                        <div key={memo.id} className='py-2 duration-300 ease-in-out hover:bg-gray-100 p-2 rounded-lg'>
-                            <MemoList title={memo.memo_title} id={memo.id} />
-                        </div>
+                        memo.memo_title ? (
+                            <div key={memo.id} className='py-2 duration-300 ease-in-out hover:bg-gray-100 p-2 rounded-lg'>
+                                <MemoList title={memo.memo_title} id={memo.id} />
+                            </div>
+                        ) : null
                     ))}
                 </div>
                 {/* 他のコンテンツをここに追加 */}

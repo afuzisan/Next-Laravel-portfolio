@@ -5,28 +5,33 @@ import Memos from '@@/(app)/dashboard/_component/memos.client';
 import LinkComponent from '@@/(app)/dashboard/_component/LinkComponent';
 import laravelAxios from '@/lib/laravelAxios';
 
-const MemoFetch = () => {
+const MemoFetch = ({ refreshKey }) => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
 
     const handleDelete = (stockCode) => {
-        // 削除ロジックをここに追加
-        console.log(`削除: ${stockCode}`);
+        laravelAxios.post('http://localhost:8080/api/dashboard/stockDelete', {
+            stockNumber: stockCode
+        })
+            .then(() => {
+                refreshKey();
+            })
+            .catch(error => {
+                console.error('Error deleting stock:', error);
+            });
     };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const data = await initFetch();
-                console.log(data) // ここでデータをログに出力
-        
                 setResult(data);
 
             } catch (error) {
-                console.error('Error fetching data:', error); // エラーログを追加
+                console.error('Error fetching data:', error);
                 setError(error);
             }
-            
+
         };
         fetchData();
     }, []);
@@ -50,14 +55,14 @@ const MemoFetch = () => {
                             <span className="grid-item px-6">{stock.stock_code}</span>
                         </div>
                         <div className="col-span-1 flex justify-end">
-                            <button className="bg-red-500 text-white px-4 py-2" onClick={() => handleDelete(stock.stock_code)}>{stock.stock_code}を削除</button>
+                            <button className="bg-red-500 text-white px-4 py-2 hover:bg-red-700" onClick={() => handleDelete(stock.stock_code)}>{stock.stock_code}を削除</button>
                         </div>
                     </div>
                     <div className="grid grid-cols-[1fr_3fr_3fr] h-[320px]">
                         <div className="grid-item p-2 overflow-y-auto h-80 whitespace-break-spaces border-l">
                             <LinkComponent links={result.links} stock={stock.stock_code} />
                         </div>
-                        <Memos memos={stock.memos}/>
+                        <Memos memos={stock.memos} />
                         <div className="grid-item pl-2">
                             <img src={`https://www.kabudragon.com/chart/s=${stock.stock_code}`} className="h-full w-full object-scale-down border-r" />
                         </div>
@@ -69,7 +74,6 @@ const MemoFetch = () => {
 }
 const initFetch = async () => {
     const result = await laravelAxios.get('http://localhost:8080/api/dashboard/reviews', { cache: 'no-cache' });
-    console.log(result) // ここで結果をログに出力
     return result.data
 }
 export default MemoFetch

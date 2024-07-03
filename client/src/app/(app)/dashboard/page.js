@@ -53,9 +53,12 @@ const Dashboard = () => {
                             </button>
                             {errorMessage && (
                                 <div 
-                                    className="absolute top-full left-6 mt-2 w-full text-red-500 bg-white border border-red-500 p-2 cursor-pointer"
+                                    className="absolute top-full left-6 mt-2 w-full text-white bg-red-400 bg-opacity-75 border border-red-500 p-2 cursor-pointer text-center flex items-center"
                                     onClick={() => setErrorMessage('')}
                                 >
+                                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path fillRule="evenodd" d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm-2-14h4v8h-4v-8zm0 9h4v4h-4V15z" clipRule="evenodd"></path>
+                                    </svg>
                                     {errorMessage}
                                 </div>
                             )}
@@ -86,7 +89,7 @@ const Dashboard = () => {
                     </nav>
                 </div>
                 <div className="grid grid-cols-1 pt-6 pl-6 pr-6 bg-white border-b border-gray-200 ">
-                    <MemoFetch key={refreshKey} /> 
+                    <MemoFetch key={refreshKey} refreshKey={() => setRefreshKey(prevKey => prevKey + 1)} /> 
                 </div>
             </div >
         </>
@@ -96,3 +99,4 @@ const Dashboard = () => {
 
 
 export default Dashboard
+

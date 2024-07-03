@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Memo extends Model
 {
@@ -25,6 +26,11 @@ class Memo extends Model
             if ($stock = $memo->stock) {
                 $stock->users()->detach(); // stock_userの関連を削除
             }
+            // stock_userテーブルの関連も削除
+            // DB::table('stock_user')
+            //     ->where('stock_id', $memo->stock_id)
+            //     ->where('user_id', $memo->user_id)
+            //     ->delete();
         });
 
         static::created(function ($memo) {
