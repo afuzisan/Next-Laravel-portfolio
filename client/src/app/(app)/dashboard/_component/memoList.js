@@ -64,7 +64,7 @@ const MemoList = ({ title, id }) => {
     return (
         <ul>
             <li>
-                <button className="text-left" onClick={() => fetchData()}>{title} </button>
+                <button className="text-left break-words" onClick={() => fetchData()}>{title}</button>
             </li>
         </ul>
     );

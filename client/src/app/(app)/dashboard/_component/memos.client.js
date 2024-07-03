@@ -27,8 +27,8 @@ const MemoContent = ({ memos }) => {
 
     return (
         <>
-            <div className="flex justify-between items-center">
-                <div className="break-words overflow-y-auto h-80 border-l border-r">
+            <div className="grid grid-cols-[1fr_3fr]">
+                <div className="break-words overflow-y-auto h-80 border-l border-r w-full break-all">
                     <div className="border-b-2 pr-1 pl-1 sticky top-0 bg-white flex justify-center">
                         <button className="text-black p-2">メモを追加</button>
                         <button className="text-black p-2">編集</button>
@@ -39,8 +39,10 @@ const MemoContent = ({ memos }) => {
                         </div>
                     ))}
                 </div>
+                {/* 他のコンテンツをここに追加 */}
+
+                {memos.length > 0 && memos[0] ? <MyEditor initMemo={memos[0].memo} initId={memos[0].id} /> : null}
             </div>
-            {memos.length > 0 && memos[0] ? <MyEditor initMemo={memos[0].memo} initId={memos[0].id} /> : null}
 
 
         </>

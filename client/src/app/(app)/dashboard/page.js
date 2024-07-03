@@ -1,6 +1,7 @@
 "use client";
 
 import { siteName } from "@/app/metadata_common.js"
+import laravelAxios from "@/lib/laravelAxios";
 import MemoFetch from '@@/(app)/dashboard/_component/MemoFetch.client';
 import { useState } from 'react';
 
@@ -13,7 +14,7 @@ const Dashboard = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleRegisterClick = () => {
-        setIsModalOpen(true);
+        laravelAxios.post('localhost:8080/dashboard/stockStore')
     };
 
     const closeModal = () => {
@@ -26,14 +27,19 @@ const Dashboard = () => {
                 <div className="grid grid-cols-2 h-full gap-2">
                     <nav aria-label="Page navigation" className="col-span-2 flex justify-between pr-6">
                         <div className="flex items-center pl-6">
+                            <input 
+                                type="text" 
+                                className="px-3 py-2 leading-tight text-gray-700 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="証券コードか銘柄名を入力"
+                            />
                             <button 
-                                className="px-3 py-2 leading-tight text-white bg-blue-500 border border-blue-500 rounded-lg hover:bg-blue-600 hover:border-blue-600"
+                                className="px-3 py-2 leading-tight text-white bg-blue-500 border border-blue-500 hover:bg-blue-600 hover:border-blue-600"
                                 onClick={handleRegisterClick}
                             >
-                                銘柄を登録する
+                                銘柄を登録
                             </button>
                         </div>
-                        <div className="flex items-center justify-center">
+                        <div className="flex items-center">
                             <button className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">日付 (新しい順)</button>
                             <button className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">日付 (古い順)</button>
                             <button className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">証券コード (大きい順)</button>

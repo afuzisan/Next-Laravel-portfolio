@@ -48,7 +48,7 @@ const MemoFetch = () => {
                             <button className="bg-red-500 text-white px-4 py-2" onClick={() => handleDelete(stock.stock_code)}>{stock.stock_code}を削除</button>
                         </div>
                     </div>
-                    <div className="grid grid-cols-[1fr_1fr_3fr_3fr] h-full">
+                    <div className="grid grid-cols-[1fr_3fr_3fr] h-[320px]">
                         <div className="grid-item p-2 overflow-y-auto h-80 whitespace-break-spaces border-l">
                             <LinkComponent links={result.links} stock={stock.stock_code} />
                         </div>

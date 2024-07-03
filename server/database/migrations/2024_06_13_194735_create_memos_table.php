@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('memos', function (Blueprint $table) {
             $table->id();
-            $table->text('memo');
-            $table->string('memo_title', 255)->default('見出しを変更して下さい');
+            $table->text('memo')->default('');
+            $table->string('memo_title', 255)->default('');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('stock_id'); 

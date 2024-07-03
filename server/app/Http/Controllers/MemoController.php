@@ -21,11 +21,11 @@ class MemoController extends Controller
     {
         $user_id = Auth::id(); // 認証されたユーザーのIDを取得
 
-        $user = User::with(['stocks' => function($query) use ($user_id) {
-            $query->where('user_id', $user_id)->with(['memos' => function($query) use ($user_id) {
+        $user = User::with(['stocks' => function ($query) use ($user_id) {
+            $query->where('user_id', $user_id)->with(['memos' => function ($query) use ($user_id) {
                 $query->where('user_id', $user_id); // memosをuser_idでフィルタリング
             }]);
-        }, 'links'])->find($user_id); 
+        }, 'links'])->find($user_id);
 
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404); // ユーザーが見つからない場合のエラーレスポンス
@@ -67,6 +67,27 @@ class MemoController extends Controller
         } else {
             return response()->json(['message' => 'Memo not found'], 404);
         }
+    }
+
+    /**
+     * 銘柄登録
+     */
+    public function stockStore(Request $request)
+    {
+        $request->validate([
+            'stockNumber' => 'required|integer', 
+        ]);
+
+        $memo = Memo::create([
+            'stock_id' => 8976,
+            // 'stock_id' => $request->input('stockNumber'),
+            'user_id' => 11,
+            // 'user_id' => Auth::id() 
+            'memo' => '',
+            'memo_title' => ''
+        ]);
+
+        return response()->json(['message' => 'Stock stored successfully', 'memo' => $memo]);
     }
 
     /**

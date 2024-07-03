@@ -84,11 +84,23 @@ const MyEditor = ({ initMemo, initId }) => {
    * TODO:function:useEffect
   ***********************************************/
   useEffect(() => {
-    const initialText = typeof initMemo === 'string' ? initMemo : '';
-    const editorState = JSON.parse(initialText);
+    let initialText = typeof initMemo === 'string' ? initMemo : '';
+    let editorState;
+
+    try {
+      editorState = initialText ? JSON.parse(initialText) : {};
+    } catch (error) {
+      console.error('Failed to parse initialText:', error);
+      editorState = {};
+    }
+
+    if (Object.keys(editorState).length === 0) {
+      return;
+    }
+
     const contentState = convertFromRaw(editorState);
     const newEditorState = EditorState.createWithContent(contentState, decorator);
-    setIndexSave(initId)
+    setIndexSave(initId);
     setEditor(newEditorState);
   }, [decorator, initMemo]);
   /********************************************** 

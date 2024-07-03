@@ -14,6 +14,8 @@ class Memo extends Model
     protected $fillable = [
         'memo',
         'memo_title',
+        'user_id',
+        'stock_id'
     ];
 
     protected static function booted()

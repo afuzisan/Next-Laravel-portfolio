@@ -39,13 +39,7 @@ class ExternalLinkController extends Controller
         return response()->json(['url' => $url, 'site_name' => $site_name]); // 'url'をJSONで返す
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+
 
     /**
      * Display the specified resource.
