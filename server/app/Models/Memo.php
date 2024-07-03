@@ -18,6 +18,7 @@ class Memo extends Model
         'stock_id'
     ];
 
+
     protected static function booted()
     {
         static::deleting(function ($memo) {
@@ -33,6 +34,21 @@ class Memo extends Model
             if ($user && $stock) {
                 // ユーザーとストックの関連を設定
                 $user->stocks()->syncWithoutDetaching([$stock->id]);
+            }
+        });
+
+        static::updated(function ($memo) {
+            if ($memo->isDirty('stock_id')) {
+                $user = User::find($memo->user_id);
+                $oldStockId = $memo->getOriginal('stock_id');
+                $newStockId = $memo->stock_id;
+
+                if ($user) {
+                    // 古いストックの関連を削除
+                    $user->stocks()->detach($oldStockId);
+                    // 新しいストックの関連を追加
+                    $user->stocks()->syncWithoutDetaching([$newStockId]);
+                }
             }
         });
     }

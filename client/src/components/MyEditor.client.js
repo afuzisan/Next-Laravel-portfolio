@@ -134,7 +134,10 @@ const MyEditor = ({ initMemo, initId }) => {
   };
 
   const onChange = (value) => {
-    setEditor(value);
+    // 無限ループを防ぐために、エディタの状態が変わった場合のみ更新
+    if (editor !== value) {
+      setEditor(value);
+    }
   };
 
   const replaceEditorContent = (newText) => {

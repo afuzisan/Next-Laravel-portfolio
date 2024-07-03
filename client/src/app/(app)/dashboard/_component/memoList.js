@@ -50,6 +50,9 @@ const MemoList = ({ title, id }) => {
                 throw new Error('Network response was not ok');
             }
             const result = await response.json();
+            if (typeof result.memo !== 'string') {
+                throw new Error('Invalid memo format');
+            }
             const contentState = convertFromRaw(JSON.parse(result.memo)); // JSONからContentStateを作成
             const newEditorState = EditorState.createWithContent(contentState, decorator); // EditorStateを作成
 

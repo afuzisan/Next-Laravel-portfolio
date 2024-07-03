@@ -18,10 +18,15 @@ const MemoFetch = () => {
         const fetchData = async () => {
             try {
                 const data = await initFetch();
+                console.log(data) // ここでデータをログに出力
+        
                 setResult(data);
+
             } catch (error) {
+                console.error('Error fetching data:', error); // エラーログを追加
                 setError(error);
             }
+            
         };
         fetchData();
     }, []);
@@ -64,6 +69,7 @@ const MemoFetch = () => {
 }
 const initFetch = async () => {
     const result = await laravelAxios.get('http://localhost:8080/api/dashboard/reviews', { cache: 'no-cache' });
+    console.log(result) // ここで結果をログに出力
     return result.data
 }
 export default MemoFetch

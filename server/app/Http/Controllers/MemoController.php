@@ -79,12 +79,10 @@ class MemoController extends Controller
         ]);
 
         $memo = Memo::create([
-            'stock_id' => 8976,
-            // 'stock_id' => $request->input('stockNumber'),
-            'user_id' => 11,
-            // 'user_id' => Auth::id() 
-            'memo' => '',
-            'memo_title' => ''
+            'stock_id' => $request->input('stockNumber'),
+            'user_id' => Auth::id(), 
+            'memo' => null,
+            'memo_title' => null
         ]);
 
         return response()->json(['message' => 'Stock stored successfully', 'memo' => $memo]);
