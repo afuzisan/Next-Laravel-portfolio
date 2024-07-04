@@ -59,12 +59,12 @@ const MemoList = ({ title, id, setActiveId, activeId }) => {
 
             // EditorStateからテキストを抽出
             newEditorState.getCurrentContent().getPlainText('\n');
-            setEditor(newEditorState); // EditorStateを設定
+            setEditor(newEditorState); 
             setActiveId(id);
         } catch (error) {
             console.error('Fetch error:', error);
             setActiveId(id);
-            setEditor(EditorState.createEmpty(decorator)); // エラー時に空のEditorStateを設定
+            setEditor(EditorState.createEmpty(decorator)); 
         }
     };
 

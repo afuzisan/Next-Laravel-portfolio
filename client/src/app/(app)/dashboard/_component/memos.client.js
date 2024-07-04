@@ -16,14 +16,14 @@ const Memos = ({ memos, stock, name }) => {
         </EditorProvider>
     )
 }
-// function getTextFromEditorState(editorState) {
-//     const contentState = editorState.getCurrentContent();
-//     const blocks = contentState.getBlocksAsArray();
+function getTextFromEditorState(editorState) {
+    const contentState = editorState.getCurrentContent();
+    const blocks = contentState.getBlocksAsArray();
 
-//     // ブロックからテキストを抽出して結合
-//     const text = blocks.map(block => block.getText()).join('\n');
-//     return JSON.stringify(text);
-// }
+    // ブロックからテキストを抽出して結合
+    const text = blocks.map(block => block.getText()).join('\n');
+    return JSON.stringify(text);
+}
 
 const MemoContent = ({ memos, activeId, setActiveId, stock, name }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
