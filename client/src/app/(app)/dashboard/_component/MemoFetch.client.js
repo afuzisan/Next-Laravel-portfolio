@@ -64,7 +64,7 @@ const MemoFetch = ({ refreshKey }) => {
                         <div className="grid-item p-2 overflow-y-auto h-80 whitespace-break-spaces border-l">
                             <LinkComponent links={result.links} stock={stock.stock_code} />
                         </div>
-                        <Memos memos={stock.memos} stock={stock.stock_code} name={stock.stock_name}/>
+                        <Memos memos={stock.memos} stock={stock.stock_code} name={stock.stock_name} refreshKey={refreshKey}/>
                         <div className="grid-item pl-2">
                             <img src={`https://www.kabudragon.com/chart/s=${stock.stock_code}`} className="h-full w-full object-scale-down border-r" />
                         </div>

@@ -7,12 +7,12 @@ import { EditorProvider, useEditorContext, useIndexSave } from './EditorContext.
 import laravelAxios from '@/lib/laravelAxios';
 
 
-const Memos = ({ memos, stock, name }) => {
-    const [activeId, setActiveId] = useState(memos.length > 0 ? memos[0].id : null); 
+const Memos = ({ memos, stock, name, refreshKey }) => {
+    const [activeId, setActiveId] = useState(memos.length > 0 ? memos[0].id : null);
 
     return (
         <EditorProvider>
-            <MemoContent memos={memos} activeId={activeId} setActiveId={setActiveId} stock={stock} name={name}/>
+            <MemoContent memos={memos} activeId={activeId} setActiveId={setActiveId} stock={stock} name={name} refreshKey={refreshKey} />
         </EditorProvider>
     )
 }
@@ -25,7 +25,7 @@ function getTextFromEditorState(editorState) {
     return JSON.stringify(text);
 }
 
-const MemoContent = ({ memos, activeId, setActiveId, stock, name }) => {
+const MemoContent = ({ memos, activeId, setActiveId, stock, name, refreshKey }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
 
@@ -44,6 +44,7 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name }) => {
                 "memo_title": inputValue
             });
             closeModal();
+            refreshKey(); 
         } catch (error) {
             console.error('Error submitting memo:', error);
         }
@@ -75,8 +76,8 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name }) => {
                     <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full relative">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-semibold">{name}({stock})にメモを追加します。</h2>
-                            <span 
-                                className="close cursor-pointer text-gray-500 hover:text-gray-700 text-xl absolute top-2 right-2 p-1 border border-gray-500 rounded-md hover:bg-gray-200" 
+                            <span
+                                className="close cursor-pointer text-gray-500 hover:text-gray-700 text-xl absolute top-2 right-2 p-1 border border-gray-500 rounded-md hover:bg-gray-200"
                                 onClick={closeModal}
                                 style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                             >
