@@ -135,7 +135,7 @@ const MyEditor = ({ initMemo, initId }) => {
 
   const onChange = (value) => {
     // 無限ループを防ぐために、エディタの状態が変わった場合のみ更新
-    if (editor !== value) {
+    if (editor.getCurrentContent() !== value.getCurrentContent()) {
       setEditor(value);
     }
   };
@@ -185,7 +185,7 @@ const MyEditor = ({ initMemo, initId }) => {
 
   return (
     <div className='break-words overflow-y-auto h-80 border-l border-r'>
-      <div className='border-b-2 pr-1 pl-1 sticky top-0 bg-white flex justify-between'>
+      <div className='border-b-2 pr-1 pl-1  top-0 bg-white flex justify-between'>
         {readonly ? (
           <>
             <div>

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Throwable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Validation\Rule;
 
 class MemoController extends Controller
 {
@@ -117,8 +118,23 @@ class MemoController extends Controller
      */
     public function memoTitleCreate(Request $request)
     {
+
+        $user = 3;
+        // $user = Auth::id();
+        $request->validate([
+            'stockNumber' => 'required|integer',
+            'memo_title' => [
+                'required',
+                'string',
+                Rule::unique('memos')->where(function ($query) use ($request, $user) {
+                    return $query->where('user_id', $user)
+                                 ->where('stock_id', $request->input('stockNumber'));
+                }),
+            ],
+        ]);
+
         DB::table('memos')->insert([
-            'user_id' => 3,
+            'user_id' => $user, 
             'stock_id' => $request->input('stockNumber'), 
             'memo_title' => $request->input('memo_title'),
         ]);
