@@ -24,13 +24,15 @@ function getTextFromEditorState(editorState) {
 }
 
 const MemoContent = ({ memos }) => {
-
+const handleClick = () =>{
+    console.log('test')
+}
     return (
         <>
             <div className="grid grid-cols-[1fr_3fr]">
                 <div className="break-words overflow-y-auto h-80 border-l border-r w-full break-all">
                     <div className="border-b-2 pr-1 pl-1 sticky top-0 bg-white flex justify-center">
-                        <button className="text-black p-2">メモを追加</button>
+                        <button onClick={handleClick} className="text-black p-2">メモを追加</button>
                         <button className="text-black p-2">編集</button>
                     </div>
                     {memos.map((memo) => (

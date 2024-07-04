@@ -75,12 +75,12 @@ class MemoController extends Controller
     public function stockStore(Request $request)
     {
         $request->validate([
-            'stockNumber' => 'required|integer', 
+            'stockNumber' => 'required|integer',
         ]);
 
         $memo = Memo::create([
             'stock_id' => $request->input('stockNumber'),
-            'user_id' => Auth::id(), 
+            'user_id' => Auth::id(),
             'memo' => null,
             'memo_title' => null
         ]);
@@ -89,16 +89,16 @@ class MemoController extends Controller
     }
 
     /**
-    * 銘柄削除
-    */
+     * 銘柄の削除
+     */
     public function stockDelete(Request $request)
     {
         $stockNumber = $request->input('stockNumber');
         $userId = Auth::id();
 
         $deletedRows = Memo::where('stock_id', $stockNumber)
-                           ->where('user_id', $userId)
-                           ->delete();
+            ->where('user_id', $userId)
+            ->delete();
 
         if ($deletedRows) {
             DB::table('stock_user')
@@ -111,12 +111,17 @@ class MemoController extends Controller
             return response()->json(['message' => 'Stock not found'], 404);
         }
     }
-    
+
     /**
-     * Show the form for creating a new resource.
+     * メモのタイトルを作成追加する
      */
-    public function create()
+    public function memoTitleCreate(Request $request)
     {
+        DB::table('memos')->insert([
+            'user_id' => 3,
+            'stock_id' => $request->input('stockNumber'), 
+            'memo_title' => $request->input('memo_title'),
+        ]);
     }
 
     /**

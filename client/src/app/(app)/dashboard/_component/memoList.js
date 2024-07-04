@@ -46,21 +46,26 @@ const MemoList = ({ title, id }) => {
         try {
             setIndexSave(id);
             const response = await fetch(`http://localhost:8080/api/dashboard/memo?id=${id}`);
+            console.log(response)
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Network response was not ok or response is null');
             }
             const result = await response.json();
-            if (typeof result.memo !== 'string') {
+            console.log(result)
+            if (typeof result.memo !== 'string' || result.memo === null) {
                 throw new Error('Invalid memo format');
             }
             const contentState = convertFromRaw(JSON.parse(result.memo)); // JSONからContentStateを作成
+            console.log(contentState)
             const newEditorState = EditorState.createWithContent(contentState, decorator); // EditorStateを作成
+            console.log(newEditorState)
 
             // EditorStateからテキストを抽出
             newEditorState.getCurrentContent().getPlainText('\n');
             setEditor(newEditorState); // EditorStateを設定
         } catch (error) {
             console.error('Fetch error:', error);
+            setEditor(EditorState.createEmpty(decorator)); // エラー時に空のEditorStateを設定
         }
     };
 

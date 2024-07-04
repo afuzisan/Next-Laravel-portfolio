@@ -10,15 +10,17 @@ const MemoFetch = ({ refreshKey }) => {
     const [error, setError] = useState(null);
 
     const handleDelete = (stockCode) => {
-        laravelAxios.post('http://localhost:8080/api/dashboard/stockDelete', {
-            stockNumber: stockCode
-        })
-            .then(() => {
-                refreshKey();
+        if (window.confirm(`${stockCode}を本当に削除しますか？`)) {
+            laravelAxios.post('http://localhost:8080/api/dashboard/stockDelete', {
+                stockNumber: stockCode
             })
-            .catch(error => {
-                console.error('Error deleting stock:', error);
-            });
+                .then(() => {
+                    refreshKey();
+                })
+                .catch(error => {
+                    console.error('Error deleting stock:', error);
+                });
+        }
     };
 
     useEffect(() => {
