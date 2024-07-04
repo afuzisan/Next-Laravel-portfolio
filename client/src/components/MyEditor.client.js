@@ -45,7 +45,7 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ initMemo, initId }) => {
+const MyEditor = ({ initMemo, initId, stock }) => {
 
 
 
@@ -136,7 +136,7 @@ const MyEditor = ({ initMemo, initId }) => {
   const onChange = (value) => {
     // エディタの状態が空でない場合のみ更新
     if (value.getCurrentContent().getPlainText() !== '' && editor !== value) {
-        setEditor(value);
+      setEditor(value);
     }
   };
 
@@ -194,7 +194,23 @@ const MyEditor = ({ initMemo, initId }) => {
               </button>
               {/* <button onClick={() => replaceEditorContent("新しいエディタの内容")}>テンプレート</button> */}
             </div>
-            <button onClick={() => setReadOnly(false)} className="text-black p-2">
+            <button onClick={async () => {
+              try {
+                const response = await laravelAxios.delete('http://localhost:8080/api/dashboard/memoDelete', {
+                  data: {
+                    stockNumber: stock, // ここに適切な値を設定
+                    memoNumber: indexSaveState    // ここに適切な値を設定
+                  },
+                  withCredentials: true,
+                });
+                console.log('Deleted successfully:', response.data);
+              } catch (error) {
+                console.error('Failed to delete memo:', error);
+                if (error.response) {
+                  console.error('Error data:', error.response.data);
+                }
+              }
+            }} className="text-black p-2">
               メモを削除
             </button>
           </>

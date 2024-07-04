@@ -141,51 +141,23 @@ class MemoController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * メモを削除する
      */
-    public function store(Request $request)
+    public function memoDelete(Request $request)
     {
-        DB::transaction(function () {
-            // Memoの作成と保存
-            $memo = new Memo([
-                'memo' => 'ここにメモの内容を入力',
-                'memo_title' => 'メモのタイトル',
-                'user_id' => 1,
-                'stock_id' => 1
-            ]);
-            $memo->save();
-        });
-    }
+        $user = Auth::id();
+        $stockNumber = $request->input('stockNumber');
+        $memoNumber = $request->input('memoNumber');
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Memo $memo)
-    {
-        //
-    }
+        $deletedRows = Memo::where('user_id', $user)
+            ->where('stock_id', $stockNumber)
+            ->where('id', $memoNumber)
+            ->delete();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Memo $memo)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Memo $memo)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Memo $memo)
-    {
-        //
+        if ($deletedRows) {
+            return response()->json(['message' => 'Memo deleted successfully']);
+        } else {
+            return response()->json(['message' => 'Memo not found'], 404);
+        }
     }
 }

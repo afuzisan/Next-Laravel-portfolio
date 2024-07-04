@@ -27,6 +27,7 @@ const MemoFetch = ({ refreshKey }) => {
         const fetchData = async () => {
             try {
                 const data = await initFetch();
+                console.log(data)
                 setResult(data);
 
             } catch (error) {

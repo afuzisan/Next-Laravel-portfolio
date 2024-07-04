@@ -68,7 +68,7 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name, refreshKey }) 
                 </div>
                 {/* 他のコンテンツをここに追加 */}
 
-                {memos.length > 0 && memos[0] ? <MyEditor initMemo={memos[0].memo} initId={memos[0].id} /> : null}
+                {memos.length > 0 && memos[0] ? <MyEditor initMemo={memos[0].memo} initId={memos[0].id} stock={stock}/> : null}
             </div>
 
             {isModalOpen && (
