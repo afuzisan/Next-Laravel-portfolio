@@ -5,14 +5,15 @@ import MemoList from './memoList';
 import MyEditor from '@/components/MyEditor.client'
 import { EditorProvider, useEditorContext, useIndexSave } from './EditorContext.client';
 import laravelAxios from '@/lib/laravelAxios';
+import MemoTitle from '@/app/(app)/dashboard/_component/memoTitle'
 
 
-const Memos = ({ memos, stock, name, refreshKey }) => {
+const Memos = ({ memos, stock, name,setMemoRefreshKey}) => {
     const [activeId, setActiveId] = useState(memos.length > 0 ? memos[0].id : null);
 
     return (
         <EditorProvider>
-            <MemoContent memos={memos} activeId={activeId} setActiveId={setActiveId} stock={stock} name={name} refreshKey={refreshKey} />
+            <MemoContent memos={memos} activeId={activeId} setActiveId={setActiveId} stock={stock} name={name} setMemoRefreshKey={setMemoRefreshKey} />
         </EditorProvider>
     )
 }
@@ -25,7 +26,8 @@ function getTextFromEditorState(editorState) {
     return JSON.stringify(text);
 }
 
-const MemoContent = ({ memos, activeId, setActiveId, stock, name, refreshKey }) => {
+const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefreshKey}) => {
+    const [MemoTitleRefreshKey, setMemoTitleRefreshKey] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
 
@@ -44,7 +46,8 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name, refreshKey }) 
                 "memo_title": inputValue
             });
             closeModal();
-            refreshKey(); 
+            setMemoRefreshKey(prevKey => prevKey + 1); // 修正: 引数を関数に変更
+            console.log(MemoTitleRefreshKey);
         } catch (error) {
             console.error('Error submitting memo:', error);
         }
@@ -53,22 +56,9 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name, refreshKey }) 
     return (
         <>
             <div className="grid grid-cols-[1fr_3fr]">
-                <div className="break-words overflow-y-auto h-80 border-l border-r w-full break-all">
-                    <div className="border-b-2 pr-1 pl-1 sticky top-0 bg-white flex justify-center">
-                        <button onClick={handleClick} className="text-black p-2">追加</button>
-                        <button className="text-black p-2">編集</button>
-                    </div>
-                    {memos.map((memo) => (
-                        memo.memo_title ? (
-                            <div key={memo.id} className='py-2 duration-300 ease-in-out hover:bg-gray-100 p-2 cursor-pointer'>
-                                <MemoList title={memo.memo_title} id={memo.id} setActiveId={setActiveId} activeId={activeId} />
-                            </div>
-                        ) : null
-                    ))}
-                </div>
-                {/* 他のコンテンツをここに追加 */}
+                <MemoTitle  memos={memos} handleClick={handleClick} activeId={activeId} setActiveId={setActiveId} />
 
-                {memos.length > 0 && memos[0] ? <MyEditor initMemo={memos[0].memo} initId={memos[0].id} stock={stock}/> : null}
+                {memos.length > 0 && memos[0] ? <MyEditor initMemo={memos[0].memo} initId={memos[0].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name}/> : null}
             </div>
 
             {isModalOpen && (

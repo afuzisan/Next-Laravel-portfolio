@@ -45,7 +45,7 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ initMemo, initId, stock }) => {
+const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
 
 
 
@@ -194,6 +194,7 @@ const MyEditor = ({ initMemo, initId, stock }) => {
               </button>
               {/* <button onClick={() => replaceEditorContent("新しいエディタの内容")}>テンプレート</button> */}
             </div>
+
             <button onClick={async () => {
               try {
                 const response = await laravelAxios.delete('http://localhost:8080/api/dashboard/memoDelete', {
@@ -204,6 +205,7 @@ const MyEditor = ({ initMemo, initId, stock }) => {
                   withCredentials: true,
                 });
                 console.log('Deleted successfully:', response.data);
+                setMemoRefreshKey(prev => prev + 1)
               } catch (error) {
                 console.error('Failed to delete memo:', error);
                 if (error.response) {
@@ -211,7 +213,7 @@ const MyEditor = ({ initMemo, initId, stock }) => {
                 }
               }
             }} className="text-black p-2">
-              メモを削除
+              {name}を削除
             </button>
           </>
         ) : (

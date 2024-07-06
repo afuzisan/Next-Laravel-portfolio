@@ -152,7 +152,7 @@ class MemoController extends Controller
         $deletedRows = Memo::where('user_id', $user)
             ->where('stock_id', $stockNumber)
             ->where('id', $memoNumber)
-            ->delete();
+            ->forceDelete();
 
         if ($deletedRows) {
             return response()->json(['message' => 'Memo deleted successfully']);

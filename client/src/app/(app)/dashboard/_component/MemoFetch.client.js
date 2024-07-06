@@ -8,6 +8,7 @@ import laravelAxios from '@/lib/laravelAxios';
 const MemoFetch = ({ refreshKey }) => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
+    const [MemoRefreshKey, setMemoRefreshKey] = useState(0);
 
     const handleDelete = (stockCode) => {
         if (window.confirm(`${stockCode}を本当に削除しますか？`)) {
@@ -37,7 +38,7 @@ const MemoFetch = ({ refreshKey }) => {
 
         };
         fetchData();
-    }, []);
+    }, [MemoRefreshKey]);
 
     if (error) {
         return <div>Error loading data</div>;
@@ -65,7 +66,7 @@ const MemoFetch = ({ refreshKey }) => {
                         <div className="grid-item p-2 overflow-y-auto h-80 whitespace-break-spaces border-l">
                             <LinkComponent links={result.links} stock={stock.stock_code} />
                         </div>
-                        <Memos memos={stock.memos} stock={stock.stock_code} name={stock.stock_name} refreshKey={refreshKey}/>
+                        <Memos key={`${stock.stock_code}-${MemoRefreshKey}`} memos={stock.memos} stock={stock.stock_code} name={stock.stock_name} setMemoRefreshKey={setMemoRefreshKey}/>
                         <div className="grid-item pl-2">
                             <img src={`https://www.kabudragon.com/chart/s=${stock.stock_code}`} className="h-full w-full object-scale-down border-r" />
                         </div>

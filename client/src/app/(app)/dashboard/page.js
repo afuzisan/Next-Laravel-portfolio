@@ -3,12 +3,13 @@
 import { siteName } from "@/app/metadata_common.js"
 import laravelAxios from "@/lib/laravelAxios";
 import MemoFetch from '@@/(app)/dashboard/_component/MemoFetch.client';
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 
 
 const Dashboard = () => {
+
     const [inputValue, setInputValue] = useState("");
-    const [refreshKey, setRefreshKey] = useState(0); 
+    const [refreshKey, setRefreshKey] = useState(0);
     const [errorMessage, setErrorMessage] = useState(""); // エラーメッセージの状態を追加
 
     const handleRegisterClick = (inputValue) => {
@@ -20,7 +21,7 @@ const Dashboard = () => {
 
         laravelAxios.post('http://localhost:8080/api/dashboard/stockStore', { "stockNumber": stockNumber })
             .then(() => {
-                setRefreshKey(prevKey => prevKey + 1); 
+                setRefreshKey(prevKey => prevKey + 1);
                 setInputValue('');
                 setErrorMessage(''); // 成功時にエラーメッセージをクリア
             })
@@ -38,21 +39,21 @@ const Dashboard = () => {
                 <div className="grid grid-cols-2 h-full gap-2">
                     <nav aria-label="Page navigation" className="col-span-2 flex justify-between pr-6">
                         <div className="flex items-center pl-6 relative">
-                            <input 
-                                type="text" 
+                            <input
+                                type="text"
                                 className="px-3 py-2 leading-tight text-gray-700 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="証券コードか銘柄名を入力"
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                             />
-                            <button 
+                            <button
                                 className="px-3 py-2 leading-tight text-white bg-blue-500 border border-blue-500 hover:bg-blue-600 hover:border-blue-600"
                                 onClick={() => handleRegisterClick(inputValue)}
                             >
                                 銘柄を登録
                             </button>
                             {errorMessage && (
-                                <div 
+                                <div
                                     className="absolute top-full left-6 mt-2 w-full text-white bg-red-400 bg-opacity-75 border border-red-500 p-2 cursor-pointer text-center flex items-center"
                                     onClick={() => setErrorMessage('')}
                                 >
@@ -89,7 +90,7 @@ const Dashboard = () => {
                     </nav>
                 </div>
                 <div className="grid grid-cols-1 pt-6 pl-6 pr-6 bg-white border-b border-gray-200 ">
-                    <MemoFetch key={refreshKey} refreshKey={() => setRefreshKey(prevKey => prevKey + 1)} /> 
+                    <MemoFetch key={refreshKey} refreshKey={() => setRefreshKey(prevKey => prevKey + 1)} />
                 </div>
             </div >
         </>
