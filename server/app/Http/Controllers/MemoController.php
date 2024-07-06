@@ -16,7 +16,7 @@ use Illuminate\Validation\Rule;
 class MemoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * 初期画面表示時の処理
      */
     public function index(Request $request)
     {
@@ -142,6 +142,9 @@ class MemoController extends Controller
 
     /**
      * メモを削除する
+     * TODO:更新したメモを保存する新しいテーブルの作成
+     * TODO:削除したメモを保存する新しいテーブルの作成
+     * TODO:メモを削除する前に削除したメモをコピーして、削除したメモを保存する新しいテーブルにコピー
      */
     public function memoDelete(Request $request)
     {
