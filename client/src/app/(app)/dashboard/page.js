@@ -66,13 +66,13 @@ const Dashboard = () => {
                                 className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700"
                                 onClick={() => handleSort('dateDesc')}
                             >
-                                日付 (新しい順)
+                                登録日 (新しい順)
                             </button>
                             <button
                                 className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
                                 onClick={() => handleSort('dateAsc')}
                             >
-                                日付 (古い順)
+                                登録日 (古い順)
                             </button>
                             <button
                                 className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"

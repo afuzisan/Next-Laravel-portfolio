@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Carbon;
 
 class Memo extends Model
 {
@@ -19,6 +20,16 @@ class Memo extends Model
         'stock_id'
     ];
 
+    // public function getFormattedCreatedAtAttribute()
+    // {
+    //     return Carbon::parse($this->attributes['created_at'])->format('Y-m-d');
+    // }
+
+    // public function getFormattedUpdatedAtAttribute()
+    // {
+    //     return Carbon::parse($this->attributes['updated_at'])->format('Y-m-d');
+    // }
+
 
     protected static function booted()
     {
@@ -26,11 +37,6 @@ class Memo extends Model
             if ($stock = $memo->stock) {
                 $stock->users()->detach(); // stock_userの関連を削除
             }
-            // stock_userテーブルの関連も削除
-            // DB::table('stock_user')
-            //     ->where('stock_id', $memo->stock_id)
-            //     ->where('user_id', $memo->user_id)
-            //     ->delete();
         });
 
         static::created(function ($memo) {
@@ -39,7 +45,7 @@ class Memo extends Model
 
             if ($user && $stock) {
                 // ユーザーとストックの関連を設定
-                $user->stocks()->syncWithoutDetaching([$stock->id]);
+                $user->stocks()->syncWithoutDetaching([$stock->id => ['created_at' => now(), 'updated_at' => now()]]);
             }
         });
 
@@ -53,7 +59,7 @@ class Memo extends Model
                     // 古いストックの関連を削除
                     $user->stocks()->detach($oldStockId);
                     // 新しいストックの関連を追加
-                    $user->stocks()->syncWithoutDetaching([$newStockId]);
+                    $user->stocks()->syncWithoutDetaching([$newStockId => ['created_at' => now(), 'updated_at' => now()]]);
                 }
             }
         });

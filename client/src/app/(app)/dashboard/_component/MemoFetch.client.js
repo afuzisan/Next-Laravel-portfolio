@@ -5,6 +5,15 @@ import Memos from '@@/(app)/dashboard/_component/memos.client';
 import LinkComponent from '@@/(app)/dashboard/_component/LinkComponent';
 import laravelAxios from '@/lib/laravelAxios';
 
+function formatDateToISO(date) {
+    const pad = (num) => String(num).padStart(2, '0');
+    const year = date.getUTCFullYear();
+    const month = pad(date.getUTCMonth() + 1);
+    const day = pad(date.getUTCDate());
+
+    return `${year}-${month}-${day}`;
+}
+
 const MemoFetch = ({ refreshKey, sortOrder }) => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
@@ -32,9 +41,9 @@ const MemoFetch = ({ refreshKey, sortOrder }) => {
 
                 // ソート処理を追加
                 if (sortOrder === 'dateDesc') {
-                    data.stocks.sort((a, b) => new Date(b.stock_at_edit) - new Date(a.stock_at_edit));
+                    data.stocks.sort((a, b) => new Date(b.memos[0].created_at) - new Date(a.memos[0].created_at));
                 } else if (sortOrder === 'dateAsc') {
-                    data.stocks.sort((a, b) => new Date(a.stock_at_edit) - new Date(b.stock_at_edit));
+                    data.stocks.sort((a, b) => new Date(a.memos[0].created_at) - new Date(b.memos[0].created_at));
                 } else if (sortOrder === 'codeDesc') {
                     data.stocks.sort((a, b) => b.stock_code.localeCompare(a.stock_code));
                 } else if (sortOrder === 'codeAsc') {
@@ -66,7 +75,7 @@ const MemoFetch = ({ refreshKey, sortOrder }) => {
                 <React.Fragment key={stock.stock_code}>
                     <div className="grid grid-cols-6 border px-3 py-2">
                         <div className="col-span-5 flex items-center">
-                            <span className="grid-item px-6">{stock.created_at}</span>
+                            <span className="grid-item px-6">{formatDateToISO(new Date(stock.memos[0].created_at))}</span>
                             <span className="grid-item px-6">{stock.stock_name}</span>
                             <span className="grid-item px-6">{stock.stock_code}</span>
                         </div>
