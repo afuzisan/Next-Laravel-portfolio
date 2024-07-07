@@ -64,7 +64,7 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefresh
             <div className="grid grid-cols-[1fr_3fr]">
                 <MemoTitle memos={memos} handleClick={handleClick} activeId={activeId} setActiveId={setActiveId} />
 
-                {memos.length > 0 && memos[0] ? <MyEditor initMemo={memos[0].memo} initId={memos[0].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} /> : null}
+                {memos.length > 0 && memos[1] ? <MyEditor initMemo={memos[1].memo} initId={memos[1].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} /> : null}
             </div>
 
             {isModalOpen && (
