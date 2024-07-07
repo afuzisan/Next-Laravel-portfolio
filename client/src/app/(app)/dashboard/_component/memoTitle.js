@@ -11,9 +11,9 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId}) => {
             </div>
             {memos.map((memo) => (
                 memo.memo_title ? (
-                    <li key={memo.id} className={`duration-300 ease-in-out hover:bg-gray-100 h-8 w-full cursor-pointer flex items-center p-2 ${activeId === memo.id ? 'bg-gray-100' : ''}`} onClick={() => setActiveId(memo.id)}>
+                    <div key={memo.id} className=''>
                         <MemoList title={memo.memo_title} id={memo.id} setActiveId={setActiveId} activeId={activeId} />
-                    </li>
+                    </div>
                 ) : null
             ))}
         </div>

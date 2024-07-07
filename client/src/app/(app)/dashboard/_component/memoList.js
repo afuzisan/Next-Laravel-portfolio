@@ -76,7 +76,7 @@ const MemoList = ({ title, id, setActiveId, activeId }) => {
         <>
             {loading && <Loading />} 
             <div
-                className={`text-left break-words `} 
+                className={`text-left break-words cursor-pointer p-2 hover:bg-gray-100 ${activeId === id ? 'bg-gray-100' : ''}`} // クリック時に背景をグレーに設定
                 onClick={() => fetchData(title)}
             >
                 {title}
@@ -85,4 +85,3 @@ const MemoList = ({ title, id, setActiveId, activeId }) => {
     );
 };
 export default MemoList
-
