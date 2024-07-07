@@ -50,6 +50,8 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
 
 
   const [indexSaveState, setIndexSave] = useIndexSave()
+
+
   const [editor, setEditor] = useEditorContext()
   const [plugins, InlineToolbar, LinkButton, linkPlugin, decorator] = useMemo(() => {
     const linkPlugin = createLinkPlugin({
@@ -100,10 +102,12 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
 
     const contentState = convertFromRaw(editorState);
     const newEditorState = EditorState.createWithContent(contentState, decorator);
-    console.log(initId)
-    setIndexSave(initId);
     setEditor(newEditorState);
   }, [decorator, initMemo]);
+
+
+
+
   /********************************************** 
    * TODO:データベースに保存する処理を追加する
    * TODO:function:saveContent
@@ -114,10 +118,9 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
     const url = 'http://localhost:8080/api/dashboard/memoUpdate';
 
     try {
-      console.log(indexSaveState)
-      console.log(initId)
 
-      console.log(indexSaveState)
+      console.log(initId);
+      console.log(indexSaveState);
       const response = await laravelAxios.post(url, JSON.stringify({
         memo: JSON.stringify(raw),
         memo_id: indexSaveState
@@ -194,8 +197,13 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
         {readonly ? (
           <>
             <div>
-              <button onClick={() => { setReadOnly(false); setIndexSave(initId); }} className="text-black p-2">
-                メモを編集      
+              <button onClick={() => {
+                setReadOnly(false);
+                if (!indexSaveState) {
+                  setIndexSave(initId);
+                }
+              }} className="text-black p-2">
+                メモを編集
               </button>
               {/* <button onClick={() => replaceEditorContent("新しいエディタの内容")}>テンプレート</button> */}
             </div>
@@ -209,7 +217,6 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
                   },
                   withCredentials: true,
                 });
-                console.log(indexSaveState)
                 console.log('Deleted successfully:', response.data);
                 setMemoRefreshKey(prev => prev + 1)
               } catch (error) {
