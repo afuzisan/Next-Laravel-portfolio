@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, createContext, useContext } from 'react'
 import Memos from '@@/(app)/dashboard/_component/memos.client';
 import LinkComponent from '@@/(app)/dashboard/_component/LinkComponent';
 import laravelAxios from '@/lib/laravelAxios';
@@ -14,10 +14,14 @@ function formatDateToISO(date) {
     return `${year}-${month}-${day}`;
 }
 
+// 編集可能か判定するコンテキストを作成
+export const EditableContext = createContext(); 
+
 const MemoFetch = ({ refreshKey, sortOrder }) => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
     const [MemoRefreshKey, setMemoRefreshKey] = useState(0);
+    const [isEditable, setIsEditable] = useState(true); 
 
     const handleDelete = (stockCode) => {
         if (window.confirm(`${stockCode}を本当に削除しますか？`)) {
@@ -70,7 +74,7 @@ const MemoFetch = ({ refreshKey, sortOrder }) => {
     }
 
     return (
-        <>
+        <EditableContext.Provider value={[isEditable, setIsEditable]}>
             {result.stocks.slice(0, 6).map((stock, index) => (
                 <React.Fragment key={stock.stock_code}>
                     <div className="grid grid-cols-6 border px-3 py-2">
@@ -87,14 +91,14 @@ const MemoFetch = ({ refreshKey, sortOrder }) => {
                         <div className="grid-item p-2 overflow-y-auto h-80 whitespace-break-spaces border-l">
                             <LinkComponent links={result.links} stock={stock.stock_code} />
                         </div>
-                        <Memos key={`${stock.stock_code}-${MemoRefreshKey}`} memos={stock.memos} stock={stock.stock_code} name={stock.stock_name} setMemoRefreshKey={setMemoRefreshKey}/>
+                        <Memos key={`${stock.stock_code}-${MemoRefreshKey}`} memos={stock.memos} stock={stock.stock_code} name={stock.stock_name} setMemoRefreshKey={setMemoRefreshKey} />
                         <div className="grid-item pl-2">
                             <img src={`https://www.kabudragon.com/chart/s=${stock.stock_code}`} className="h-full w-full object-scale-down border-r" />
                         </div>
                     </div >
                 </React.Fragment>
             ))}
-        </>
+        </EditableContext.Provider>
     )
 }
 const initFetch = async () => {

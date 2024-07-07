@@ -11,7 +11,7 @@ const IndexSave = createContext();
 export const useEditorContext = () => useContext(EditorContext);
 export const useIndexSave = () => useContext(IndexSave);
 
-export const EditorProvider = ({ children, initialData }) => {
+export const EditorProvider = ({ children}) => {
   const [editor, setEditor] = useState(() =>
     EditorState.createEmpty()
   );

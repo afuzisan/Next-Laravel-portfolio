@@ -15,7 +15,7 @@ import Loading from "@/app/(app)/Loading"; // Loading component imported
 const MemoList = ({ title, id, setActiveId, activeId }) => {
     const [, setEditor] = useEditorContext()
     const [, setIndexSave] = useIndexSave()
-    const [loading, setLoading] = useState(false); // Loading state managed
+    const [loading, setLoading] = useState(false); 
 
     function findLinkEntities(contentBlock, callback, contentState) {
         contentBlock.findEntityRanges(
@@ -76,7 +76,7 @@ const MemoList = ({ title, id, setActiveId, activeId }) => {
         <>
             {loading && <Loading />} 
             <div
-                className={`text-left break-words cursor-pointer p-2 hover:bg-gray-100 ${activeId === id ? 'bg-gray-100' : ''}`} // クリック時に背景をグレーに設定
+                className={`text-left break-words cursor-pointer p-2 hover:bg-gray-100 ${activeId === id ? 'bg-gray-100' : ''}`} 
                 onClick={() => fetchData(title)}
             >
                 {title}

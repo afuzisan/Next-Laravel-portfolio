@@ -100,6 +100,7 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
 
     const contentState = convertFromRaw(editorState);
     const newEditorState = EditorState.createWithContent(contentState, decorator);
+    console.log(initId)
     setIndexSave(initId);
     setEditor(newEditorState);
   }, [decorator, initMemo]);
@@ -113,6 +114,10 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
     const url = 'http://localhost:8080/api/dashboard/memoUpdate';
 
     try {
+      console.log(indexSaveState)
+      console.log(initId)
+
+      console.log(indexSaveState)
       const response = await laravelAxios.post(url, JSON.stringify({
         memo: JSON.stringify(raw),
         memo_id: indexSaveState
@@ -184,13 +189,13 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
   }
 
   return (
-    <div className='break-words overflow-y-auto h-80 border-l border-r'>
+    <div className='break-words overflow-y-auto h-80 '>
       <div className='border-b-2 pr-1 pl-1  top-0 bg-white flex justify-between'>
         {readonly ? (
           <>
             <div>
-              <button onClick={() => setReadOnly(false)} className="text-black p-2">
-                メモを編集
+              <button onClick={() => { setReadOnly(false); setIndexSave(initId); }} className="text-black p-2">
+                メモを編集      
               </button>
               {/* <button onClick={() => replaceEditorContent("新しいエディタの内容")}>テンプレート</button> */}
             </div>
@@ -204,6 +209,7 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
                   },
                   withCredentials: true,
                 });
+                console.log(indexSaveState)
                 console.log('Deleted successfully:', response.data);
                 setMemoRefreshKey(prev => prev + 1)
               } catch (error) {
@@ -249,7 +255,7 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
         </InlineToolbar>
 
       </div>
-    </div>
+    </div >
   );
 };
 

@@ -16,7 +16,10 @@ const Dashboard = () => {
     const [sortOrder, setSortOrder] = useState('dateDesc'); // ソート順の状態を追加
 
     const handleRegisterClick = (inputValue) => {
-        const stockNumber = parseInt(inputValue, 10); // 入力値を整数に変換
+        
+        // ２バイト数字を１バイト数字に変換
+        const normalizedInput = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+        const stockNumber = parseInt(normalizedInput, 10); // 入力値を整数に変換
         if (isNaN(stockNumber) || stockNumber < 1000 || stockNumber > 9999) { // 4桁の整数かどうかを確認
             setErrorMessage("正しい証券コードを入力してください。");
             return;

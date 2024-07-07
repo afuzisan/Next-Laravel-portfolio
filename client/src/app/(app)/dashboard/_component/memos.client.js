@@ -1,8 +1,9 @@
 'use client'
 
-import { React, useState, useEffect } from 'react'
+import { React, useState, useEffect, useContext } from 'react'
 import MemoList from './memoList';
 import MyEditor from '@/components/MyEditor.client'
+import { EditableContext } from './MemoFetch.client'; 
 import { EditorProvider, useEditorContext, useIndexSave } from './EditorContext.client';
 import laravelAxios from '@/lib/laravelAxios';
 import MemoTitle from '@/app/(app)/dashboard/_component/memoTitle'
@@ -18,20 +19,17 @@ const Memos = ({ memos, stock, name, setMemoRefreshKey }) => {
         </EditorProvider>
     )
 }
-// function getTextFromEditorState(editorState) {
-//     const contentState = editorState.getCurrentContent();
-//     const blocks = contentState.getBlocksAsArray();
 
-//     // ブロックからテキストを抽出して結合
-//     const text = blocks.map(block => block.getText()).join('\n');
-//     return JSON.stringify(text);
-// }
 
 const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefreshKey }) => {
     const [MemoTitleRefreshKey, setMemoTitleRefreshKey] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    /*useContextのテスト*/
+    const [isEditable, setIsEditable] = useContext(EditableContext)
+
 
     const handleClick = () => {
         setIsModalOpen(true);
@@ -47,13 +45,16 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefresh
                 setErrorMessage("文字を入力してください。");
                 return;
             }
+
+            // ２バイト数字を１バイト数字に変換
+            const convertedInputValue = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+
             await laravelAxios.post('http://localhost:8080/api/dashboard/memoTitleCreate', {
                 "stockNumber": stock,
-                "memo_title": inputValue
+                "memo_title": convertedInputValue
             });
             closeModal();
             setMemoRefreshKey(prevKey => prevKey + 1);
-            console.log(MemoTitleRefreshKey);
         } catch (error) {
             console.error('Error submitting memo:', error);
         }
@@ -61,10 +62,10 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefresh
 
     return (
         <>
-            <div className="grid grid-cols-[1fr_3fr]">
+            <div className="grid grid-cols-[1fr_3fr] h-80 border-r">
                 <MemoTitle memos={memos} handleClick={handleClick} activeId={activeId} setActiveId={setActiveId} />
 
-                {memos.length > 0 && memos[1] ? <MyEditor initMemo={memos[1].memo} initId={memos[1].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} /> : null}
+                {memos.length >= 0 && memos[1] ? <MyEditor initMemo={memos[1].memo} initId={memos[1].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} /> : <MyEditor initMemo={memos[0].memo} initId={memos[0].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} />}
             </div>
 
             {isModalOpen && (
@@ -101,5 +102,3 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefresh
 }
 
 export default Memos
-
-
