@@ -45,7 +45,7 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
+const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength }) => {
 
 
 
@@ -143,9 +143,12 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
 
   const onChange = (value) => {
     // エディタの状態が空でない場合のみ更新
-    if (value.getCurrentContent().getPlainText() !== '' && editor !== value) {
+    console.log(memosLength)
+    if (value.getCurrentContent().getPlainText() !== '') {
+      // if (value.getCurrentContent().getPlainText() !== '' && editor !== value) {
       setEditor(value);
     }
+
   };
 
   const replaceEditorContent = (newText) => {
