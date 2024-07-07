@@ -7,11 +7,13 @@ import { useReducer, useState } from 'react';
 import Danger from '@/components/Danger'
 
 
+
 const Dashboard = () => {
 
     const [inputValue, setInputValue] = useState("");
     const [refreshKey, setRefreshKey] = useState(0);
     const [errorMessage, setErrorMessage] = useState(""); // エラーメッセージの状態を追加
+    const [sortOrder, setSortOrder] = useState('dateDesc'); // ソート順の状態を追加
 
     const handleRegisterClick = (inputValue) => {
         const stockNumber = parseInt(inputValue, 10); // 入力値を整数に変換
@@ -32,7 +34,9 @@ const Dashboard = () => {
             });
     };
 
-
+    const handleSort = (order) => {
+        setSortOrder(order);
+    };
 
     return (
         <>
@@ -58,10 +62,30 @@ const Dashboard = () => {
                             )}
                         </div>
                         <div className="flex items-center">
-                            <button className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">日付 (新しい順)</button>
-                            <button className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">日付 (古い順)</button>
-                            <button className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">証券コード (大きい順)</button>
-                            <button className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">証券コード (小さい順)</button>
+                            <button
+                                className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700"
+                                onClick={() => handleSort('dateDesc')}
+                            >
+                                日付 (新しい順)
+                            </button>
+                            <button
+                                className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                                onClick={() => handleSort('dateAsc')}
+                            >
+                                日付 (古い順)
+                            </button>
+                            <button
+                                className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                                onClick={() => handleSort('codeDesc')}
+                            >
+                                証券コード (大きい順)
+                            </button>
+                            <button
+                                className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700"
+                                onClick={() => handleSort('codeAsc')}
+                            >
+                                証券コード (小さい順)
+                            </button>
                         </div>
                         <ul className="inline-flex -space-x-px items-center">
                             <li>
@@ -83,7 +107,7 @@ const Dashboard = () => {
                     </nav>
                 </div>
                 <div className="grid grid-cols-1 pt-6 pl-6 pr-6 bg-white border-b border-gray-200 ">
-                    <MemoFetch key={refreshKey} refreshKey={() => setRefreshKey(prevKey => prevKey + 1)} />
+                    <MemoFetch key={refreshKey} refreshKey={() => setRefreshKey(prevKey => prevKey + 1)} sortOrder={sortOrder} />
                 </div>
             </div >
         </>

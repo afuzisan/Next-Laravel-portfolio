@@ -213,7 +213,7 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, name }) => {
                 }
               }
             }} className="text-black p-2">
-              {name}を削除
+              削除
             </button>
           </>
         ) : (

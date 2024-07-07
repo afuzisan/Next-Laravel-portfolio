@@ -10,10 +10,12 @@ import '@draft-js-plugins/image/lib/plugin.css';
 import { useEditorContext, useIndexSave } from '../_component/EditorContext.client';
 import Link from 'next/link'; // Link component imported
 import { useState } from 'react';
+import Loading from "@/app/(app)/Loading"; // Loading component imported
 
 const MemoList = ({ title, id, setActiveId, activeId }) => {
     const [, setEditor] = useEditorContext()
     const [, setIndexSave] = useIndexSave()
+    const [loading, setLoading] = useState(false); // Loading state managed
 
     function findLinkEntities(contentBlock, callback, contentState) {
         contentBlock.findEntityRanges(
@@ -43,7 +45,8 @@ const MemoList = ({ title, id, setActiveId, activeId }) => {
         // 他のデコレータ設定があればここに追加
     ]);
 
-    const fetchData = async () => {
+    const fetchData = async (title) => {
+        setLoading(true); 
         try {
             setIndexSave(id);
             const response = await fetch(`http://localhost:8080/api/dashboard/memo?id=${id}`);
@@ -57,7 +60,6 @@ const MemoList = ({ title, id, setActiveId, activeId }) => {
             const contentState = convertFromRaw(JSON.parse(result.memo)); // JSONからContentStateを作成
             const newEditorState = EditorState.createWithContent(contentState, decorator); // EditorStateを作成
 
-            // EditorStateからテキストを抽出
             newEditorState.getCurrentContent().getPlainText('\n');
             setEditor(newEditorState); 
             setActiveId(id);
@@ -65,16 +67,22 @@ const MemoList = ({ title, id, setActiveId, activeId }) => {
             console.error('Fetch error:', error);
             setActiveId(id);
             setEditor(EditorState.createEmpty(decorator)); 
+        } finally {
+            setLoading(false); 
         }
     };
 
     return (
-        <div
-            className={`text-left break-words ${activeId === id ? 'text-red-600' : ''}`} // クリックしたメモだけ赤くする
-            onClick={() => fetchData()}
-        >
-            {title}
-        </div>
+        <>
+            {loading && <Loading />} 
+            <div
+                className={`text-left break-words `} 
+                onClick={() => fetchData(title)}
+            >
+                {title}
+            </div>
+        </>
     );
 };
 export default MemoList
+
