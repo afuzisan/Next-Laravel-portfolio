@@ -3,7 +3,7 @@
 import { siteName } from "@/app/metadata_common.js"
 import laravelAxios from "@/lib/laravelAxios";
 import MemoFetch from '@@/(app)/dashboard/_component/MemoFetch.client';
-import { useReducer, useState } from 'react';
+import { useReducer, useState, useEffect } from 'react';
 import Danger from '@/components/Danger'
 
 
@@ -13,7 +13,13 @@ const Dashboard = () => {
     const [inputValue, setInputValue] = useState("");
     const [refreshKey, setRefreshKey] = useState(0);
     const [errorMessage, setErrorMessage] = useState(""); // エラーメッセージの状態を追加
-    const [sortOrder, setSortOrder] = useState('dateDesc'); // ソート順の状態を追加
+    const [sortOrder, setSortOrder] = useState(() => {
+        return localStorage.getItem('sortOrder') || 'dateDesc';
+    }); // ソート順の状態を追加
+
+    useEffect(() => {
+        localStorage.setItem('sortOrder', sortOrder);
+    }, [sortOrder]);
 
     const handleRegisterClick = (inputValue) => {
         
