@@ -194,6 +194,25 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength }) =
     );
   }
 
+  const deleteMemo = async (memoId) => {
+    try {
+      const response = await laravelAxios.delete('http://localhost:8080/api/dashboard/memoDelete', {
+        data: {
+          stockNumber: stock, 
+          memoNumber: memoId    
+        },
+        withCredentials: true,
+      });
+      console.log('Deleted successfully:', response.data);
+      setMemoRefreshKey(prev => prev + 1);
+    } catch (error) {
+      console.error('Failed to delete memo:', error);
+      if (error.response) {
+        console.error('Error data:', error.response.data);
+      }
+    }
+  };
+
   return (
     <div className='break-words overflow-y-auto h-80 '>
       <div className='border-b-2 pr-1 pl-1  top-0 bg-white flex justify-between'>
@@ -212,22 +231,12 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength }) =
             </div>
 
             <button onClick={async () => {
-              try {
-                const response = await laravelAxios.delete('http://localhost:8080/api/dashboard/memoDelete', {
-                  data: {
-                    stockNumber: stock, // ここに適切な値を設定
-                    memoNumber: indexSaveState    // ここに適切な値を設定
-                  },
-                  withCredentials: true,
-                });
-                console.log('Deleted successfully:', response.data);
-                setMemoRefreshKey(prev => prev + 1)
-              } catch (error) {
-                console.error('Failed to delete memo:', error);
-                if (error.response) {
-                  console.error('Error data:', error.response.data);
-                }
+              if (!indexSaveState) {
+                setIndexSave(initId);
+                await deleteMemo(initId);
+                return;
               }
+              await deleteMemo(indexSaveState);
             }} className="text-black p-2">
               削除
             </button>
