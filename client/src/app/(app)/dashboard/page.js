@@ -66,25 +66,25 @@ const Dashboard = () => {
                         </div>
                         <div className="flex items-center">
                             <button
-                                className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700"
+                                className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'dateDesc' ? 'bg-gray-100' : 'bg-white'}`}
                                 onClick={() => handleSort('dateDesc')}
                             >
                                 登録日 (新しい順)
                             </button>
                             <button
-                                className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                                className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'dateAsc' ? 'bg-gray-100' : 'bg-white'}`}
                                 onClick={() => handleSort('dateAsc')}
                             >
                                 登録日 (古い順)
                             </button>
                             <button
-                                className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+                                className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'codeDesc' ? 'bg-gray-100' : 'bg-white'}`}
                                 onClick={() => handleSort('codeDesc')}
                             >
                                 証券コード (大きい順)
                             </button>
                             <button
-                                className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700"
+                                className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'codeAsc' ? 'bg-gray-100' : 'bg-white'}`}
                                 onClick={() => handleSort('codeAsc')}
                             >
                                 証券コード (小さい順)
@@ -120,4 +120,3 @@ const Dashboard = () => {
 
 
 export default Dashboard
-

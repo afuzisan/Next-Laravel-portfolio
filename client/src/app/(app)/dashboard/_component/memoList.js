@@ -12,10 +12,10 @@ import Link from 'next/link'; // Link component imported
 import { useState } from 'react';
 import Loading from "@/app/(app)/Loading"; // Loading component imported
 
-const MemoList = ({ title, id, setActiveId, activeId }) => {
+const MemoList = ({ title, id, setActiveId, activeId, index, setBg }) => {
     const [, setEditor] = useEditorContext()
     const [, setIndexSave] = useIndexSave()
-    const [loading, setLoading] = useState(false); 
+    const [loading, setLoading] = useState(false);
 
     function findLinkEntities(contentBlock, callback, contentState) {
         contentBlock.findEntityRanges(
@@ -46,7 +46,7 @@ const MemoList = ({ title, id, setActiveId, activeId }) => {
     ]);
 
     const fetchData = async (title) => {
-        setLoading(true); 
+        setLoading(true);
         try {
             setIndexSave(id);
             const response = await fetch(`http://localhost:8080/api/dashboard/memo?id=${id}`);
@@ -61,23 +61,26 @@ const MemoList = ({ title, id, setActiveId, activeId }) => {
             const newEditorState = EditorState.createWithContent(contentState, decorator); // EditorStateを作成
 
             newEditorState.getCurrentContent().getPlainText('\n');
-            setEditor(newEditorState); 
+            setEditor(newEditorState);
             setActiveId(id);
         } catch (error) {
             console.error('Fetch error:', error);
             setActiveId(id);
-            setEditor(EditorState.createEmpty(decorator)); 
+            setEditor(EditorState.createEmpty(decorator));
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
     return (
         <>
-            {loading && <Loading />} 
+            {loading && <Loading />}
             <div
-                className={`text-left break-words cursor-pointer p-2 hover:bg-gray-100 ${activeId === id ? 'bg-gray-100' : ''}`} 
-                onClick={() => fetchData(title)}
+                className={`text-left break-words cursor-pointer p-2 hover:bg-gray-100 ${activeId === id ? 'bg-gray-100' : ''}`}
+                onClick={() => {
+                    fetchData(title);
+                    setBg('bg-white-100')
+                }}
             >
                 {title}
             </div>
