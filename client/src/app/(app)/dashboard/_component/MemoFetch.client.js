@@ -17,7 +17,7 @@ function formatDateToISO(date) {
 // 編集可能か判定するコンテキストを作成
 export const EditableContext = createContext(); 
 
-const MemoFetch = ({ refreshKey, sortOrder }) => {
+const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, onDataFetched }) => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
     const [MemoRefreshKey, setMemoRefreshKey] = useState(0);
@@ -55,6 +55,7 @@ const MemoFetch = ({ refreshKey, sortOrder }) => {
                 }
 
                 setResult(data);
+                onDataFetched(data); // 親コンポーネントにデータを渡す
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -75,7 +76,7 @@ const MemoFetch = ({ refreshKey, sortOrder }) => {
 
     return (
         <EditableContext.Provider value={[isEditable, setIsEditable]}>
-            {result.stocks.slice(0, 6).map((stock, index) => (
+            {result.stocks.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((stock, index) => (
                 <React.Fragment key={stock.stock_code}>
                     <div className="grid grid-cols-6 border px-3 py-2">
                         <div className="col-span-5 flex items-center">

@@ -15,14 +15,23 @@ const Dashboard = () => {
     const [errorMessage, setErrorMessage] = useState(""); // エラーメッセージの状態を追加
     const [sortOrder, setSortOrder] = useState(() => {
         return localStorage.getItem('sortOrder') || 'dateDesc';
-    }); // ソート順の状態を追加
+    });
+    const [currentPage, setCurrentPage] = useState(() => {
+        return parseInt(localStorage.getItem('currentPage'), 10) || 1;
+    });
+    const itemsPerPage = 2;
+    const [result, setResult] = useState(null);
 
     useEffect(() => {
         localStorage.setItem('sortOrder', sortOrder);
     }, [sortOrder]);
 
+    useEffect(() => {
+        localStorage.setItem('currentPage', currentPage);
+    }, [currentPage]);
+
     const handleRegisterClick = (inputValue) => {
-        
+
         // ２バイト数字を１バイト数字に変換
         const normalizedInput = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
         const stockNumber = parseInt(normalizedInput, 10); // 入力値を整数に変換
@@ -39,14 +48,14 @@ const Dashboard = () => {
             })
             .catch((error) => {
                 console.error("Error:", error.response.data); // エラーメッセージをコンソールに表示
-                setErrorMessage("エラーが発生しました: " + error.response.data.message);
+                setErrorMessage("エラー発生しました: " + error.response.data.message);
             });
     };
 
     const handleSort = (order) => {
         setSortOrder(order);
     };
-
+    console.log(currentPage)
     return (
         <>
             <div className="py-6">
@@ -59,6 +68,11 @@ const Dashboard = () => {
                                 placeholder="証券コードか銘柄名を入力"
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleRegisterClick(inputValue);
+                                    }
+                                }}
                             />
                             <button
                                 className="px-3 py-2 leading-tight text-white bg-blue-500 border border-blue-500 hover:bg-blue-600 hover:border-blue-600"
@@ -67,7 +81,7 @@ const Dashboard = () => {
                                 銘柄を登録
                             </button>
                             {errorMessage && (
-                                <Danger errorMessage={errorMessage} setErrorMessage={setErrorMessage} className="absolute top-full left-6 mt-2 w-full text-white bg-red-400 bg-opacity-75 border border-red-500 p-2 cursor-pointer text-center flex items-center"/>
+                                <Danger errorMessage={errorMessage} setErrorMessage={setErrorMessage} className="absolute top-full left-6 mt-2 w-full text-white bg-red-400 bg-opacity-75 border border-red-500 p-2 cursor-pointer text-center flex items-center" />
                             )}
                         </div>
                         <div className="flex items-center">
@@ -75,7 +89,7 @@ const Dashboard = () => {
                                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'dateDesc' ? 'bg-gray-100' : 'bg-white'}`}
                                 onClick={() => handleSort('dateDesc')}
                             >
-                                登録日 (新しい順)
+                                登録日 (新しい)
                             </button>
                             <button
                                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'dateAsc' ? 'bg-gray-100' : 'bg-white'}`}
@@ -98,25 +112,45 @@ const Dashboard = () => {
                         </div>
                         <ul className="inline-flex -space-x-px items-center">
                             <li>
-                                <a href="#" className="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">前</a>
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-red-100 hover:text-gray-700"
+                                >
+                                    前
+                                </button>
                             </li>
+                            {[...Array(Math.ceil(result ? result.stocks.length / itemsPerPage : 0)).keys()].map(page => (
+                                <li key={page}>
+                                    <button
+                                        onClick={() => setCurrentPage(page + 1)}
+                                        className={`px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-red-100 hover:text-gray-700 ${currentPage === page + 1 ? 'bg-red-100' : 'bg-white'}`}
+                                    >
+                                        {page + 1}
+                                    </button>
+                                </li>
+                            ))}
                             <li>
-                                <a href="#" className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">1</a>
-                            </li>
-                            <li>
-                                <a href="#" className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">2</a>
-                            </li>
-                            <li>
-                                <a href="#" className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">3</a>
-                            </li>
-                            <li>
-                                <a href="#" className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">次</a>
+                                <button
+                                    onClick={() => setCurrentPage(prev => prev + 1)}
+                                    disabled={result && currentPage * itemsPerPage >= result.stocks.length}
+                                    className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-red-100 hover:text-gray-700"
+                                >
+                                    次
+                                </button>
                             </li>
                         </ul>
                     </nav>
                 </div>
                 <div className="grid grid-cols-1 pt-6 pl-6 pr-6 bg-white border-b border-gray-200 ">
-                    <MemoFetch key={refreshKey} refreshKey={() => setRefreshKey(prevKey => prevKey + 1)} sortOrder={sortOrder} />
+                    <MemoFetch
+                        key={refreshKey}
+                        refreshKey={() => setRefreshKey(prevKey => prevKey + 1)}
+                        sortOrder={sortOrder}
+                        currentPage={currentPage}
+                        itemsPerPage={itemsPerPage}
+                        onDataFetched={setResult} // データを受け取る
+                    />
                 </div>
             </div >
         </>
