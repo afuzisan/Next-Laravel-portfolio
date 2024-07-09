@@ -3,6 +3,7 @@ import Link from 'next/link'; // Next.jsのLinkをインポート
 
 
 const replace = (links, stock) => {
+    if (!links) return []; // 追加: linksがundefinedの場合の処理
     const result = links.map((link) => {
         return {
             ...link,

@@ -17,10 +17,11 @@ const Dashboard = () => {
         return localStorage.getItem('sortOrder') || 'dateDesc';
     });
     const [currentPage, setCurrentPage] = useState(() => {
-        return parseInt(localStorage.getItem('currentPage'), 10) || 1;
+        return parseInt(localStorage.getItem('currentPage'), 10) || 0;
     });
-    const itemsPerPage = 2;
+    const [itemsPerPage, setItemsPerPage] = useState(3);
     const [result, setResult] = useState(null);
+    const [totalStockCount, setTotalStockCount] = useState(0);
 
     useEffect(() => {
         localStorage.setItem('sortOrder', sortOrder);
@@ -113,30 +114,31 @@ const Dashboard = () => {
                         <ul className="inline-flex -space-x-px items-center">
                             <li>
                                 <button
-                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                                    disabled={currentPage === 1}
+                                    onClick={() => {
+                                        setCurrentPage(prev => (prev > 0 ? prev - 1 : Math.ceil(totalStockCount / itemsPerPage) - 1));
+                                    }}
                                     className="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-red-100 hover:text-gray-700"
                                 >
-                                    前
+                                    ＜
                                 </button>
                             </li>
                             {[...Array(Math.ceil(result ? result.stocks.length / itemsPerPage : 0)).keys()].map(page => (
                                 <li key={page}>
                                     <button
-                                        onClick={() => setCurrentPage(page + 1)}
-                                        className={`px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-red-100 hover:text-gray-700 ${currentPage === page + 1 ? 'bg-red-100' : 'bg-white'}`}
+                                        className={`px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-red-100 hover:text-gray-700 ${page + 1 === currentPage ? 'bg-gray-100' : 'bg-white'}`}
                                     >
-                                        {page + 1}
+                                        {currentPage + 1}
                                     </button>
                                 </li>
                             ))}
                             <li>
                                 <button
-                                    onClick={() => setCurrentPage(prev => prev + 1)}
-                                    disabled={result && currentPage * itemsPerPage >= result.stocks.length}
+                                    onClick={() => {
+                                        setCurrentPage(prev => (prev < Math.ceil(totalStockCount / itemsPerPage) - 1 ? prev + 1 : 0));
+                                    }}
                                     className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-red-100 hover:text-gray-700"
                                 >
-                                    次
+                                    ＞
                                 </button>
                             </li>
                         </ul>
@@ -149,7 +151,9 @@ const Dashboard = () => {
                         sortOrder={sortOrder}
                         currentPage={currentPage}
                         itemsPerPage={itemsPerPage}
-                        onDataFetched={setResult} // データを受け取る
+                        onDataFetched={setResult} 
+                        setItemsPerPage={setItemsPerPage}
+                        setTotalStockCount={setTotalStockCount}
                     />
                 </div>
             </div >

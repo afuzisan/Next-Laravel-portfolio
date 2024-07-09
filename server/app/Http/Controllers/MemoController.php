@@ -21,18 +21,24 @@ class MemoController extends Controller
     public function index(Request $request)
     {
         $user_id = Auth::id(); // 認証されたユーザーのIDを取得
+        $pagination = $request->query('param');
+        $viewStocks = $request->query('page');
+        Log::info('Received param:' . $pagination * $viewStocks);
 
-        $user = User::with(['stocks' => function ($query) use ($user_id) {
+        $user = User::with(['stocks' => function ($query) use ($user_id, $pagination, $viewStocks) {
             $query->where('user_id', $user_id)->with(['memos' => function ($query) use ($user_id) {
-                $query->where('user_id', $user_id); // memosをuser_idでフィルタリング
-            }]);
-        }, 'links'])->find($user_id);
+                $query->where('user_id', $user_id);
+            }])->skip($pagination * $viewStocks)->take($viewStocks);
+        }, 'links'])->where('id', $user_id)->first();
 
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404); // ユーザーが見つからない場合のエラーレスポンス
+        if (!$user || $user->stocks->isEmpty()) {
+            return response()->json(['message' => 'Stocks not found']);
         }
 
-        return response()->json($user); // ユーザー情報をJSON形式で返す
+        // 全体のstocksの数を取得
+        $totalStockCount = User::withCount('stocks')->where('id', $user_id)->first()->stocks_count;
+
+        return response()->json(['user' => $user, 'totalStockCount' => $totalStockCount]); // ユーザー情報と全体のstocksの数をJSON形式で返す
     }
 
     public function memo(Request $request)
@@ -56,7 +62,7 @@ class MemoController extends Controller
         $memoId = $request->input('memo_id');
         $newContent = $request->input('memo');
 
-        // memo_id に基づいて Memo オブジェクトを取得
+        // memo_id に基づいて Memo ブジェクトを取得
         $memo = Memo::find($memoId);
 
         if ($memo) {
@@ -114,7 +120,7 @@ class MemoController extends Controller
     }
 
     /**
-     * メモのタイトルを作成追加する
+     * メモのタイルを作成追
      */
     public function memoTitleCreate(Request $request)
     {
@@ -128,14 +134,14 @@ class MemoController extends Controller
                 'string',
                 Rule::unique('memos')->where(function ($query) use ($request, $user) {
                     return $query->where('user_id', $user)
-                                 ->where('stock_id', $request->input('stockNumber'));
+                        ->where('stock_id', $request->input('stockNumber'));
                 }),
             ],
         ]);
 
         DB::table('memos')->insert([
-            'user_id' => $user, 
-            'stock_id' => $request->input('stockNumber'), 
+            'user_id' => $user,
+            'stock_id' => $request->input('stockNumber'),
             'memo_title' => $request->input('memo_title'),
         ]);
     }
