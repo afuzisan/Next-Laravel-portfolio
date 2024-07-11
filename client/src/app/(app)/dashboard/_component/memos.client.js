@@ -11,18 +11,28 @@ import Danger from '@/components/Danger';
 
 
 const Memos = ({ memos, stock, name, setMemoRefreshKey }) => {
+
     const [activeId, setActiveId] = useState(memos.length > 0 ? memos[0].id : null);
+    const [MemoTitleRefreshKey, setMemoTitleRefreshKey] = useState(0); // Moved here
 
     return (
         <EditorProvider>
-            <MemoContent memos={memos} activeId={activeId} setActiveId={setActiveId} stock={stock} name={name} setMemoRefreshKey={setMemoRefreshKey} />
+            <MemoContent 
+                memos={memos} 
+                activeId={activeId} 
+                setActiveId={setActiveId} 
+                stock={stock} 
+                name={name} 
+                setMemoRefreshKey={setMemoRefreshKey} 
+                MemoTitleRefreshKey={MemoTitleRefreshKey} // Pass down
+                setMemoTitleRefreshKey={setMemoTitleRefreshKey} // Pass down
+            />
         </EditorProvider>
     )
 }
 
 
-const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefreshKey }) => {
-    const [MemoTitleRefreshKey, setMemoTitleRefreshKey] = useState(0);
+const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefreshKey, MemoTitleRefreshKey, setMemoTitleRefreshKey }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -48,22 +58,29 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefresh
 
             // ２バイト数字を１バイト数字に変換
             const convertedInputValue = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-
             await laravelAxios.post('http://localhost:8080/api/dashboard/memoTitleCreate', {
                 "stockNumber": stock,
                 "memo_title": convertedInputValue
             });
             closeModal();
-            setMemoRefreshKey(prevKey => prevKey + 1);
+            setMemoRefreshKey(prevKey => prevKey + 1); // ここでステートを更新
         } catch (error) {
             console.error('Error submitting memo:', error);
         }
     }
 
+
     return (
         <>
             <div className="grid grid-cols-[1fr_3fr] h-80 border-r">
-                <MemoTitle memos={memos} handleClick={handleClick} activeId={activeId} setActiveId={setActiveId} />
+                <MemoTitle 
+                    memos={memos} 
+                    handleClick={handleClick} 
+                    activeId={activeId} 
+                    setActiveId={setActiveId} 
+                    setMemoRefreshKey={setMemoRefreshKey} 
+                    MemoTitleRefreshKey={MemoTitleRefreshKey} // Pass down
+                />
 
                 {memos.length >= 0 && memos[1] ? <MyEditor initMemo={memos[1].memo} initId={memos[1].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length}/> : <MyEditor initMemo={memos[0].memo} initId={memos[0].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length}/>}
             </div>
@@ -73,8 +90,6 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefresh
                     <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full relative">
                         <div className="flex justify-between items-center mb-4">
                             <div className="text-xl font-semibold">{name}({stock})にメモを追加します。</div>
-
-
                             <div
                                 className="close cursor-pointer text-gray-500 hover:text-gray-700 text-xl absolute top-2 right-2 p-1 border border-gray-500 rounded-md hover:bg-gray-200"
                                 onClick={closeModal}

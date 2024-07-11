@@ -110,7 +110,6 @@ const initFetch = async (param, itemsPerPage,setTotalStockCount) => {
     try {
         const result = await laravelAxios.get(`http://localhost:8080/api/dashboard/reviews?param=${param}&page=${itemsPerPage}`, { cache: 'no-cache' });
         setTotalStockCount(result.data.totalStockCount)
-        console.log(result.data.totalStockCount)
         return result.data.user;
     } catch (error) {
         console.error('Error fetching data:', error);

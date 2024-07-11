@@ -92,8 +92,8 @@ const MemoList = ({ title, id, setActiveId, activeId, index, setBg }) => {
 
             {loading && <Loading />}
             <li className={`flex items-center hover:bg-gray-100 ${activeId === id ? 'bg-gray-100' : ''}`}>
-                <div className='w-full flex items-center justify-center' style={{ cursor: 'grab' }}>
-                    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="flex items-center w-full">
+                <div className='w-full flex items-center justify-center' >
+                    <div ref={setNodeRef} style={{ ...style, cursor: 'grab' }} {...attributes} {...listeners} className="flex items-center w-full">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 48 48"
@@ -108,7 +108,6 @@ const MemoList = ({ title, id, setActiveId, activeId, index, setBg }) => {
                             {...attributes}
                             {...listeners}
                             onPointerDown={(e) => e.stopPropagation()}
-                            style={{ cursor: 'default' }} // ポインターを普通の矢印に変更
                             className={`flex-1 text-left break-words cursor-pointer p-2`}
                             onClick={() => {
                                 fetchData(title);
