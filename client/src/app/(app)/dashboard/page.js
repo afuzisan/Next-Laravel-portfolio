@@ -56,7 +56,6 @@ const Dashboard = () => {
     const handleSort = (order) => {
         setSortOrder(order);
     };
-    console.log(currentPage)
     return (
         <>
             <div className="py-6">

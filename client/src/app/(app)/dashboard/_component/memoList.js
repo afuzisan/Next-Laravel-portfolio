@@ -88,7 +88,6 @@ const MemoList = ({ title, id, setActiveId, activeId, index, minId}) => {
         }
     };
     useEffect(() => {
-        console.log(minId)
         setIndexSave(minId);
         setActiveId(minId);
     }, [minId]); // minIdが変わった時だけ実行

@@ -14,6 +14,7 @@ import {
     sortableKeyboardCoordinates,
     verticalListSortingStrategy
 } from '@dnd-kit/sortable';
+import laravelAxios from '@/lib/laravelAxios';
 
 
 const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKey, MemoTitleRefreshKey }) => {
@@ -45,6 +46,11 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
 
                 const reorderedItems = arrayMove(items, oldIndex, newIndex);
                 setItems(reorderedItems);
+                console.log(reorderedItems)
+                laravelAxios.post(`http://localhost:8080/memo/exchange`, {
+                    newId: reorderedItems[newIndex].id,
+                    oldId: reorderedItems[oldIndex].id,
+                })
             }
         } catch (error) {
             console.error('Error saving order:', error);
