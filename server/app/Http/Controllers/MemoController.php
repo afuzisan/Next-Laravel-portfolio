@@ -169,4 +169,36 @@ class MemoController extends Controller
             return response()->json(['message' => 'Memo not found'], 404);
         }
     }
+    public function exchange(Request $request)
+    {
+        $newId = $request->input('newId');
+        $oldId = $request->input('oldId');
+
+        DB::transaction(function () use ($newId, $oldId) {
+            $newMemo = Memo::find($newId);
+            $oldMemo = Memo::find($oldId);
+
+            if ($newMemo && $oldMemo) {
+                // メモの内容を交換
+                $tempMemo = $newMemo->memo;
+                $newMemo->memo = $oldMemo->memo;
+                $oldMemo->memo = $tempMemo;
+
+                // メモのタイトルを交換
+                $tempTitle = $newMemo->memo_title;
+                $newMemo->memo_title = $oldMemo->memo_title;
+                $oldMemo->memo_title = $tempTitle;
+
+                // stock_idを交換
+                $tempStockId = $newMemo->stock_id;
+                $newMemo->stock_id = $oldMemo->stock_id;
+                $oldMemo->stock_id = $tempStockId;
+
+                $newMemo->save();
+                $oldMemo->save();
+            }
+        });
+
+        return response()->json(['message' => 'Memos exchanged successfully']);
+    }
 }

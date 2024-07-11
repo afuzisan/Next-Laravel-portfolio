@@ -47,13 +47,15 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
                 const reorderedItems = arrayMove(items, oldIndex, newIndex);
                 setItems(reorderedItems);
                 console.log(reorderedItems)
-                laravelAxios.post(`http://localhost:8080/memo/exchange`, {
+                laravelAxios.post(`http://localhost:8080/api/dashboard/memo/exchange`, {
                     newId: reorderedItems[newIndex].id,
                     oldId: reorderedItems[oldIndex].id,
                 })
             }
         } catch (error) {
             console.error('Error saving order:', error);
+        } finally {
+            setMemoRefreshKey(prevKey => prevKey + 1);
         }
     }
 
@@ -72,7 +74,7 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
                         <button onClick={handleClick} className="text-black p-2">追加</button>
                         <button className="text-black p-2">編集</button>
                     </div>
-                    {items.map((memo, index) => ( 
+                    {items.map((memo, index) => (
                         memo.memo_title ? (
                             <div key={memo.id}>
                                 <MemoList
@@ -81,7 +83,7 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
                                     setActiveId={setActiveId}
                                     activeId={activeId}
                                     index={index}
-                                    minId={minId}                                
+                                    minId={minId}
                                 />
                             </div>
                         ) : null
