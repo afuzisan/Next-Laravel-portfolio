@@ -17,8 +17,13 @@ import {
 
 
 const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKey, MemoTitleRefreshKey }) => {
-    const [bg, setBg] = useState('bg-gray-100');
     const [items, setItems] = useState(memos); // items の初期化
+    const [minId, setMinId] = useState(null);
+
+    useEffect(() => {
+        const sortedItems = [...items].sort((a, b) => a.id - b.id);
+        setMinId(sortedItems[1]?.id);
+    }, [items]);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -28,8 +33,6 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
     );
 
     useEffect(() => {
-        console.log('MemoTitleRefreshKey has changed:', MemoTitleRefreshKey); // ここでログを追加
-        console.log('memos has changed:', memos); // memosの更新を確認
         setItems(memos); // MemoTitleRefreshKeyが変わったときにitemsを更新
     }, [MemoTitleRefreshKey, memos]);
 
@@ -42,13 +45,11 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
 
                 const reorderedItems = arrayMove(items, oldIndex, newIndex);
                 setItems(reorderedItems);
-                console.log(reorderedItems, oldIndex, newIndex);
             }
         } catch (error) {
             console.error('Error saving order:', error);
         }
     }
-
 
     return (
         <DndContext
@@ -65,16 +66,16 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
                         <button onClick={handleClick} className="text-black p-2">追加</button>
                         <button className="text-black p-2">編集</button>
                     </div>
-                    {items.map((memo, index) => ( // itemsをmapする
+                    {items.map((memo, index) => ( 
                         memo.memo_title ? (
-                            <div key={memo.id} className={`${index === 1 ? bg : ''}`}>
+                            <div key={memo.id}>
                                 <MemoList
                                     title={memo.memo_title}
                                     id={memo.id}
                                     setActiveId={setActiveId}
                                     activeId={activeId}
                                     index={index}
-                                    setBg={setBg}
+                                    minId={minId}                                
                                 />
                             </div>
                         ) : null

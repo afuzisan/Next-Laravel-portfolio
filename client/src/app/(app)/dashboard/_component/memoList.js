@@ -9,13 +9,13 @@ import '@draft-js-plugins/anchor/lib/plugin.css';
 import '@draft-js-plugins/image/lib/plugin.css';
 import { useEditorContext, useIndexSave } from '../_component/EditorContext.client';
 import Link from 'next/link'; // Link component imported
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import Loading from "@/app/(app)/Loading"; // Loading component imported
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const MemoList = ({ title, id, setActiveId, activeId, index, setBg }) => {
+const MemoList = ({ title, id, setActiveId, activeId, index, minId}) => {
     const [, setEditor] = useEditorContext()
     const [, setIndexSave] = useIndexSave()
     const [loading, setLoading] = useState(false);
@@ -76,6 +76,7 @@ const MemoList = ({ title, id, setActiveId, activeId, index, setBg }) => {
             const newEditorState = EditorState.createWithContent(contentState, decorator); // EditorStateを作成
 
             newEditorState.getCurrentContent().getPlainText('\n');
+            console.log(id)
             setEditor(newEditorState);
             setActiveId(id);
         } catch (error) {
@@ -86,12 +87,17 @@ const MemoList = ({ title, id, setActiveId, activeId, index, setBg }) => {
             setLoading(false);
         }
     };
+    useEffect(() => {
+        console.log(minId)
+        setIndexSave(minId);
+        setActiveId(minId);
+    }, [minId]); // minIdが変わった時だけ実行
 
     return (
         <>
 
             {loading && <Loading />}
-            <li className={`flex items-center hover:bg-gray-100 ${activeId === id ? 'bg-gray-100' : ''}`}>
+            <li className={`flex items-center hover:bg-gray-100  ${activeId === id  ? 'bg-gray-100' : ''}`}>
                 <div className='w-full flex items-center justify-center' >
                     <div ref={setNodeRef} style={{ ...style, cursor: 'grab' }} {...attributes} {...listeners} className="flex items-center w-full">
                         <svg
@@ -111,7 +117,7 @@ const MemoList = ({ title, id, setActiveId, activeId, index, setBg }) => {
                             className={`flex-1 text-left break-words cursor-pointer p-2`}
                             onClick={() => {
                                 fetchData(title);
-                                setBg('bg-white-100');
+
                             }}
                         >
                             {title}
