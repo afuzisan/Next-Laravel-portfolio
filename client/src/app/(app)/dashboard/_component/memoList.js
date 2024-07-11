@@ -10,13 +10,28 @@ import '@draft-js-plugins/image/lib/plugin.css';
 import { useEditorContext, useIndexSave } from '../_component/EditorContext.client';
 import Link from 'next/link'; // Link component imported
 import { useState } from 'react';
+import React from 'react';
 import Loading from "@/app/(app)/Loading"; // Loading component imported
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const MemoList = ({ title, id, setActiveId, activeId, index, setBg }) => {
     const [, setEditor] = useEditorContext()
     const [, setIndexSave] = useIndexSave()
     const [loading, setLoading] = useState(false);
 
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
     function findLinkEntities(contentBlock, callback, contentState) {
         contentBlock.findEntityRanges(
             (character) => {
@@ -74,16 +89,37 @@ const MemoList = ({ title, id, setActiveId, activeId, index, setBg }) => {
 
     return (
         <>
+
             {loading && <Loading />}
-            <div
-                className={`text-left break-words cursor-pointer p-2 hover:bg-gray-100 ${activeId === id ? 'bg-gray-100' : ''}`}
-                onClick={() => {
-                    fetchData(title);
-                    setBg('bg-white-100')
-                }}
-            >
-                {title}
-            </div>
+            <li className={`flex items-center hover:bg-gray-100 ${activeId === id ? 'bg-gray-100' : ''}`}>
+                <div className='w-full flex items-center justify-center' style={{ cursor: 'grab' }}>
+                    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="flex items-center w-full">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 48 48"
+                            className="w-6 h-6"
+                        >
+                            <rect width="48" height="48" fill="none" />
+                            <line x1="10" y1="12" x2="38" y2="12" stroke="currentColor" strokeWidth="2" />
+                            <line x1="10" y1="24" x2="38" y2="24" stroke="currentColor" strokeWidth="2" />
+                            <line x1="10" y1="36" x2="38" y2="36" stroke="currentColor" strokeWidth="2" />
+                        </svg>
+                        <div
+                            {...attributes}
+                            {...listeners}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            style={{ cursor: 'default' }} // ポインターを普通の矢印に変更
+                            className={`flex-1 text-left break-words cursor-pointer p-2`}
+                            onClick={() => {
+                                fetchData(title);
+                                setBg('bg-white-100');
+                            }}
+                        >
+                            {title}
+                        </div>
+                    </div>
+                </div>
+            </li>
         </>
     );
 };
