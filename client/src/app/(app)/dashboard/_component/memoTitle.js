@@ -67,8 +67,14 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
                 // 変更されたペアを生成
                 const pairs = [];
                 for (let i = 0; i < updatedItems.length; i++) {
-                    if (items[i].order !== updatedItems[i].order) {
-                        pairs.push({ newId: updatedItems[i].id, oldId: items[i].id });
+                    const originalItem = items.find(item => item.id === updatedItems[i].id);
+                    if (originalItem && originalItem.order !== updatedItems[i].order) {
+                        pairs.push({ 
+                            newId: updatedItems[i].id, 
+                            oldId: originalItem.id,
+                            newOrder: updatedItems[i].order,
+                            oldOrder: originalItem.order
+                        });
                     }
                 }
                 console.log(pairs)

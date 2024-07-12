@@ -156,7 +156,7 @@ class MemoController extends Controller
      * メモを削除する
      * TODO:更新したメモを保存する新しいテーブルの作成
      * TODO:削除したメモを保存する新しいテーブルの作成
-     * TODO:メモを削除する前に削除したメモをコピーして、除したメモを保存する新しいテーブルにコピー
+     * TODO:メモを削除する前に削除したメモをコピーして、���したメモを保存する新しいテーブルにコピー
      */
     public function memoDelete(Request $request)
     {
@@ -177,8 +177,8 @@ class MemoController extends Controller
     }
     public function exchange(Request $request)
     {
-        $pairs = $request->input('pairs'); // [['newId' => 1, 'oldId' => 2], ...]
-        Log::info('Received pairs:', $pairs); // 受信したペアをログに出力
+        $pairs = $request->input('pairs'); 
+        Log::info('Received pairs:', $pairs); 
 
         DB::transaction(function () use ($pairs) {
             // すべてのペアを一度に処理するためのマッピング
@@ -187,6 +187,7 @@ class MemoController extends Controller
             foreach ($pairs as $pair) {
                 $newId = $pair['newId'];
                 $oldId = $pair['oldId'];
+                $newOrder = $pair['newOrder'];
 
                 Log::info("Processing pair: newId={$newId}, oldId={$oldId}");
 
@@ -206,10 +207,8 @@ class MemoController extends Controller
                     $newMemo->memo_title = $oldMemo->memo_title;
                     $oldMemo->memo_title = $tempTitle;
 
-                    // orderを交換
-                    $tempOrder = $newMemo->order;
-                    $newMemo->order = $oldMemo->order;
-                    $oldMemo->order = $tempOrder;
+                    // orderをnewOrderの値に書き換え
+                    $newMemo->order = $newOrder;
 
                     // 保存前のログ出力
                     Log::info("Before save: newMemo=" . json_encode($newMemo->toArray()));
