@@ -96,7 +96,7 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
             onDragEnd={handleDragEnd}
         >
             <SortableContext
-                items={items.map(item => item.order)} 
+                items={items.map(item => item.id)} // idを使用
                 strategy={verticalListSortingStrategy}
             >
                 <div key={setMemoRefreshKey} className="break-words overflow-y-auto h-80 border-l border-r w-full break-all">
