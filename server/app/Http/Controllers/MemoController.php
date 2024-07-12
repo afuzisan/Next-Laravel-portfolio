@@ -61,20 +61,22 @@ class MemoController extends Controller
         // リクエストから memo_id を取得
         $memoId = $request->input('memo_id');
         $newContent = $request->input('memo');
+        $order = $request->input('order');
 
         // memo_id に基づいて Memo ブジェクトを取得
         $memo = Memo::find($memoId);
 
         if ($memo) {
             // createdイベントをスキップするフラグを設定
-            Memo::$skipCreatedEvent = true;
+            Memo::$skipCreatedEvent = false;
 
             // メモの内容を更新
             $memo->memo = $newContent;
+            $memo->order = $order;
             $memo->save();
 
             // フラグをリセット
-            Memo::$skipCreatedEvent = false;
+            Memo::$skipCreatedEvent = true;
 
             return response()->json(['message' => 'Memo updated successfully', 'memo' => $memo]);
         } else {
@@ -89,13 +91,26 @@ class MemoController extends Controller
     {
         $request->validate([
             'stockNumber' => 'required|integer',
+            'memo' => 'nullable|string',
+            'memo_title' => 'nullable|string',
         ]);
 
+        // 既存のメモを確認
+        $existingMemo = Memo::where('stock_id', $request->input('stockNumber'))
+                            ->where('user_id', Auth::id())
+                            ->first();
+
+        if ($existingMemo) {
+            return response()->json(['message' => 'Memo already exists for this stock'], 400);
+        }
+
+        // 新しいメモを作成
         $memo = Memo::create([
             'stock_id' => $request->input('stockNumber'),
             'user_id' => Auth::id(),
-            'memo' => null,
-            'memo_title' => null
+            'memo' => $request->input('memo', null),
+            'memo_title' => $request->input('memo_title', null),
+            'order' => 0
         ]);
 
         return response()->json(['message' => 'Stock stored successfully', 'memo' => $memo]);
@@ -156,7 +171,7 @@ class MemoController extends Controller
      * メモを削除する
      * TODO:更新したメモを保存する新しいテーブルの作成
      * TODO:削除したメモを保存する新しいテーブルの作成
-     * TODO:メモを削除する前に削除したメモをコピーして、���したメモを保存する新しいテーブルにコピー
+     * TODO:メモを削除する前に削除したメモをコピーして、したメモを保存する新しいテーブルにコピー
      */
     public function memoDelete(Request $request)
     {
@@ -207,7 +222,7 @@ class MemoController extends Controller
                     $newMemo->memo_title = $oldMemo->memo_title;
                     $oldMemo->memo_title = $tempTitle;
 
-                    // orderをnewOrderの値に書き換え
+                    // orderをnewOrderの値に書換え
                     $newMemo->order = $newOrder;
 
                     // 保存前のログ出力

@@ -81,7 +81,9 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                     <React.Fragment key={stock.stock_code}>
                         <div className="grid grid-cols-6 border px-3 py-2">
                             <div className="col-span-5 flex items-center">
-                                <span className="grid-item px-6">{formatDateToISO(new Date(stock.memos[0].created_at))}</span>
+                                <span className="grid-item px-6">
+                                    {stock.memos.length > 0 ? formatDateToISO(new Date(stock.memos[0].created_at)) : 'N/A'}
+                                </span>
                                 <span className="grid-item px-6">{stock.stock_name}</span>
                                 <span className="grid-item px-6">{stock.stock_code}</span>
                             </div>

@@ -14,12 +14,12 @@ class MemosSeeder extends Seeder
 
         foreach ($userStocks as $userId => $stocks) {
             foreach ($stocks as $stockId) {
-                Memo::factory()->create([
+                $memo = Memo::factory()->create([
                     'user_id' => $userId,
-                    'stock_id' => $stockId
+                    'stock_id' => $stockId,
+                    'order' => Memo::max('id') + 1 // order カラムをプライマリーキーと同じに設定
                 ]);
             }
         }
     }
 }
-

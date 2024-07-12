@@ -47,7 +47,7 @@ const Link = (props) => {
 
 const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength }) => {
 
-
+  console.log(initMemo, initId, stock)
 
   const [indexSaveState, setIndexSave] = useIndexSave()
 
@@ -123,7 +123,8 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength }) =
       console.log(indexSaveState);
       const response = await laravelAxios.post(url, JSON.stringify({
         memo: JSON.stringify(raw),
-        memo_id: indexSaveState
+        memo_id: initId,
+        order: indexSaveState
       }), {
         headers: {
           'Content-Type': 'application/json'
@@ -197,8 +198,8 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength }) =
     try {
       const response = await laravelAxios.delete('http://localhost:8080/api/dashboard/memoDelete', {
         data: {
-          stockNumber: stock, 
-          memoNumber: memoId    
+          stockNumber: stock,
+          memoNumber: initId
         },
         withCredentials: true,
       });

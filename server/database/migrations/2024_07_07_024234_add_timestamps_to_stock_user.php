@@ -12,7 +12,9 @@ class AddTimestampsToStockUser extends Migration
     public function up(): void
     {
         Schema::table('stock_user', function (Blueprint $table) {
-            $table->timestamps(); // 作成日と更新日を追加
+            if (!Schema::hasColumn('stock_user', 'created_at') && !Schema::hasColumn('stock_user', 'updated_at')) {
+                $table->timestamps(); // 作成日と更新日を追加
+            }
         });
     }
 

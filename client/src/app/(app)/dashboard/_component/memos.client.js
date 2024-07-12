@@ -45,7 +45,7 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
         return memo.order === activeOrder;
     });
     const initMemoIndex = activeMemoIndex === -1 ? 1 : activeMemoIndex;
-
+    console.log('initMemoIndex',initMemoIndex)
 
 
     const handleClick = () => {

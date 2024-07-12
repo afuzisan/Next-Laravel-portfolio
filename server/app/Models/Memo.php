@@ -20,19 +20,19 @@ class Memo extends Model
     ];
 
     // フラグを追加
-    public static $skipCreatedEvent = false;
+    public static $skipCreatedEvent = true;
 
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        static::created(function ($memo) {
-            if (!self::$skipCreatedEvent) {
-                $memo->order = $memo->id;
-                $memo->save();
-            }
-        });
-    }
+    //     static::created(function ($memo) {
+    //         if (self::$skipCreatedEvent) {
+    //             $memo->order = $memo->id;
+    //             $memo->save();
+    //         }
+    //     });
+    // }
 
     protected static function booted()
     {
@@ -47,8 +47,10 @@ class Memo extends Model
             $stock = Stock::find($memo->stock_id); // Memoに関連付けられたストックを取得
 
             if ($user && $stock) {
-                // ユーザーとストックの関連を設定
-                $user->stocks()->syncWithoutDetaching([$stock->id => ['created_at' => now(), 'updated_at' => now()]]);
+                // ユーザーとストックの関連を追加（重複を避ける）
+                if (!$user->stocks()->where('stock_id', $stock->id)->exists()) {
+                    $user->stocks()->attach($stock->id, ['created_at' => now(), 'updated_at' => now()]);
+                }
             }
         });
 
@@ -61,8 +63,10 @@ class Memo extends Model
                 if ($user) {
                     // 古いストックの関連を削除
                     $user->stocks()->detach($oldStockId);
-                    // 新しいストックの関連を追加
-                    $user->stocks()->syncWithoutDetaching([$newStockId => ['created_at' => now(), 'updated_at' => now()]]);
+                    // 新しいストックの関連を追加（重複を避ける）
+                    if (!$user->stocks()->where('stock_id', $newStockId)->exists()) {
+                        $user->stocks()->attach($newStockId, ['created_at' => now(), 'updated_at' => now()]);
+                    }
                 }
             }
         });
