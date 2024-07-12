@@ -22,18 +22,6 @@ class Memo extends Model
     // フラグを追加
     public static $skipCreatedEvent = true;
 
-    // protected static function boot()
-    // {
-    //     parent::boot();
-
-    //     static::created(function ($memo) {
-    //         if (self::$skipCreatedEvent) {
-    //             $memo->order = $memo->id;
-    //             $memo->save();
-    //         }
-    //     });
-    // }
-
     protected static function booted()
     {
         static::deleting(function ($memo) {

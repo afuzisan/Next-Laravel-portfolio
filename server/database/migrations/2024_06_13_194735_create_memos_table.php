@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB; // Added this line
 
 return new class extends Migration
 {
@@ -23,7 +24,7 @@ return new class extends Migration
             $table->timestamp('memo_at_edit')->nullable()->default(null)->useCurrentOnUpdate();
             $table->timestamps();
             $table->softDeletes(); 
-            $table->integer('order')->default(0); // デフォルト値を設定
+            $table->timestamp('order')->default(DB::raw('CURRENT_TIMESTAMP')); // Changed this line
         });
     }
 

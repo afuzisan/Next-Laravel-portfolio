@@ -145,8 +145,6 @@ class MemoController extends Controller
      */
     public function memoTitleCreate(Request $request)
     {
-
-        // $user = 3;
         $user = Auth::id();
         $request->validate([
             'stockNumber' => 'required|integer',
