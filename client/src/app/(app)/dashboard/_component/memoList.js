@@ -15,7 +15,7 @@ import Loading from "@/app/(app)/Loading"; // Loading component imported
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, order}) => {
+const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, order, setMemoRefreshKey}) => {
     const [, setEditor] = useEditorContext()
     const [, setIndexSave] = useIndexSave()
     const [loading, setLoading] = useState(false);
@@ -63,8 +63,10 @@ const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, ord
     const fetchData = async (title) => {
         setLoading(true);
         try {
-            setIndexSave(order); // idからorderに変更
-            const response = await fetch(`http://localhost:8080/api/dashboard/memo?id=${id}`);
+            setIndexSave(order); 
+            const response = await fetch(`http://localhost:8080/api/dashboard/memo?id=${id}`, {
+                cache: 'no-store'
+            });
             if (!response.ok) {
                 throw new Error('Network response was not ok or response is null');
             }
@@ -76,14 +78,14 @@ const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, ord
             const newEditorState = EditorState.createWithContent(contentState, decorator); // EditorStateを作成
 
             newEditorState.getCurrentContent().getPlainText('\n');
-            console.log(order) // idからorderに変更
             setEditor(newEditorState);
-            setActiveOrder(order); // idからorderに変更
+            setActiveOrder(order); 
         } catch (error) {
             console.error('Fetch error:', error);
-            setActiveOrder(order); // idからorderに変更
+            setActiveOrder(order); 
             setEditor(EditorState.createEmpty(decorator));
         } finally {
+            
             setLoading(false);
         }
     };

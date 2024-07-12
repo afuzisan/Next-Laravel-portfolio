@@ -139,6 +139,8 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength }) =
       if (error.response) {
         console.error('Error data:', error.response.data);
       }
+    }finally{
+      setMemoRefreshKey(prevKey => prevKey + 1);
     }
   };
 

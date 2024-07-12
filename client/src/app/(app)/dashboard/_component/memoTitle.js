@@ -115,6 +115,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
                                     index={index}
                                     minOrder={minOrder}
                                     order={memo.order}
+                                    setMemoRefreshKey={setMemoRefreshKey}
                                 />
                             </div>
                         ) : null
