@@ -5,8 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-// use Illuminate\Support\Facades\DB;
-// use Illuminate\Support\Carbon;
 
 class Memo extends Model
 {
@@ -17,19 +15,24 @@ class Memo extends Model
         'memo',
         'memo_title',
         'user_id',
-        'stock_id'
+        'stock_id',
+        'order' 
     ];
 
-    // public function getFormattedCreatedAtAttribute()
-    // {
-    //     return Carbon::parse($this->attributes['created_at'])->format('Y-m-d');
-    // }
+    // フラグを追加
+    public static $skipCreatedEvent = false;
 
-    // public function getFormattedUpdatedAtAttribute()
-    // {
-    //     return Carbon::parse($this->attributes['updated_at'])->format('Y-m-d');
-    // }
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::created(function ($memo) {
+            if (!self::$skipCreatedEvent) {
+                $memo->order = $memo->id;
+                $memo->save();
+            }
+        });
+    }
 
     protected static function booted()
     {

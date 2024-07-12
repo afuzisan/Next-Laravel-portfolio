@@ -34,28 +34,52 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
     );
 
     useEffect(() => {
-        setItems(memos); // MemoTitleRefreshKeyが変わったときにitemsを更新
+        // itemsをorder順にソート
+        const sortedItems = [...memos].sort((a, b) => a.order - b.order);
+        setItems(sortedItems);
     }, [MemoTitleRefreshKey, memos]);
 
     const handleDragEnd = async (event) => {
         const { active, over } = event;
+        console.log(active, over)
         try {
             if (active && over && active.id !== over.id) {
                 const oldIndex = items.findIndex(item => item.id === active.id);
                 const newIndex = items.findIndex(item => item.id === over.id);
 
-                const reorderedItems = arrayMove(items, oldIndex, newIndex);
-                setItems(reorderedItems);
-                console.log(reorderedItems)
-                laravelAxios.post(`http://localhost:8080/api/dashboard/memo/exchange`, {
-                    newId: reorderedItems[newIndex].id,
-                    oldId: reorderedItems[oldIndex].id,
-                })
+                // 複数アイテムの移動ロジック
+                const movedItems = [...items];
+                const [movedItem] = movedItems.splice(oldIndex, 1);
+                movedItems.splice(newIndex, 0, movedItem);
+
+                // orderを更新
+                const updatedItems = movedItems.map((item, index) => ({
+                    ...item,
+                    order: index + 1 // 1から始まる新しいorderを設定
+                }));
+
+                // orderの番号が低い順に並び替え
+                updatedItems.sort((a, b) => a.order - b.order);
+
+                setItems(updatedItems);
+                console.log(updatedItems);
+
+                // 変更されたペアを生成
+                const pairs = [];
+                for (let i = 0; i < updatedItems.length; i++) {
+                    if (items[i].order !== updatedItems[i].order) {
+                        pairs.push({ newId: updatedItems[i].id, oldId: items[i].id });
+                    }
+                }
+                console.log(pairs)
+                await laravelAxios.post(`http://localhost:8080/api/dashboard/memo/exchange`, {
+                    pairs: pairs,
+                });
             }
         } catch (error) {
             console.error('Error saving order:', error);
         } finally {
-            setMemoRefreshKey(prevKey => prevKey + 1);
+            // setMemoRefreshKey(prevKey => prevKey + 1);
         }
     }
 
@@ -66,7 +90,7 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
             onDragEnd={handleDragEnd}
         >
             <SortableContext
-                items={items.map(item => item.id)} // itemsのidを渡す
+                items={items.map(item => item.order)} 
                 strategy={verticalListSortingStrategy}
             >
                 <div key={setMemoRefreshKey} className="break-words overflow-y-auto h-80 border-l border-r w-full break-all">
@@ -84,6 +108,7 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
                                     activeId={activeId}
                                     index={index}
                                     minId={minId}
+                                    order={memo.order}
                                 />
                             </div>
                         ) : null

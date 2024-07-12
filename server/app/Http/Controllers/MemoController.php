@@ -66,9 +66,15 @@ class MemoController extends Controller
         $memo = Memo::find($memoId);
 
         if ($memo) {
+            // createdイベントをスキップするフラグを設定
+            Memo::$skipCreatedEvent = true;
+
             // メモの内容を更新
             $memo->memo = $newContent;
             $memo->save();
+
+            // フラグをリセット
+            Memo::$skipCreatedEvent = false;
 
             return response()->json(['message' => 'Memo updated successfully', 'memo' => $memo]);
         } else {
@@ -150,7 +156,7 @@ class MemoController extends Controller
      * メモを削除する
      * TODO:更新したメモを保存する新しいテーブルの作成
      * TODO:削除したメモを保存する新しいテーブルの作成
-     * TODO:メモを削除する前に削除したメモをコピーして、削除したメモを保存する新しいテーブルにコピー
+     * TODO:メモを削除する前に削除したメモをコピーして、除したメモを保存する新しいテーブルにコピー
      */
     public function memoDelete(Request $request)
     {
@@ -171,31 +177,55 @@ class MemoController extends Controller
     }
     public function exchange(Request $request)
     {
-        $newId = $request->input('newId');
-        $oldId = $request->input('oldId');
+        $pairs = $request->input('pairs'); // [['newId' => 1, 'oldId' => 2], ...]
+        Log::info('Received pairs:', $pairs); // 受信したペアをログに出力
 
-        DB::transaction(function () use ($newId, $oldId) {
-            $newMemo = Memo::find($newId);
-            $oldMemo = Memo::find($oldId);
+        DB::transaction(function () use ($pairs) {
+            // すべてのペアを一度に処理するためのマッピング
+            $memos = Memo::whereIn('id', array_merge(array_column($pairs, 'newId'), array_column($pairs, 'oldId')))->get()->keyBy('id');
 
-            if ($newMemo && $oldMemo) {
-                // メモの内容を交換
-                $tempMemo = $newMemo->memo;
-                $newMemo->memo = $oldMemo->memo;
-                $oldMemo->memo = $tempMemo;
+            foreach ($pairs as $pair) {
+                $newId = $pair['newId'];
+                $oldId = $pair['oldId'];
 
-                // メモのタイトルを交換
-                $tempTitle = $newMemo->memo_title;
-                $newMemo->memo_title = $oldMemo->memo_title;
-                $oldMemo->memo_title = $tempTitle;
+                Log::info("Processing pair: newId={$newId}, oldId={$oldId}");
 
-                // stock_idを交換
-                $tempStockId = $newMemo->stock_id;
-                $newMemo->stock_id = $oldMemo->stock_id;
-                $oldMemo->stock_id = $tempStockId;
+                $newMemo = $memos->get($newId);
+                $oldMemo = $memos->get($oldId);
 
-                $newMemo->save();
-                $oldMemo->save();
+                if ($newMemo && $oldMemo) {
+                    Log::info("Found memos: newMemo={$newMemo->order}, oldMemo={$oldMemo->order}");
+
+                    // メモの内容を交換
+                    $tempMemo = $newMemo->memo;
+                    $newMemo->memo = $oldMemo->memo;
+                    $oldMemo->memo = $tempMemo;
+
+                    // メモのタイトルを交換
+                    $tempTitle = $newMemo->memo_title;
+                    $newMemo->memo_title = $oldMemo->memo_title;
+                    $oldMemo->memo_title = $tempTitle;
+
+                    // orderを交換
+                    $tempOrder = $newMemo->order;
+                    $newMemo->order = $oldMemo->order;
+                    $oldMemo->order = $tempOrder;
+
+                    // 保存前のログ出力
+                    Log::info("Before save: newMemo=" . json_encode($newMemo->toArray()));
+                    Log::info("Before save: oldMemo=" . json_encode($oldMemo->toArray()));
+
+                    $newMemo->save();
+                    $oldMemo->save(); // コメントを解除
+
+                    // 保存後のログ出力
+                    Log::info("After save: newMemo=" . json_encode($newMemo->toArray()));
+                    Log::info("After save: oldMemo=" . json_encode($oldMemo->toArray()));
+
+                    Log::info("Memos exchanged: newMemo={$newMemo->id}, oldMemo={$oldMemo->id}");
+                } else {
+                    Log::warning("Memo not found: newId={$newId}, oldId={$oldId}");
+                }
             }
         });
 

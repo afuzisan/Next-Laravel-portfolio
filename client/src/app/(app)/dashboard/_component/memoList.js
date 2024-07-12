@@ -15,7 +15,7 @@ import Loading from "@/app/(app)/Loading"; // Loading component imported
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const MemoList = ({ title, id, setActiveId, activeId, index, minId}) => {
+const MemoList = ({ title, id, setActiveId, activeId, index, minId, order}) => {
     const [, setEditor] = useEditorContext()
     const [, setIndexSave] = useIndexSave()
     const [loading, setLoading] = useState(false);
