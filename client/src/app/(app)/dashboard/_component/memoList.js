@@ -15,7 +15,7 @@ import Loading from "@/app/(app)/Loading"; // Loading component imported
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const MemoList = ({ title, id, setActiveId, activeId, index, minId, order}) => {
+const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, order}) => {
     const [, setEditor] = useEditorContext()
     const [, setIndexSave] = useIndexSave()
     const [loading, setLoading] = useState(false);
@@ -63,7 +63,7 @@ const MemoList = ({ title, id, setActiveId, activeId, index, minId, order}) => {
     const fetchData = async (title) => {
         setLoading(true);
         try {
-            setIndexSave(id);
+            setIndexSave(order); // idからorderに変更
             const response = await fetch(`http://localhost:8080/api/dashboard/memo?id=${id}`);
             if (!response.ok) {
                 throw new Error('Network response was not ok or response is null');
@@ -76,27 +76,27 @@ const MemoList = ({ title, id, setActiveId, activeId, index, minId, order}) => {
             const newEditorState = EditorState.createWithContent(contentState, decorator); // EditorStateを作成
 
             newEditorState.getCurrentContent().getPlainText('\n');
-            console.log(id)
+            console.log(order) // idからorderに変更
             setEditor(newEditorState);
-            setActiveId(id);
+            setActiveOrder(order); // idからorderに変更
         } catch (error) {
             console.error('Fetch error:', error);
-            setActiveId(id);
+            setActiveOrder(order); // idからorderに変更
             setEditor(EditorState.createEmpty(decorator));
         } finally {
             setLoading(false);
         }
     };
     useEffect(() => {
-        setIndexSave(minId);
-        setActiveId(minId);
-    }, [minId]); // minIdが変わった時だけ実行
+        setIndexSave(minOrder);
+        setActiveOrder(minOrder);
+    }, [minOrder]); // minIdが変わった時だけ実行
 
     return (
         <>
 
             {loading && <Loading />}
-            <li className={`flex items-center hover:bg-gray-100  ${activeId === id  ? 'bg-gray-100' : ''}`}>
+            <li className={`flex items-center hover:bg-gray-100  ${activeOrder === order  ? 'bg-gray-100' : ''}`}>
                 <div className='w-full flex items-center justify-center' >
                     <div ref={setNodeRef} style={{ ...style, cursor: 'grab' }} {...attributes} {...listeners} className="flex items-center w-full">
                         <svg
@@ -116,7 +116,6 @@ const MemoList = ({ title, id, setActiveId, activeId, index, minId, order}) => {
                             className={`flex-1 text-left break-words cursor-pointer p-2`}
                             onClick={() => {
                                 fetchData(title);
-
                             }}
                         >
                             {title}

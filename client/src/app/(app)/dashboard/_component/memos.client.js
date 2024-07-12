@@ -3,7 +3,7 @@
 import { React, useState, useEffect, useContext } from 'react'
 import MemoList from './memoList';
 import MyEditor from '@/components/MyEditor.client'
-import { EditableContext } from './MemoFetch.client'; 
+import { EditableContext } from './MemoFetch.client';
 import { EditorProvider, useEditorContext, useIndexSave } from './EditorContext.client';
 import laravelAxios from '@/lib/laravelAxios';
 import MemoTitle from '@/app/(app)/dashboard/_component/memoTitle'
@@ -12,18 +12,19 @@ import Danger from '@/components/Danger';
 
 const Memos = ({ memos, stock, name, setMemoRefreshKey }) => {
 
-    const [activeId, setActiveId] = useState(memos.length > 0 ? memos[0].id : null);
+    const sortedItems = [...memos].sort((a, b) => a.order - b.order);
+    const [activeOrder, setActiveOrder] = useState(memos.length > 0 ? sortedItems[1]?.order : null);
     const [MemoTitleRefreshKey, setMemoTitleRefreshKey] = useState(0); // Moved here
 
     return (
         <EditorProvider>
-            <MemoContent 
-                memos={memos} 
-                activeId={activeId} 
-                setActiveId={setActiveId} 
-                stock={stock} 
-                name={name} 
-                setMemoRefreshKey={setMemoRefreshKey} 
+            <MemoContent
+                memos={memos}
+                activeOrder={activeOrder}
+                setActiveOrder={setActiveOrder}
+                stock={stock}
+                name={name}
+                setMemoRefreshKey={setMemoRefreshKey}
                 MemoTitleRefreshKey={MemoTitleRefreshKey} // Pass down
                 setMemoTitleRefreshKey={setMemoTitleRefreshKey} // Pass down
             />
@@ -32,13 +33,19 @@ const Memos = ({ memos, stock, name, setMemoRefreshKey }) => {
 }
 
 
-const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefreshKey, MemoTitleRefreshKey, setMemoTitleRefreshKey }) => {
+const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoRefreshKey, MemoTitleRefreshKey, setMemoTitleRefreshKey }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    /*useContextのテスト*/
-    const [isEditable, setIsEditable] = useContext(EditableContext)
+
+    // activeOrderと一致するmemosの配列番号を取得
+    const activeMemoIndex = memos.findIndex((memo) => {
+        console.log(memo.order,activeOrder)
+        return memo.order === activeOrder;
+    });
+    const initMemoIndex = activeMemoIndex === -1 ? 1 : activeMemoIndex;
+
 
 
     const handleClick = () => {
@@ -73,16 +80,16 @@ const MemoContent = ({ memos, activeId, setActiveId, stock, name, setMemoRefresh
     return (
         <>
             <div className="grid grid-cols-[1fr_3fr] h-80 border-r">
-                <MemoTitle 
-                    memos={memos} 
-                    handleClick={handleClick} 
-                    activeId={activeId} 
-                    setActiveId={setActiveId} 
-                    setMemoRefreshKey={setMemoRefreshKey} 
+                <MemoTitle
+                    memos={memos}
+                    handleClick={handleClick}
+                    activeOrder={activeOrder}
+                    setActiveOrder={setActiveOrder}
+                    setMemoRefreshKey={setMemoRefreshKey}
                     MemoTitleRefreshKey={MemoTitleRefreshKey} // Pass down
                 />
 
-                {memos.length >= 0 && memos[1] ? <MyEditor initMemo={memos[1].memo} initId={memos[1].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length}/> : <MyEditor initMemo={memos[0].memo} initId={memos[0].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length}/>}
+                {memos.length >= 0 && memos[1] ? <MyEditor initMemo={memos[initMemoIndex].memo} initId={memos[initMemoIndex].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} /> : <MyEditor initMemo={memos[0].memo} initId={memos[0].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} />}
             </div>
 
             {isModalOpen && (

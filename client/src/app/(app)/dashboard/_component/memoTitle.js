@@ -17,13 +17,13 @@ import {
 import laravelAxios from '@/lib/laravelAxios';
 
 
-const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKey, MemoTitleRefreshKey }) => {
+const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRefreshKey, MemoTitleRefreshKey }) => {
     const [items, setItems] = useState(memos); // items の初期化
-    const [minId, setMinId] = useState(null);
+    const [minOrder, setMinOrder] = useState(null);
 
     useEffect(() => {
-        const sortedItems = [...items].sort((a, b) => a.id - b.id);
-        setMinId(sortedItems[1]?.id);
+        const sortedItems = [...items].sort((a, b) => a.order - b.order);
+        setMinOrder(sortedItems[1]?.order);
     }, [items]);
 
     const sensors = useSensors(
@@ -110,10 +110,10 @@ const MemoTitle = ({ memos, handleClick, setActiveId, activeId, setMemoRefreshKe
                                 <MemoList
                                     title={memo.memo_title}
                                     id={memo.id}
-                                    setActiveId={setActiveId}
-                                    activeId={activeId}
+                                    setActiveOrder={setActiveOrder}
+                                    activeOrder={activeOrder}
                                     index={index}
-                                    minId={minId}
+                                    minOrder={minOrder}
                                     order={memo.order}
                                 />
                             </div>
