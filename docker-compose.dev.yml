@@ -37,6 +37,11 @@ services:
             - "3000:3000"
         depends_on: 
             - server
+    mail:
+        image: mailhog/mailhog
+        ports:
+            - "8025:8025"
+            - "1025:1025" 
 
 networks:
   default:

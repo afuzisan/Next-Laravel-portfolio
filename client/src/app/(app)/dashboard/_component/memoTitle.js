@@ -82,7 +82,6 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
         } catch (error) {
             console.error('Error saving order:', error);
         } finally {
-            // setMemoRefreshKey(prevKey => prevKey + 1);
         }
     }, [items, setMemoRefreshKey]);
 

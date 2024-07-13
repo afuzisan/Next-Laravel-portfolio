@@ -19,7 +19,7 @@ const LinkComponent = ({ links, stock }) => {
         <ul>
             {result.map((link) => (
                 <Link href={link.url} target="_blank" rel="noopener noreferrer" key={link.id}>
-                    <li className="p-2 transition duration-300 ease-in-out hover:bg-gray-100 flex items-center rounded-lg">
+                    <li className="p-2 transition hover:bg-red-100 flex items-center rounded-lg">
                         <img src={`http://www.google.com/s2/favicons?domain=${link.url}`} alt={link.site_name} className="mr-2 flex-shrink-0" />
                         <span className="break-words flex-1 overflow-hidden">{link.site_name}</span>
                     </li>

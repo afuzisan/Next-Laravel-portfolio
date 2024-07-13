@@ -94,7 +94,7 @@ const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, ord
         <>
 
             {loading && <Loading />}
-            <li className={`flex items-center hover:bg-gray-100  ${activeOrder === order  ? 'bg-gray-100' : ''}`}>
+            <li className={`flex items-center hover:bg-red-100  ${activeOrder === order  ? 'bg-gray-100' : ''}`}>
                 <div className='w-full flex items-center justify-center' >
                     <div ref={setNodeRef} style={{ ...style, cursor: 'grab' }} {...attributes} {...listeners} className="flex items-center w-full">
                         <svg

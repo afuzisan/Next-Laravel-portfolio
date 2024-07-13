@@ -42,7 +42,7 @@ RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
 WORKDIR /var/www/
 RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
 # Laravelプロジェクトのソースコードをコピー
-COPY . /var/www/
+# COPY . /var/www/
 # パーミッションの設定
 RUN chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data /var/www/storage
