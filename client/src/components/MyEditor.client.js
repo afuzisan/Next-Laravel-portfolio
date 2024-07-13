@@ -45,9 +45,9 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength }) => {
+const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, editorKey, setEditorKey }) => {
 
-  console.log(initMemo, initId, stock)
+
 
   const [indexSaveState, setIndexSave] = useIndexSave()
 
@@ -119,8 +119,6 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength }) =
 
     try {
 
-      console.log(initId);
-      console.log(indexSaveState);
       const response = await laravelAxios.post(url, JSON.stringify({
         memo: JSON.stringify(raw),
         memo_id: initId,
@@ -246,12 +244,12 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength }) =
         ) : (
           <>
             <div>
-              <button onClick={() => { saveContent(); setReadOnly(true) }} className="text-black p-2">保存</button>
+              <button onClick={() => { saveContent(); setReadOnly(true); }} className="text-black p-2">保存</button>
             </div>
           </>
         )}
       </div>
-      <div readOnly className={readonly ? "p-2" : "p-2 bg-orange-50"}>
+      <div readOnly className={readonly ? "p-2" : "p-2 bg-orange-50"} >
         <Editor
           editorState={editor}
           onChange={onChange}

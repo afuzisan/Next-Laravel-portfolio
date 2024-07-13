@@ -17,7 +17,6 @@ import { CSS } from '@dnd-kit/utilities';
 
 const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, order, setMemoRefreshKey}) => {
     const [, setEditor] = useEditorContext()
-    const [, setIndexSave] = useIndexSave()
     const [loading, setLoading] = useState(false);
 
     const {
@@ -59,11 +58,10 @@ const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, ord
         },
         // 他のデコレータ設定があればここに追加
     ]);
-
-    const fetchData = async (title) => {
+    const fetchData = async () => {
         setLoading(true);
         try {
-            setIndexSave(order); 
+            
             const response = await fetch(`http://localhost:8080/api/dashboard/memo?id=${id}`, {
                 cache: 'no-store'
             });
@@ -85,14 +83,12 @@ const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, ord
             setActiveOrder(order); 
             setEditor(EditorState.createEmpty(decorator));
         } finally {
-            
             setLoading(false);
         }
     };
     useEffect(() => {
-        setIndexSave(minOrder);
         setActiveOrder(minOrder);
-    }, [minOrder]); // minIdが変わった時だけ実行
+    }, [minOrder]); 
 
     return (
         <>
@@ -117,7 +113,8 @@ const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, ord
                             onPointerDown={(e) => e.stopPropagation()}
                             className={`flex-1 text-left break-words cursor-pointer p-2`}
                             onClick={() => {
-                                fetchData(title);
+                                fetchData();
+                                fetchData();
                             }}
                         >
                             {title}

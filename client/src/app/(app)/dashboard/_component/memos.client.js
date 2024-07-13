@@ -37,15 +37,16 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [editorKey, setEditorKey] = useState(0);
 
 
     // activeOrderと一致するmemosの配列番号を取得
     const activeMemoIndex = memos.findIndex((memo) => {
-        console.log(memo.order,activeOrder)
+
         return memo.order === activeOrder;
     });
     const initMemoIndex = activeMemoIndex === -1 ? 1 : activeMemoIndex;
-    console.log('initMemoIndex',initMemoIndex)
+
 
 
     const handleClick = () => {
@@ -67,7 +68,8 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
             const convertedInputValue = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
             await laravelAxios.post('http://localhost:8080/api/dashboard/memoTitleCreate', {
                 "stockNumber": stock,
-                "memo_title": convertedInputValue
+                "memo_title": convertedInputValue,
+                "memo": '{"blocks":[{"key":"cchb4","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}'
             });
             closeModal();
             setMemoRefreshKey(prevKey => prevKey + 1); // ここでステートを更新
@@ -86,10 +88,14 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
                     activeOrder={activeOrder}
                     setActiveOrder={setActiveOrder}
                     setMemoRefreshKey={setMemoRefreshKey}
-                    MemoTitleRefreshKey={MemoTitleRefreshKey} // Pass down
+                    MemoTitleRefreshKey={MemoTitleRefreshKey} 
+                    setEditorKey={setEditorKey}
                 />
 
-                {memos.length >= 0 && memos[1] ? <MyEditor initMemo={memos[initMemoIndex].memo} initId={memos[initMemoIndex].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} /> : <MyEditor initMemo={memos[0].memo} initId={memos[0].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} />}
+                {memos.length >= 0 && memos[1] ? 
+                    <MyEditor editorKey={editorKey} setEditorKey={setEditorKey} initMemo={memos[initMemoIndex].memo} initId={memos[initMemoIndex].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} /> : 
+                    <MyEditor editorKey={editorKey} setEditorKey={setEditorKey} initMemo={memos[0].memo} initId={memos[0].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} />
+                }
             </div>
 
             {isModalOpen && (
@@ -109,7 +115,7 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
                             <input
                                 type="text"
                                 className="border p-1 flex-grow rounded-md"
-                                placeholder="(例)第三四半期決算の忘備録"
+                                placeholder="(例)第三四半期決算"
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                             />

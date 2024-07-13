@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import MemoList from '@@/(app)/dashboard/_component/memoList'
 import {
     DndContext,
@@ -17,8 +17,8 @@ import {
 import laravelAxios from '@/lib/laravelAxios';
 
 
-const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRefreshKey, MemoTitleRefreshKey }) => {
-    const [items, setItems] = useState(memos); // items の初期化
+const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRefreshKey, MemoTitleRefreshKey, setEditorKey }) => {
+    const [items, setItems] = useState(memos); 
     const [minOrder, setMinOrder] = useState(null);
 
     useEffect(() => {
@@ -37,47 +37,44 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
         // itemsをorder順にソート
         const sortedItems = [...memos].sort((a, b) => a.order - b.order);
         setItems(sortedItems);
-    }, [MemoTitleRefreshKey, memos]);
+    }, [memos]);
 
-    const handleDragEnd = async (event) => {
+    const handleDragEnd = useCallback(async (event) => {
         const { active, over } = event;
-        console.log(active, over)
+
         try {
             if (active && over && active.id !== over.id) {
                 const oldIndex = items.findIndex(item => item.id === active.id);
                 const newIndex = items.findIndex(item => item.id === over.id);
-
+                
                 // 複数アイテムの移動ロジック
                 const movedItems = [...items];
                 const [movedItem] = movedItems.splice(oldIndex, 1);
                 movedItems.splice(newIndex, 0, movedItem);
-
+                
                 // orderを更新
                 const updatedItems = movedItems.map((item, index) => ({
                     ...item,
                     order: index + 1 // 1から始まる新しいorderを設定
                 }));
-
+                
                 // orderの番号が低い順に並び替え
                 updatedItems.sort((a, b) => a.order - b.order);
-
+                setMemoRefreshKey(prevKey => prevKey + 1);
                 setItems(updatedItems);
-                console.log(updatedItems);
-
                 // 変更されたペアを生成
                 const pairs = [];
                 for (let i = 0; i < updatedItems.length; i++) {
                     const originalItem = items.find(item => item.id === updatedItems[i].id);
                     if (originalItem && originalItem.order !== updatedItems[i].order) {
-                        pairs.push({ 
-                            newId: updatedItems[i].id, 
+                        pairs.push({
+                            newId: updatedItems[i].id,
                             oldId: originalItem.id,
                             newOrder: updatedItems[i].order,
                             oldOrder: originalItem.order
                         });
                     }
                 }
-                console.log(pairs)
                 await laravelAxios.post(`http://localhost:8080/api/dashboard/memo/exchange`, {
                     pairs: pairs,
                 });
@@ -87,12 +84,31 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
         } finally {
             // setMemoRefreshKey(prevKey => prevKey + 1);
         }
-    }
+    }, [items, setMemoRefreshKey]);
+
+    const memoList = useMemo(() => (
+        items.map((memo, index) => (
+            memo.memo_title ? (
+                <div key={memo.id}>
+                    <MemoList
+                        title={memo.memo_title}
+                        id={memo.id}
+                        setActiveOrder={setActiveOrder}
+                        activeOrder={activeOrder}
+                        index={index}
+                        minOrder={minOrder}
+                        order={memo.order}
+                        setMemoRefreshKey={setMemoRefreshKey}
+                    />
+                </div>
+            ) : null
+        ))
+    ), [items, setActiveOrder, activeOrder, minOrder, setMemoRefreshKey]);
 
     return (
         <DndContext
             sensors={sensors}
-            collisionDetection={closestCenter}
+            pointerWithin={closestCenter}
             onDragEnd={handleDragEnd}
         >
             <SortableContext
@@ -104,22 +120,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
                         <button onClick={handleClick} className="text-black p-2">追加</button>
                         <button className="text-black p-2">編集</button>
                     </div>
-                    {items.map((memo, index) => (
-                        memo.memo_title ? (
-                            <div key={memo.id}>
-                                <MemoList
-                                    title={memo.memo_title}
-                                    id={memo.id}
-                                    setActiveOrder={setActiveOrder}
-                                    activeOrder={activeOrder}
-                                    index={index}
-                                    minOrder={minOrder}
-                                    order={memo.order}
-                                    setMemoRefreshKey={setMemoRefreshKey}
-                                />
-                            </div>
-                        ) : null
-                    ))}
+                    {memoList}
                 </div>
             </SortableContext>
         </DndContext>

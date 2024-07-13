@@ -41,7 +41,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         const fetchData = async () => {
             try {
                 const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount); // ページ番号を渡す
-                console.log(data);
+                
 
                 // ソート処理を追加
                 if (sortOrder === 'dateDesc') {

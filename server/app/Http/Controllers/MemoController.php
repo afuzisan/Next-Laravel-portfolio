@@ -108,7 +108,7 @@ class MemoController extends Controller
         $memo = Memo::create([
             'stock_id' => $request->input('stockNumber'),
             'user_id' => Auth::id(),
-            'memo' => $request->input('memo', null),
+            'memo' => $request->input('memo', 'メモを入力してください'),
             'memo_title' => $request->input('memo_title', null),
             'order' => 0
         ]);
@@ -156,13 +156,17 @@ class MemoController extends Controller
                         ->where('stock_id', $request->input('stockNumber'));
                 }),
             ],
+            'memo' => 'required|string',
         ]);
 
         DB::table('memos')->insert([
             'user_id' => $user,
             'stock_id' => $request->input('stockNumber'),
             'memo_title' => $request->input('memo_title'),
+            'memo' => $request->input('memo'), // 修正: リクエストからメモを取得
         ]);
+
+        return response()->json(['message' => 'Memo title created successfully']); // 修正: レスポンスを追加
     }
 
     /**

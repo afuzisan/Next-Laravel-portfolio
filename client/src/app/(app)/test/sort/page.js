@@ -52,7 +52,7 @@ const ItemList = () => {
 
       const reorderedItems = arrayMove(items, oldIndex, newIndex);
       setItems(reorderedItems);
-      console.log(reorderedItems, oldIndex, newIndex);
+
 
       try {
         // 新しい順序のアイテムリストをサーバーに送信
