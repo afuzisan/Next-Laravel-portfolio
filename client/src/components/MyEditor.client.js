@@ -45,7 +45,7 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, editorKey, setEditorKey }) => {
+const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, editorKey, setEditorKey, activeOrder }) => {
 
 
 
@@ -92,7 +92,7 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, edi
     try {
       editorState = initialText ? JSON.parse(initialText) : {};
     } catch (error) {
-      console.error('Failed to parse initialText:', error);
+      // console.error('Failed to parse initialText:', error);
       editorState = {};
     }
 
@@ -222,7 +222,8 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, edi
               <button onClick={() => {
                 setReadOnly(false);
                 if (!indexSaveState) {
-                  setIndexSave(initId);
+                  console.log(initId)
+                  setIndexSave(activeOrder);
                 }
               }} className="text-black p-2">
                 メモを編集
@@ -232,7 +233,7 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, edi
 
             <button onClick={async () => {
               if (!indexSaveState) {
-                setIndexSave(initId);
+                setIndexSave(activeOrder);
                 await deleteMemo(initId);
                 return;
               }

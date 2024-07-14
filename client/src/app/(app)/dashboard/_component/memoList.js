@@ -72,13 +72,11 @@ const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, ord
                 id: id,
                 cache: 'no-store'
             });
-            console.log(response)
             const contentState = convertFromRaw(JSON.parse(response.data.memo));
             const newEditorState = EditorState.createWithContent(contentState, decorator);
 
             newEditorState.getCurrentContent().getPlainText('\n');
 
-            console.log(newEditorState)
             setEditor(newEditorState);
             setActiveOrder(order);
         } finally {

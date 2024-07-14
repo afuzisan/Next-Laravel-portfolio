@@ -43,7 +43,8 @@ class MemoController extends Controller
 
     public function memo(Request $request)
     {
-        $id = $request->input('id'); // リクエストボディから'id'を取得
+        $id = $request->input('id');
+        
         Log::info('Received id: ' . $id); // 取得したIDをログに出力
 
         // 特定のメモ情報を取得

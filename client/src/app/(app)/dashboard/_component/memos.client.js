@@ -47,8 +47,6 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
     });
     const initMemoIndex = activeMemoIndex === -1 ? 1 : activeMemoIndex;
 
-
-
     const handleClick = () => {
         setIsModalOpen(true);
     }
@@ -93,8 +91,8 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
                 />
 
                 {memos.length >= 0 && memos[1] ? 
-                    <MyEditor editorKey={editorKey} setEditorKey={setEditorKey} initMemo={memos[initMemoIndex].memo} initId={memos[initMemoIndex].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} /> : 
-                    <MyEditor editorKey={editorKey} setEditorKey={setEditorKey} initMemo={memos[0].memo} initId={memos[0].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} />
+                    <MyEditor editorKey={editorKey} setEditorKey={setEditorKey} initMemo={memos[initMemoIndex].memo} initId={memos[initMemoIndex].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} activeOrder={activeOrder}/> : 
+                    <MyEditor editorKey={editorKey} setEditorKey={setEditorKey} initMemo={memos[0].memo} initId={memos[0].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} activeOrder={activeOrder}/>
                 }
             </div>
 
