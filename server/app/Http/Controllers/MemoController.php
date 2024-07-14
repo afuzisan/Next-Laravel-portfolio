@@ -109,7 +109,7 @@ class MemoController extends Controller
             return response()->json(['message' => 'Memo already exists for this stock'], 400);
         }
 
-        // 新しいメモを作成
+        // 新しいメモを���成
         $memo = Memo::create([
             'stock_id' => $request->input('stockNumber'),
             'user_id' => Auth::id(),
@@ -120,7 +120,36 @@ class MemoController extends Controller
 
         return response()->json(['message' => 'Stock stored successfully', 'memo' => $memo]);
     }
+    /**
+     * メモのタイトルを編集
+     */
+    public function memoEdit(Request $request)
+    {
+        $stockNumber = $request->input('stock');
+        $userId = Auth::id();
 
+        $memo = Memo::where('stock_id', $stockNumber)
+            ->where('user_id', $userId)
+            ->get();
+
+        return response()->json(['message' => 'Memo edited successfully', 'memo' => $memo]);
+    }
+
+    public function memoTitleUpdate(Request $request)
+    {
+        $memoData = $request->input('memos');
+        Log::info('Received memo:', ['memos' => $memoData]); 
+
+        foreach ($memoData as $data) {
+            $memo = Memo::find($data['id']);
+            if ($memo && $memo->memo_title !== $data['memo_title']) {
+                $memo->memo_title = $data['memo_title'];
+                $memo->save();
+            }
+        }
+
+        return response()->json(['message' => 'Memo titles updated successfully']);
+    }
     /**
      * 銘柄の削除
      */

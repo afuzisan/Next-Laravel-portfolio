@@ -88,6 +88,8 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
                     setMemoRefreshKey={setMemoRefreshKey}
                     MemoTitleRefreshKey={MemoTitleRefreshKey} 
                     setEditorKey={setEditorKey}
+                    stock={stock}
+                    name={name}
                 />
 
                 {memos.length >= 0 && memos[1] ? 
