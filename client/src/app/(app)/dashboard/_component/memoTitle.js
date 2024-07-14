@@ -188,14 +188,15 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
                         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
                         borderRadius: '8px',
                         border: 'none',
-                        minWidth:'300px'
+                        minWidth:'600px',
+                        maxWidth:'600px'
                     }
                 }}
             >
                 <div style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1, borderBottom: '1px solid #ccc', paddingBottom: '10px', height: '50px', paddingTop:'10px',paddingBottom:'10px', paddingLeft:'10px',}}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h2 style={{ margin: 0 }}>{name}({stock})</h2>
-                        <button onClick={saveChanges} style={{ border: 'none', cursor: 'pointer', fontSize: '0.9em', padding: '5px 10px', backgroundColor: '#007BFF', color: 'white' }}>保存</button>
+                        <h2 className='text-xl font-semibold' style={{ margin: 0 }}>{name}({stock})</h2>
+                        <button onClick={saveChanges} className="rounded-md" style={{ border: 'none', cursor: 'pointer', fontSize: '0.9em', padding: '5px 10px', backgroundColor: '#007BFF', color: 'white' }}>保存</button>
                     </div>
                 </div>
                 <ul style={{ padding: 0, listStyleType: 'none' }}>

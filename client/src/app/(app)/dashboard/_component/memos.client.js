@@ -1,6 +1,7 @@
 'use client'
 
 import { React, useState, useEffect, useContext } from 'react'
+import Modal from 'react-modal';
 import MemoList from './memoList';
 import MyEditor from '@/components/MyEditor.client'
 import { EditableContext } from './MemoFetch.client';
@@ -98,34 +99,34 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
                 }
             </div>
 
-            {isModalOpen && (
-                <div className="fixed inset-0 flex justify-center items-center">
-                    <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full relative">
-                        <div className="flex justify-between items-center mb-4">
-                            <div className="text-xl font-semibold">{name}({stock})にメモを追加します。</div>
-                            <div
-                                className="close cursor-pointer text-gray-500 hover:text-gray-700 text-xl absolute top-2 right-2 p-1 border border-gray-500 rounded-md hover:bg-gray-200"
-                                onClick={closeModal}
-                                style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                            >
-                                &times;
-                            </div>
-                        </div>
-                        <div className="flex space-x-2">
-                            <input
-                                type="text"
-                                className="border p-1 flex-grow rounded-md"
-                                placeholder="(例)第三四半期決算"
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                            />
-                            <button onClick={handleSubmit} className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">送信</button>
-                           
-                        </div>
-                        {errorMessage && <Danger errorMessage={errorMessage} setErrorMessage={setErrorMessage} className="mt-2 w-full text-white bg-red-400 bg-opacity-75 border border-red-500 p-2 cursor-pointer text-center flex items-center" />}
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={closeModal}
+                className="bg-white p-6 rounded-lg shadow-2xl max-w-md w-full relative"
+                overlayClassName="fixed inset-0 flex justify-center items-center bg-white bg-opacity-75"
+            >
+                <div className="flex justify-between items-center mb-4">
+                    <div className="text-xl font-semibold">{name}({stock})にメモを追加します。</div>
+                    <div
+                        className="close cursor-pointer text-gray-500 hover:text-gray-700 text-xl absolute top-2 right-2 p-1 border border-gray-500 rounded-md hover:bg-gray-200"
+                        onClick={closeModal}
+                        style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                        &times;
                     </div>
                 </div>
-            )}
+                <div className="flex space-x-2">
+                    <input
+                        type="text"
+                        className="border p-1 flex-grow rounded-md"
+                        placeholder="(例)第三四半期決算"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                    />
+                    <button onClick={handleSubmit} className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">保存</button>
+                </div>
+                {errorMessage && <Danger errorMessage={errorMessage} setErrorMessage={setErrorMessage} className="mt-2 w-full text-white bg-red-400 bg-opacity-75 border border-red-500 p-2 cursor-pointer text-center flex items-center" />}
+            </Modal>
         </>
     );
 }
