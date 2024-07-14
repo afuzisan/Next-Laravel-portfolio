@@ -11,7 +11,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard/reviews/', [MemoController::class, 'index']);
-    Route::get('dashboard/memo', [MemoController::class, 'memo']);
+    Route::post('dashboard/memo', [MemoController::class, 'memo']);
     Route::post('dashboard/memoUpdate', [MemoController::class, 'memoUpdate']);
     Route::post('dashboard/stockStore', [MemoController::class, 'stockStore']);
     Route::post('dashboard/stockDelete', [MemoController::class, 'stockDelete']);

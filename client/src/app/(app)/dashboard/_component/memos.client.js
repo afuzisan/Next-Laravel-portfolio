@@ -120,6 +120,7 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
                                 onChange={(e) => setInputValue(e.target.value)}
                             />
                             <button onClick={handleSubmit} className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">送信</button>
+                           
                         </div>
                         {errorMessage && <Danger errorMessage={errorMessage} setErrorMessage={setErrorMessage} className="mt-2 w-full text-white bg-red-400 bg-opacity-75 border border-red-500 p-2 cursor-pointer text-center flex items-center" />}
                     </div>

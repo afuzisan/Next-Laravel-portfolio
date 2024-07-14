@@ -15,11 +15,44 @@ import {
     verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import laravelAxios from '@/lib/laravelAxios';
+import Modal from 'react-modal';
 
 
 const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRefreshKey, MemoTitleRefreshKey, setEditorKey }) => {
     const [items, setItems] = useState(memos); 
     const [minOrder, setMinOrder] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editedMemos, setEditedMemos] = useState(memos);
+
+    const handleEdit = () => {
+        
+        setIsModalOpen(true);
+    }
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    }
+
+    const handleInputChange = (id, value) => {
+        
+        setEditedMemos(prevMemos => 
+            prevMemos.map(memo => 
+                memo.id === id ? { ...memo, memo_title: value } : memo
+            )
+        );
+    }
+
+    const saveChanges = async () => {
+        try {
+            // await laravelAxios.post('http://localhost:8080/api/dashboard/memo/update', {
+            //     memos: editedMemos,
+            // });
+            setMemoRefreshKey(prevKey => prevKey + 1);
+            closeModal();
+        } catch (error) {
+            console.error('Error saving changes:', error);
+        }
+    }
 
     useEffect(() => {
         const sortedItems = [...items].sort((a, b) => a.order - b.order);
@@ -117,11 +150,41 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
                 <div key={setMemoRefreshKey} className="break-words overflow-y-auto h-80 border-l border-r w-full break-all">
                     <div className="border-b-2 pr-1 pl-1 sticky top-0 bg-white flex justify-center">
                         <button onClick={handleClick} className="text-black p-2">追加</button>
-                        <button className="text-black p-2">編集</button>
+                        <button onClick={handleEdit} className="text-black p-2">編集</button>
                     </div>
                     {memoList}
                 </div>
             </SortableContext>
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={closeModal}
+                contentLabel="編集モダール"
+                style={{
+                    content: {
+                        top: '50%',
+                        left: '50%',
+                        right: 'auto',
+                        bottom: 'auto',
+                        marginRight: '-50%',
+                        transform: 'translate(-50%, -50%)'
+                    }
+                }}
+            >
+                <h2>編集モダール</h2>
+                <ul>
+                    {editedMemos.map(memo => (
+                        <li key={memo.id}>
+                            <input 
+                                type="text" 
+                                value={memo.memo_title} 
+                                onChange={(e) => handleInputChange(memo.id, e.target.value)} 
+                            />
+                        </li>
+                    ))}
+                </ul>
+                <button onClick={saveChanges}>保存</button>
+                <button onClick={closeModal}>閉じる</button>
+            </Modal>
         </DndContext>
     )
 }

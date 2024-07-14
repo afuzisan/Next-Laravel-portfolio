@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use App\Models\Memo;
 use App\Models\User;
-use Illuminate\Routing\Controller; // Added this line
+use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
@@ -43,17 +43,21 @@ class MemoController extends Controller
 
     public function memo(Request $request)
     {
-        $id = $request->query('id');
+        $id = $request->input('id'); // リクエストボディから'id'を取得
+        Log::info('Received id: ' . $id); // 取得したIDをログに出力
+
         // 特定のメモ情報を取得
         $memo = null;
         if ($id) {
-            $memo = Memo::select('memo')->find($id);
+            $memo = Memo::find($id); // プライマリーキーに一致する行をすべて取得
             if (!$memo) {
                 return response()->json(['message' => 'Memo not found'], 404);
             }
+        } else {
+            return response()->json(['message' => 'ID is required'], 400);
         }
-        $response = $memo;
-        return response()->json($response);
+
+        return response()->json($memo);
     }
 
     public function memoUpdate(Request $request)
@@ -172,7 +176,7 @@ class MemoController extends Controller
     /**
      * メモを削除する
      * TODO:更新したメモを保存する新しいテーブルの作成
-     * TODO:削除したメモを保存する新しいテーブルの作成
+     * TODO:削除したメモを保存する新しいテーブルの成
      * TODO:メモを削除する前に削除したメモをコピーして、したメモを保存する新しいテーブルにコピー
      */
     public function memoDelete(Request $request)

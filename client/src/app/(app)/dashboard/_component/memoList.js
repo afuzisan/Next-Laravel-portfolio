@@ -14,8 +14,9 @@ import React from 'react';
 import Loading from "@/app/(app)/Loading"; // Loading component imported
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import laravelAxios from '@/lib/laravelAxios';
 
-const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, order, setMemoRefreshKey}) => {
+const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, order, setMemoRefreshKey }) => {
     const [, setEditor] = useEditorContext()
     const [loading, setLoading] = useState(false);
 
@@ -61,40 +62,38 @@ const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, ord
     const fetchData = async () => {
         setLoading(true);
         try {
-            
-            const response = await fetch(`http://localhost:8080/api/dashboard/memo?id=${id}`, {
+            setActiveOrder(order);
+            setEditor(EditorState.createEmpty(decorator));
+            // setMemoRefreshKey(prev=>prev+1)
+            console.log(id)
+            const URL = 'http://localhost:8080/api/dashboard/memo';
+            console.log(URL)
+            const response = await laravelAxios.post(URL, {
+                id: id,
                 cache: 'no-store'
             });
-            if (!response.ok) {
-                throw new Error('Network response was not ok or response is null');
-            }
-            const result = await response.json();
-            if (typeof result.memo !== 'string' || result.memo === null) {
-                throw new Error('Invalid memo format');
-            }
-            const contentState = convertFromRaw(JSON.parse(result.memo)); // JSONからContentStateを作成
-            const newEditorState = EditorState.createWithContent(contentState, decorator); // EditorStateを作成
+            console.log(response)
+            const contentState = convertFromRaw(JSON.parse(response.data.memo));
+            const newEditorState = EditorState.createWithContent(contentState, decorator);
 
             newEditorState.getCurrentContent().getPlainText('\n');
+
+            console.log(newEditorState)
             setEditor(newEditorState);
-            setActiveOrder(order); 
-        } catch (error) {
-            console.error('Fetch error:', error);
-            setActiveOrder(order); 
-            setEditor(EditorState.createEmpty(decorator));
+            setActiveOrder(order);
         } finally {
             setLoading(false);
         }
     };
     useEffect(() => {
         setActiveOrder(minOrder);
-    }, [minOrder]); 
+    }, [minOrder]);
 
     return (
         <>
 
             {loading && <Loading />}
-            <li className={`flex items-center hover:bg-red-100  ${activeOrder === order  ? 'bg-gray-100' : ''}`}>
+            <li className={`flex items-center hover:bg-red-100  ${activeOrder === order ? 'bg-gray-100' : ''}`}>
                 <div className='w-full flex items-center justify-center' >
                     <div ref={setNodeRef} style={{ ...style, cursor: 'grab' }} {...attributes} {...listeners} className="flex items-center w-full">
                         <svg
@@ -113,7 +112,6 @@ const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, ord
                             onPointerDown={(e) => e.stopPropagation()}
                             className={`flex-1 text-left break-words cursor-pointer p-2`}
                             onClick={() => {
-                                fetchData();
                                 fetchData();
                             }}
                         >
