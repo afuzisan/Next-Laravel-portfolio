@@ -67,7 +67,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     }, [MemoRefreshKey, sortOrder, currentPage, param]); // paramを依存に追加
 
     if (error) {
-        return <div>Error loading data</div>;
+        return <div>新しく銘柄を登録してください</div>;
     }
 
     if (!result) {

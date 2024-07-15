@@ -74,4 +74,9 @@ class User extends Authenticatable implements MustVerifyEmailContract
     {
         $this->notify(new VerifyEmail); // Added
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+    }
 }
