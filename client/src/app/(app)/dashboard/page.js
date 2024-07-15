@@ -49,7 +49,7 @@ const Dashboard = () => {
             })
             .catch((error) => {
                 console.error("Error:", error.response.data); // エラーメッセージをコンソールに表示
-                setErrorMessage("エラー発生しました: " + error.response.data.message);
+                setErrorMessage(error.response.data.message);
             });
     };
 
