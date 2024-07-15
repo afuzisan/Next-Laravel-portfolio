@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MemoController;
 use App\Http\Controllers\ExternalLinkController;
+use App\Http\Controllers\UserController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -23,4 +24,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('mypage/externallinks', [ExternalLinkController::class, 'index']);
     Route::post('mypage/externallinks/create', [ExternalLinkController::class, 'create']);
     Route::post('mypage/externallinks/delete', [ExternalLinkController::class, 'destroy']);
+    Route::post('mypage/deleteAccount', [UserController::class, 'deleteAccount']);
 });

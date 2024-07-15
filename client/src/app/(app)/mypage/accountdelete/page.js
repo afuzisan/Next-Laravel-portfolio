@@ -11,22 +11,27 @@ const Component = () => {
     const [fetchTrigger, setFetchTrigger] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false) // モーダルの状態
 
-    const fetchData = () => {
-        laravelAxios.get('http://localhost:8080/api/mypage/externallinks', { cache: 'no-store' })
-            .then(response => {
-                setData(response.data)
-            })
-            .catch(error => {
-                console.error(error)
-            })
+    const fetchData = async () => {
+        try {
+            const response = await laravelAxios.post('http://localhost:8080/api/mypage/deleteAccount');
+            console.log(response)
+            if (response.status !== 200) {
+                throw new Error('アカウント削除に失敗しました。');
+            }
+        } catch (error) {
+            console.error('APIリクエストエラー:', error);
+            throw error;
+        }
     }
 
-    useEffect(() => {
-        fetchData()
-    }, [fetchTrigger])
-
-    const handleDelete = () => {
-        // 削除処理
+    const handleDelete = async () => {
+        try {
+            await fetchData();
+            alert('アカウントが削除されました。');
+        } catch (error) {
+            console.error('アカウント削除エラー:', error);
+            alert('アカウント削除に失敗しました。');
+        }
     }
 
     return (

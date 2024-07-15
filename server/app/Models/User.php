@@ -8,11 +8,12 @@ use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Auth\Notifications\VerifyEmail; // Added
+use Illuminate\Auth\Notifications\VerifyEmail; 
+
 
 class User extends Authenticatable implements MustVerifyEmailContract
 {
-    use HasFactory, Notifiable, MustVerifyEmail;
+    use HasFactory, Notifiable, MustVerifyEmail ;
     
 
     /**
@@ -56,7 +57,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
 
     public function stocks()
     {
-        return $this->belongsToMany(Stock::class, 'stock_user');
+        return $this->belongsToMany(Stock::class, 'stock_user', 'user_id', 'stock_id');
     }
 
     public function links()
