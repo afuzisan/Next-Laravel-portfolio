@@ -36,4 +36,11 @@ class UserController extends Controller
 
         return response()->json(['message' => 'ユーザーが見つかりません。'], 404);
     }
+
+    public function memo_display_number()
+    {
+        $userId = Auth::id();
+        $memo_display_number = User::where('id', $userId)->value('memo_display_number');
+        return response()->json(['memo_display_number' => $memo_display_number]);
+    }
 }

@@ -3,14 +3,12 @@
 import { useState, useEffect } from "react"
 import laravelAxios from "@/lib/laravelAxios";
 
-const InputChange = ({ info = { placeholder: '入力欄', initialValue: '', type: 'text'} }) => {
-    const { placeholder, initialValue, type} = info;
+const InputChange = ({placeholder, initialValue, type}) => {
     const [inputValue, setInputValue] = useState(initialValue);
 
     useEffect(() => {
-        console.log('info:', info);
         console.log('initialValue:', initialValue);
-    }, [info, initialValue]);
+    }, [initialValue]);
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
