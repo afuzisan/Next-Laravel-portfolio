@@ -22,6 +22,23 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     const [error, setError] = useState(null);
     const [MemoRefreshKey, setMemoRefreshKey] = useState(0);
     const [isEditable, setIsEditable] = useState(true);
+    const [chartImage, setChartImage] = useState(`https://www.kabudragon.com/chart/s=[code]`);
+    const [chartCount, setChartCount] = useState(0);
+    const [chartImages, setChartImages] = useState({});
+
+    const handleImageClick = (stockCode) => {
+        setChartCount(chartCount + 1);
+        let newChartImage;
+        if (chartCount === 0) {
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/volb=1.png`;
+        } else if (chartCount === 1) {
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/volb=1/a=1.png`;
+        } else {
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/volb=1/a=2.png`;
+            setChartCount(0);
+        }
+        setChartImages(prevImages => ({ ...prevImages, [stockCode]: newChartImage }));
+    };
 
     const handleDelete = (stockCode) => {
         if (window.confirm(`${stockCode}を本当に削除しますか？`)) {
@@ -40,7 +57,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount,setItemsPerPage); // ページ番号を渡す
+                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage); // ページ番号を渡す
                 setItemsPerPage(data.memo_display_number)
                 // console.log(data.memo_display_number)
 
@@ -78,38 +95,46 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     return (
         <EditableContext.Provider value={[isEditable, setIsEditable]}>
             {result && result.stocks && result.stocks.length > 0 ? (
-                result.stocks.map((stock, index) => (
-                    <React.Fragment key={stock.stock_code}>
-                        <div className="grid grid-cols-6 border px-3 py-2">
-                            <div className="col-span-5 flex items-center">
-                                <span className="grid-item px-6">
-                                    {stock.memos.length > 0 ? formatDateToISO(new Date(stock.memos[0].created_at)) : 'N/A'}
-                                </span>
-                                <span className="grid-item px-6">{stock.stock_name}</span>
-                                <span className="grid-item px-6">{stock.stock_code}</span>
+                result.stocks.map((stock, index) => {
+
+
+                    return (
+                        <React.Fragment key={stock.stock_code}>
+                            <div className="grid grid-cols-6 border px-3 py-2">
+                                <div className="col-span-5 flex items-center">
+                                    <span className="grid-item px-6">
+                                        {stock.memos.length > 0 ? formatDateToISO(new Date(stock.memos[0].created_at)) : 'N/A'}
+                                    </span>
+                                    <span className="grid-item px-6">{stock.stock_name}</span>
+                                    <span className="grid-item px-6">{stock.stock_code}</span>
+                                </div>
+                                <div className="col-span-1 flex justify-end">
+                                    <button className="bg-red-500 text-white px-4 py-2 hover:bg-red-700" onClick={() => handleDelete(stock.stock_code)}>{stock.stock_code}を削除</button>
+                                </div>
                             </div>
-                            <div className="col-span-1 flex justify-end">
-                                <button className="bg-red-500 text-white px-4 py-2 hover:bg-red-700" onClick={() => handleDelete(stock.stock_code)}>{stock.stock_code}を削除</button>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-[1fr_3fr_3fr] h-[320px]">
-                            <div className="grid-item p-2 overflow-y-auto h-80 whitespace-break-spaces border-l">
-                                <LinkComponent links={result.links} stock={stock.stock_code} />
-                            </div>
-                            <Memos key={`${stock.stock_code}-${MemoRefreshKey}`} memos={stock.memos} stock={stock.stock_code} name={stock.stock_name} setMemoRefreshKey={setMemoRefreshKey} />
-                            <div className="grid-item pl-2">
-                                <img src={`https://www.kabudragon.com/chart/s=${stock.stock_code}`} className="h-full w-full object-scale-down border-r" />
-                            </div>
-                        </div >
-                    </React.Fragment>
-                ))
+                            <div className="grid grid-cols-[1fr_3fr_3fr] h-[320px]">
+                                <div className="grid-item p-2 overflow-y-auto h-80 whitespace-break-spaces border-l">
+                                    <LinkComponent links={result.links} stock={stock.stock_code} />
+                                </div>
+                                <Memos key={`${stock.stock_code}-${MemoRefreshKey}`} memos={stock.memos} stock={stock.stock_code} name={stock.stock_name} setMemoRefreshKey={setMemoRefreshKey} />
+                                <div className="grid-item pl-2">
+                                    <img
+                                        src={chartImages[stock.stock_code] || chartImage.replace('[code]', stock.stock_code)}
+                                        className="h-full w-full object-scale-down border-r"
+                                        onClick={() => handleImageClick(stock.stock_code)} 
+                                    />
+                                </div>
+                            </div >
+                        </React.Fragment>
+                    );
+                })
             ) : (
                 <div>No data available</div>
             )}
         </EditableContext.Provider>
     )
 }
-const initFetch = async (param, itemsPerPage,setTotalStockCount,setItemsPerPage) => {
+const initFetch = async (param, itemsPerPage, setTotalStockCount, setItemsPerPage) => {
     try {
         const result = await laravelAxios.get(`http://localhost:8080/api/dashboard/reviews?param=${param}&page=${itemsPerPage}`, { cache: 'no-cache' });
         setTotalStockCount(result.data.totalStockCount)
@@ -120,4 +145,6 @@ const initFetch = async (param, itemsPerPage,setTotalStockCount,setItemsPerPage)
         throw error; // エラーを再スローして呼び出し元で処理
     }
 }
+
+
 export default MemoFetch
