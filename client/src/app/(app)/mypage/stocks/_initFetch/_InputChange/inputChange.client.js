@@ -27,9 +27,7 @@ const InputChange = ({placeholder, initialValue, type}) => {
             popup.style.padding = '5px';
             popup.style.borderRadius = '3px';
             formRef.current.appendChild(popup);
-            setTimeout(() => {
-                formRef.current.removeChild(popup);
-            }, 3000);
+
         } catch (error) {
             const errorPopup = document.createElement('div');
             errorPopup.textContent = '更新に失敗しました';
@@ -41,9 +39,7 @@ const InputChange = ({placeholder, initialValue, type}) => {
             errorPopup.style.borderRadius = '3px';
             errorPopup.style.textAlign = 'center';
             formRef.current.appendChild(errorPopup);
-            setTimeout(() => {
-                formRef.current.removeChild(errorPopup);
-            }, 3000);
+
         }
     };
 

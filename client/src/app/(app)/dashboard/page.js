@@ -33,7 +33,7 @@ const Dashboard = () => {
 
     const handleRegisterClick = (inputValue) => {
 
-        // ２バイト数字を１バイト数字に変換
+        // ２バイト数字���１バイト数字に変換
         const normalizedInput = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
         const stockNumber = parseInt(normalizedInput, 10); // 入力値を整数に変換
         if (isNaN(stockNumber) || stockNumber < 1000 || stockNumber > 9999) { // 4桁の整数かどうかを確認
@@ -121,15 +121,13 @@ const Dashboard = () => {
                                     ＜
                                 </button>
                             </li>
-                            {[...Array(Math.ceil(result ? result.stocks.length / itemsPerPage : 0)).keys()].map(page => (
-                                <li key={page}>
-                                    <button
-                                        className={`px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-red-100 hover:text-gray-700 ${page + 1 === currentPage ? 'bg-gray-100' : 'bg-white'}`}
-                                    >
-                                        {currentPage + 1}
-                                    </button>
-                                </li>
-                            ))}
+                            <li>
+                                <button
+                                    className={`px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-red-100 hover:text-gray-700 ${currentPage + 1 === currentPage ? 'bg-gray-100' : 'bg-white'}`}
+                                >
+                                    {currentPage + 1}
+                                </button>
+                            </li>
                             <li>
                                 <button
                                     onClick={() => {

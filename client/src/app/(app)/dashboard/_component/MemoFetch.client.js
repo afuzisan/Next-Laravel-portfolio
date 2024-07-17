@@ -40,8 +40,9 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount); // ページ番号を渡す
-                
+                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount,setItemsPerPage); // ページ番号を渡す
+                setItemsPerPage(data.memo_display_number)
+                // console.log(data.memo_display_number)
 
                 // ソート処理を追加
                 if (sortOrder === 'dateDesc') {
@@ -108,10 +109,11 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         </EditableContext.Provider>
     )
 }
-const initFetch = async (param, itemsPerPage,setTotalStockCount) => {
+const initFetch = async (param, itemsPerPage,setTotalStockCount,setItemsPerPage) => {
     try {
         const result = await laravelAxios.get(`http://localhost:8080/api/dashboard/reviews?param=${param}&page=${itemsPerPage}`, { cache: 'no-cache' });
         setTotalStockCount(result.data.totalStockCount)
+        // setItemsPerPage(result.data.memo_display_number)
         return result.data.user;
     } catch (error) {
         console.error('Error fetching data:', error);
