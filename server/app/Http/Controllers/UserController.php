@@ -43,4 +43,12 @@ class UserController extends Controller
         $memo_display_number = User::where('id', $userId)->value('memo_display_number');
         return response()->json(['memo_display_number' => $memo_display_number]);
     }
+
+    public function memo_display_number_update(Request $request)
+    {
+        $userId = Auth::id();
+        $memo_display_number = $request->input('memo_display_number');
+        User::where('id', $userId)->update(['memo_display_number' => $memo_display_number]);
+        return response()->json(['message' => '１ページに表示する銘柄数を「' . $memo_display_number . '」に変更しました。']);
+    }
 }

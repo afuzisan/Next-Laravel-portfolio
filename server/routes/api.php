@@ -25,5 +25,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('mypage/externallinks/create', [ExternalLinkController::class, 'create']);
     Route::post('mypage/externallinks/delete', [ExternalLinkController::class, 'destroy']);
     Route::get('mypage/memo_display_number', [UserController::class, 'memo_display_number']);
+    Route::post('mypage/memo_display_number_update', [UserController::class, 'memo_display_number_update']);
     Route::post('mypage/deleteAccount', [UserController::class, 'deleteAccount']);
 });
