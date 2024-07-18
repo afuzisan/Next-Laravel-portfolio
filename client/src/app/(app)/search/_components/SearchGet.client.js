@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import laravelAxios from '@/lib/laravelAxios';
+import { Editor, EditorState, convertFromRaw } from 'draft-js';
 
 const SearchGet = () => {
     const searchParams = useSearchParams()
@@ -26,7 +27,15 @@ const SearchGet = () => {
             <h1>SearchGet</h1>
             <ul>
                 {data.map((item, index) => (
-                    <li key={index}>{item.memo_title}</li> // memo_titleを表示
+                    <>
+                        <li key={index}>{item.memo_title}</li>
+                        <li key={index}>
+                            <Editor
+                                editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(item.memo)))}
+                                readOnly={true}
+                            />
+                        </li>
+                    </>
                 ))}
             </ul>
         </div>

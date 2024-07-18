@@ -109,11 +109,11 @@ class MemoController extends Controller
             return response()->json(['message' => 'Memo already exists for this stock'], 400);
         }
 
-        // 新しいメモを���成
+        // 新しいメモを作成
         $memo = Memo::create([
             'stock_id' => $request->input('stockNumber'),
             'user_id' => Auth::id(),
-            'memo' => $request->input('memo', 'メモを入力してください'),
+            'memo' => $request->input('memo', '{"blocks":[{"key":"cchb4","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}'),
             'memo_title' => $request->input('memo_title', null),
             'order' => 0
         ]);
