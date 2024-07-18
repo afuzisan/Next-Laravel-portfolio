@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User; 
 use App\Models\Stock; 
+use Illuminate\Support\Facades\Schema; // 追加
+use Illuminate\Database\Schema\Blueprint; // 追加
 
 class Memo extends Model
 {
@@ -76,5 +78,15 @@ class Memo extends Model
     public function stock()
     {
         return $this->belongsTo(Stock::class, 'stock_id');
+    }
+
+    /**
+     * モデルのインデックスを定義
+     */
+    public function buildIndexes()
+    {
+        Schema::table('memos', function (Blueprint $table) {
+            $table->index('memo');
+        });
     }
 }

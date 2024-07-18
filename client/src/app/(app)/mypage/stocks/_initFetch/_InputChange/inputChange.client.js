@@ -18,6 +18,7 @@ const InputChange = ({placeholder, initialValue, type}) => {
             const response = await laravelAxios.post('http://localhost:8080/api/mypage/memo_display_number_update', { 
                 memo_display_number: inputValue 
             });
+            localStorage.setItem('itemsPerPage', inputValue); 
             const popup = document.createElement('div');
             popup.textContent = response.data.message;
             popup.style.color = 'white';  

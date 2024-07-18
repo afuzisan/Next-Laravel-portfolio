@@ -96,8 +96,6 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         <EditableContext.Provider value={[isEditable, setIsEditable]}>
             {result && result.stocks && result.stocks.length > 0 ? (
                 result.stocks.map((stock, index) => {
-
-
                     return (
                         <React.Fragment key={stock.stock_code}>
                             <div className="grid grid-cols-6 border px-3 py-2">

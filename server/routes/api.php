@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MemoController;
 use App\Http\Controllers\ExternalLinkController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SearchController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -27,4 +28,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('mypage/memo_display_number', [UserController::class, 'memo_display_number']);
     Route::post('mypage/memo_display_number_update', [UserController::class, 'memo_display_number_update']);
     Route::post('mypage/deleteAccount', [UserController::class, 'deleteAccount']);
+    Route::get('search/memo', [SearchController::class, 'searchMemo']);
 });

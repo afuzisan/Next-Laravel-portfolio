@@ -19,9 +19,15 @@ const Dashboard = () => {
     const [currentPage, setCurrentPage] = useState(() => {
         return parseInt(localStorage.getItem('currentPage'), 10) || 0;
     });
-    const [itemsPerPage, setItemsPerPage] = useState(3);
+    const [itemsPerPage, setItemsPerPage] = useState(() => {
+        return parseInt(localStorage.getItem('itemsPerPage'), 10) || 100;
+    });
     const [result, setResult] = useState(null);
     const [totalStockCount, setTotalStockCount] = useState(0);
+
+    useEffect(() => {
+        localStorage.setItem('itemsPerPage', itemsPerPage);
+    }, [itemsPerPage]);
 
     useEffect(() => {
         localStorage.setItem('sortOrder', sortOrder);
@@ -33,7 +39,7 @@ const Dashboard = () => {
 
     const handleRegisterClick = (inputValue) => {
 
-        // ２バイト数字���１バイト数字に変換
+        // ２バイト数字１バイト数字に変換
         const normalizedInput = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
         const stockNumber = parseInt(normalizedInput, 10); // 入力値を整数に変換
         if (isNaN(stockNumber) || stockNumber < 1000 || stockNumber > 9999) { // 4桁の整数かどうかを確認
@@ -148,7 +154,7 @@ const Dashboard = () => {
                         sortOrder={sortOrder}
                         currentPage={currentPage}
                         itemsPerPage={itemsPerPage}
-                        onDataFetched={setResult} 
+                        onDataFetched={setResult}
                         setItemsPerPage={setItemsPerPage}
                         setTotalStockCount={setTotalStockCount}
                     />
