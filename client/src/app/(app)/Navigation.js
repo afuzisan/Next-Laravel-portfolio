@@ -8,6 +8,7 @@ import { DropdownButton } from '@/components/DropdownLink'
 import { useAuth } from '@/hooks/auth'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import Search from '@/components/_Navigation/Search'
 
 const Navigation = ({ user }) => {
     const { logout } = useAuth()
@@ -46,19 +47,7 @@ const Navigation = ({ user }) => {
                             </NavLink>
                         </div>
                     </div>
-                    <div className="flex justify-center w-full">
-                        <div className="flex items-center w-full max-w-4xl px-6">
-                            <input type="text" className="flex-grow px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg" placeholder="検索..." />
-                            <select className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300">
-                                <option value="title">タイトル</option>
-                                <option value="content">内容</option>
-                                <option value="author">著者</option>
-                                <option value="date">日付</option>
-                                <option value="code">証券コード</option>
-                            </select>
-                            <button className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">検索</button>
-                        </div>
-                    </div>
+                    <Search />
 
                     {/* Settings Dropdown */}
                     <div className="hidden sm:flex sm:items-center sm:ml-6">

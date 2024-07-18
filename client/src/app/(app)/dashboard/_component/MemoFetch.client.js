@@ -120,7 +120,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                                 <div className="grid-item pl-2">
                                     <img
                                         src={chartImages[stock.stock_code] || chartImage.replace('[code]', stock.stock_code)}
-                                        className="h-full w-full object-scale-down border-r"
+                                        className="h-full w-full object-scale-down border-r cursor-pointer"
                                         onClick={() => handleImageClick(stock.stock_code)} 
                                     />
                                 </div>
