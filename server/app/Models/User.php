@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Notifications\VerifyEmail; 
-
+use Carbon\Carbon;
 
 class User extends Authenticatable implements MustVerifyEmailContract
 {
@@ -78,5 +78,14 @@ class User extends Authenticatable implements MustVerifyEmailContract
     protected static function boot()
     {
         parent::boot();
+
+        static::creating(function ($user) {
+            $user->created_at = Carbon::now('Asia/Tokyo');
+            $user->updated_at = Carbon::now('Asia/Tokyo');
+        });
+
+        static::updating(function ($user) {
+            $user->updated_at = Carbon::now('Asia/Tokyo');
+        });
     }
 }

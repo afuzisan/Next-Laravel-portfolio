@@ -41,9 +41,9 @@ const Navigation = ({ user }) => {
                                 mypage
                             </NavLink>
                             <NavLink
-                                href="/memo"
-                                active={usePathname() === '/memo'}>
-                                memo
+                                href="/dashboard/Log"
+                                active={usePathname() === '/dashboard/Log'}>
+                                Log
                             </NavLink>
                         </div>
                     </div>

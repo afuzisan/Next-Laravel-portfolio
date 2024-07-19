@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class Stock extends Model
 {
@@ -30,5 +31,18 @@ class Stock extends Model
     public function memos()
     {
         return $this->hasMany(Memo::class, 'stock_id');
+    }
+
+    // モデルのイベントをフックしてタイムゾーンを設定
+    protected static function booted()
+    {
+        static::creating(function ($stock) {
+            $stock->created_at = Carbon::now('Asia/Tokyo');
+            $stock->updated_at = Carbon::now('Asia/Tokyo');
+        });
+
+        static::updating(function ($stock) {
+            $stock->updated_at = Carbon::now('Asia/Tokyo');
+        });
     }
 }

@@ -29,6 +29,7 @@
     "immutable": "3.x",
     "next": "^14.2.3",
     "react": "^18.3.1",
+    "react-calendar": "^5.0.0",
     "react-dom": "^18.3.1",
     "react-draft-wysiwyg": "^1.15.0",
     "react-infinite-scroll-component": "^6.1.0",
