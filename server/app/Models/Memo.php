@@ -52,11 +52,11 @@ class Memo extends Model
                 [
                     'stock_id' => $memo->stock_id,
                     'memo_title' => $memo->memo_title,
+                    'user_id' => $memo->user_id,
                     'memo_at_create' => (new \DateTime($memo->memo_at_create))->format('Y-m-d') // 修正: 文字列をDateTimeオブジェクトに変換
                 ],
                 [
                     'memo' => $memo->memo,
-                    'user_id' => $memo->user_id,
                     'memo_at_edit' => now(),
                     'updated_at' => now(),
                 ]
