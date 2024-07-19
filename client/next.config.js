@@ -1,5 +1,8 @@
 module.exports = {
   reactStrictMode: true,
+  experimental: {
+    appDir: true, 
+  },
   webpackDevMiddleware: config => {
     config.watchOptions = {
       poll: 2000, //チェック時間を増やす

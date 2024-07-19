@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\User; 
-use App\Models\Stock; 
-use Illuminate\Support\Facades\Schema; // 追加
-use Illuminate\Database\Schema\Blueprint; // 追加
+use App\Models\User;
+use App\Models\Stock;
+use Illuminate\Support\Facades\Schema; 
+use Illuminate\Database\Schema\Blueprint; 
+use Illuminate\Support\Facades\DB;
 
 class Memo extends Model
 {
@@ -20,7 +21,7 @@ class Memo extends Model
         'memo_title',
         'user_id',
         'stock_id',
-        'order' 
+        'order'
     ];
 
     // フラグを追加
@@ -44,6 +45,22 @@ class Memo extends Model
                     $user->stocks()->attach($stock->id, ['created_at' => now(), 'updated_at' => now()]);
                 }
             }
+        });
+
+        static::updated(function ($memo) {
+            DB::table('memo_logs')->updateOrInsert(
+                [
+                    'stock_id' => $memo->stock_id,
+                    'memo_title' => $memo->memo_title,
+                    'memo_at_create' => (new \DateTime($memo->memo_at_create))->format('Y-m-d') // 修正: 文字列をDateTimeオブジェクトに変換
+                ],
+                [
+                    'memo' => $memo->memo,
+                    'user_id' => $memo->user_id,
+                    'memo_at_edit' => now(),
+                    'updated_at' => now(),
+                ]
+            );
         });
 
         static::updated(function ($memo) {
