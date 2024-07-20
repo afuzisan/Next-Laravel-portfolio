@@ -52,6 +52,7 @@ const InputChange = ({placeholder, initialValue, type}) => {
                 onChange={handleInputChange}
                 value={inputValue}
                 className="w-full"
+                min="1" 
             />
             <button 
                 onClick={handleSubmit} 
