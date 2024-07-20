@@ -74,7 +74,7 @@ const Calendar = () => {
         setDate(selectedDate);
         checkIfToday(selectedDate);
         displayContent(selectedDate);
-        setActiveStartDate(new Date(Date.UTC(value.getFullYear(), value.getMonth(), 1))); // 追加
+        setActiveStartDate(new Date(Date.UTC(value.getFullYear(), value.getMonth(), 1))); 
     };
 
     const handleActiveStartDateChange = ({ activeStartDate }) => {
@@ -177,7 +177,7 @@ const Calendar = () => {
                                 className={`hover:bg-gray-100 cursor-pointer p-2 grid grid-cols-[100px_2fr] gap-2 break-words overflow-hidden ${index !== Object.keys(eventsData).length - 1 ? 'border-b' : ''}`}
                                 onClick={() => handleDateClick(new Date(Date.UTC(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDate())))}
                             >
-                                <p className="break-words">{new Date(date).toLocaleDateString()}</p>
+                                <p className="break-words">{new Date(date).toLocaleDateString().replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-')}</p>
                             </div>
                         ))}
                     </div>
