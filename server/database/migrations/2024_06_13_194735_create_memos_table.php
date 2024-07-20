@@ -20,8 +20,6 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('stock_id'); 
             $table->foreign('stock_id')->references('id')->on('stocks')->onDelete('cascade')->onUpdate('cascade'); 
-            $table->timestamp('memo_at_create')->useCurrent();
-            $table->timestamp('memo_at_edit')->nullable()->default(null)->useCurrentOnUpdate();
             $table->timestamps();
             $table->softDeletes(); 
             $table->timestamp('order')->default(DB::raw('CURRENT_TIMESTAMP')); // Changed this line

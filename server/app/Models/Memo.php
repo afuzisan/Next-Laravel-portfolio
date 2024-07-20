@@ -63,12 +63,10 @@ class Memo extends Model
                     'stock_id' => $memo->stock_id,
                     'memo_title' => $memo->memo_title,
                     'user_id' => $memo->user_id,
-                    'memo_at_create' => Carbon::parse($memo->memo_at_create)->timezone('Asia/Tokyo')->format('Y-m-d') // 修正: 文字列をDateTimeオブジェクトに変換
+                    'updated_at' => Carbon::parse($memo->updated_at)->timezone('Asia/Tokyo')->format('Y-m-d') 
                 ],
                 [
                     'memo' => $memo->memo,
-                    'memo_at_edit' => Carbon::now('Asia/Tokyo'),
-                    'updated_at' => Carbon::now('Asia/Tokyo'),
                 ]
             );
         });

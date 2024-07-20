@@ -38,10 +38,6 @@ const Calendar = () => {
         setActiveStartDate(activeStartDate);
     };
 
-    const handleButtonClick = () => {
-        handleDateClick(date);
-    };
-
     const checkIfToday = (selectedDate) => {
         const today = new Date();
         const isToday = selectedDate.toDateString() === today.toDateString();

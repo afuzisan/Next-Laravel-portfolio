@@ -17,8 +17,6 @@ return new class extends Migration
             $table->string('memo_title', 255)->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('stock_id');
-            $table->timestamp('memo_at_create')->useCurrent();
-            $table->timestamp('memo_at_edit')->nullable()->useCurrentOnUpdate();
             $table->timestamps();
             $table->softDeletes();
         });
