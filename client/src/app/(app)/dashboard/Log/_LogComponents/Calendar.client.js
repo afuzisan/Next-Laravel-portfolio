@@ -1,7 +1,7 @@
 'use client'
 
 import laravelAxios from '@/lib/laravelAxios';
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import CalendarComponent from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
@@ -26,22 +26,23 @@ const dummyData = {
 };
 
 const Calendar = () => {
-    
+
     const [date, setDate] = useState(new Date());
     const [content, setContent] = useState('');
     const [tooltip, setTooltip] = useState({ visible: false, content: '', x: 0, y: 0 });
     const [activeStartDate, setActiveStartDate] = useState(new Date());
-    const [eventsData, setEventsData] = useState(dummyData); // ダミーデータを使用
+    const [eventsData, setEventsData] = useState({}); // ダミーデータを使用
     const [eventsData2, setEventsData2] = useState({}); // 新しいステートを追加
-    
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await laravelAxios.get('http://localhost:8080/api/log/getAll', { cache: 'no-store' });
                 console.log(res.data);
                 const formattedData = res.data.reduce((acc, event) => {
-                    if (event.updated_at) { 
-                        const date = new Date(event.updated_at).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' }).replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-'); // 月と日を2桁にする
+                    if (event.updated_at) {
+                        const date = new Date(new Date(event.updated_at).getTime() - (9 * 60 * 60 * 1000)).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' }).replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-').replace(/-(\d)$/, '-0$1');
+
                         if (!acc[date]) {
                             acc[date] = [];
                         }
@@ -49,7 +50,8 @@ const Calendar = () => {
                             memo: JSON.parse(event.memo).blocks[0].text,
                             memo_title: event.memo_title,
                             stock_id: event.stock_id,
-                            updated_at: new Date(event.updated_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', hour12: false }).replace(/T\d{2}:\d{2}:\d{2}\.\d{6}Z$/, '').replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-') // 月と日を2桁にする
+
+                            updated_at: new Date(new Date(event.updated_at).getTime() - (9 * 60 * 60 * 1000)).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }).replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-').replace(/-(\d)$/, '-0$1')
                         });
                         console.log(acc);
                     }
@@ -170,8 +172,8 @@ const Calendar = () => {
                 <div className='overflow-auto w-full'>
                     <div className='w-full h-full'>
                         {Array.from(new Set(Object.keys(eventsData))).map((date, index) => (
-                            <div 
-                                key={index} 
+                            <div
+                                key={index}
                                 className={`hover:bg-gray-100 cursor-pointer p-2 grid grid-cols-[100px_2fr] gap-2 break-words overflow-hidden ${index !== Object.keys(eventsData).length - 1 ? 'border-b' : ''}`}
                                 onClick={() => handleDateClick(new Date(Date.UTC(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDate())))}
                             >
