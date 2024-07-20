@@ -37,24 +37,28 @@ class Memo extends Model
         });
 
         static::creating(function ($memo) {
-            $memo->created_at = Carbon::now('Asia/Tokyo');
-            $memo->updated_at = Carbon::now('Asia/Tokyo');
-        });
-
-        static::updating(function ($memo) {
-            $memo->updated_at = Carbon::now('Asia/Tokyo');
+            $now = Carbon::now('Asia/Tokyo');
+            $memo->created_at = $now;
+            $memo->updated_at = $now;
         });
 
         static::created(function ($memo) {
-            $user = User::find($memo->user_id); // Memoに関連付けられたユーザーを取得
-            $stock = Stock::find($memo->stock_id); // Memoに関連付けられたストックを取得
+            $user = User::find($memo->user_id);
+            $stock = Stock::find($memo->stock_id);
 
             if ($user && $stock) {
-                // ユーザーとストックの関連を追加（重複を避ける）
                 if (!$user->stocks()->where('stock_id', $stock->id)->exists()) {
-                    $user->stocks()->attach($stock->id, ['created_at' => Carbon::now('Asia/Tokyo'), 'updated_at' => Carbon::now('Asia/Tokyo')]);
+                    $user->stocks()->attach($stock->id, [
+                        'created_at' => $memo->created_at->format('Y-m-d H:i:s'),
+                        'updated_at' => $memo->created_at->format('Y-m-d H:i:s')
+                    ]);
                 }
             }
+        });
+
+        static::updating(function ($memo) {
+            $now = Carbon::now('Asia/Tokyo');
+            $memo->updated_at = $now;
         });
 
         static::updated(function ($memo) {
@@ -63,7 +67,7 @@ class Memo extends Model
                     'stock_id' => $memo->stock_id,
                     'memo_title' => $memo->memo_title,
                     'user_id' => $memo->user_id,
-                    'updated_at' => Carbon::parse($memo->updated_at)->timezone('Asia/Tokyo')->format('Y-m-d') 
+                    'updated_at' => $memo->updated_at->format('Y-m-d H:i:s')
                 ],
                 [
                     'memo' => $memo->memo,
@@ -78,11 +82,12 @@ class Memo extends Model
                 $newStockId = $memo->stock_id;
 
                 if ($user) {
-                    // 古いストックの関連を削除
                     $user->stocks()->detach($oldStockId);
-                    // 新しいストックの関連を追加（重複を避ける）
                     if (!$user->stocks()->where('stock_id', $newStockId)->exists()) {
-                        $user->stocks()->attach($newStockId, ['created_at' => Carbon::now('Asia/Tokyo'), 'updated_at' => Carbon::now('Asia/Tokyo')]);
+                        $user->stocks()->attach($newStockId, [
+                            'created_at' => $memo->updated_at->format('Y-m-d H:i:s'),
+                            'updated_at' => $memo->updated_at->format('Y-m-d H:i:s')
+                        ]);
                     }
                 }
             }

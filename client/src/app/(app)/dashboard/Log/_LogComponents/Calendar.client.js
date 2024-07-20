@@ -1,30 +1,71 @@
 'use client'
 
-import React, { useState } from 'react'
+import laravelAxios from '@/lib/laravelAxios';
+import React, { useState,useEffect } from 'react'
 import CalendarComponent from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-// ダミーデータ
+// ダミーデータを追加
 const dummyData = {
-    '2023-10-01': [
-        { memo: 'あいうえおaaaaaaaaあああああaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaっっっっっっっっっっっっっｂ', memo_title: 'タイトル1', stock_id: '001', memo_at_create: '2023-10-01T10:00:00' },
-        { memo: 'メモ5', memo_title: 'タイトル5', stock_id: '005', memo_at_create: '2023-10-01T15:00:00' }
+    "2023-10-01": [
+        {
+            memo: "サンプルメモ1",
+            memo_title: "サンプルタイトル1",
+            stock_id: "1",
+            updated_at: "2023-10-01 10:00:00"
+        }
     ],
-    '2023-10-02': [
-        { memo: 'メモ2', memo_title: 'タイトル2', stock_id: '002', memo_at_create: '2023-10-02T11:00:00' }
-    ],
-    '2023-10-03': [
-        { memo: 'メモ3', memo_title: 'タイトル3', stock_id: '003', memo_at_create: '2023-10-03T12:00:00' }
-    ],
+    "2023-10-02": [
+        {
+            memo: "サンプルメモ2",
+            memo_title: "サンプルタイトル2",
+            stock_id: "2",
+            updated_at: "2023-10-02 11:00:00"
+        }
+    ]
 };
 
 const Calendar = () => {
-
+    
     const [date, setDate] = useState(new Date());
     const [content, setContent] = useState('');
     const [tooltip, setTooltip] = useState({ visible: false, content: '', x: 0, y: 0 });
     const [activeStartDate, setActiveStartDate] = useState(new Date());
-
+    const [eventsData, setEventsData] = useState(dummyData); // ダミーデータを使用
+    const [eventsData2, setEventsData2] = useState({}); // 新しいステートを追加
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await laravelAxios.get('http://localhost:8080/api/log/getAll', { cache: 'no-store' });
+                console.log(res.data);
+                const formattedData = res.data.reduce((acc, event) => {
+                    if (event.updated_at) { 
+                        const date = new Date(event.updated_at).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' }).replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-'); // 月と日を2桁にする
+                        if (!acc[date]) {
+                            acc[date] = [];
+                        }
+                        acc[date].push({
+                            memo: JSON.parse(event.memo).blocks[0].text,
+                            memo_title: event.memo_title,
+                            stock_id: event.stock_id,
+                            updated_at: new Date(event.updated_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', hour12: false }).replace(/T\d{2}:\d{2}:\d{2}\.\d{6}Z$/, '').replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-') // 月と日を2桁にする
+                        });
+                        console.log(acc);
+                    }
+                    return acc;
+                }, {});
+                console.log(formattedData);
+                // setEventsData2(formattedData);
+                setEventsData(formattedData)
+            } catch (err) {
+                console.log(err);
+            }
+            console.log(eventsData2);
+            console.log(eventsData)
+        };
+        fetchData();
+    }, []);
     const handleDateClick = (value) => {
         const selectedDate = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate()));
         console.log('Date clicked:', selectedDate);
@@ -46,22 +87,25 @@ const Calendar = () => {
 
     const displayContent = (selectedDate) => {
         const formattedDate = selectedDate.toISOString().split('T')[0];
-        const events = dummyData[formattedDate];
+        const events = eventsData[formattedDate];
         if (events) {
             const eventContent = (
                 <div className="border p-2">
-                    {events.map((event, index) => (
-                        <div key={index} className={`p-2 grid grid-cols-[100px_2fr] gap-2 break-words overflow-hidden ${index !== events.length - 1 ? 'border-b' : ''}`}>
-                            <p><strong>タイトル:</strong></p>
-                            <p className="break-words">{event.memo_title}</p>
-                            <p><strong>メモ:</strong></p>
-                            <p className="break-words">{event.memo}</p>
-                            <p><strong>ID:</strong></p>
-                            <p className="break-words">{event.stock_id}</p>
-                            <p><strong>作成日時:</strong></p>
-                            <p className="break-words">{event.memo_at_create}</p>
-                        </div>
-                    ))}
+                    {events.map((event, index) => {
+                        const localUpdatedAt = new Date(event.updated_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', hour12: false }).replace(/T\d{2}:\d{2}:\d{2}\.\d{6}Z$/, '').replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-'); // 月と日を2桁にする
+                        return (
+                            <div key={index} className={`p-2 grid grid-cols-[100px_2fr] gap-2 break-words overflow-hidden ${index !== events.length - 1 ? 'border-b' : ''}`}>
+                                <p><strong>タイトル:</strong></p>
+                                <p className="break-words">{event.memo_title}</p>
+                                <p><strong>メモ:</strong></p>
+                                <p className="break-words">{event.memo}</p>
+                                <p><strong>ID:</strong></p>
+                                <p className="break-words">{event.stock_id}</p>
+                                <p><strong>作成日時:</strong></p>
+                                <p className="break-words">{localUpdatedAt}</p>
+                            </div>
+                        );
+                    })}
                 </div>
             );
             setContent(eventContent);
@@ -73,18 +117,21 @@ const Calendar = () => {
     const showTooltip = (event, content) => {
         const tooltipContent = (
             <div className="border p-2">
-                {content.map((event, index) => (
-                    <div key={index} className={`p-2 grid grid-cols-[100px_500px] gap-2 break-words overflow-hidden ${index !== content.length - 1 ? 'border-b' : ''}`}>
-                        <p><strong>タイトル:</strong></p>
-                        <p className="break-words">{event.memo_title}</p>
-                        <p><strong>メモ:</strong></p>
-                        <p className="break-words">{event.memo}</p>
-                        <p><strong>ID:</strong></p>
-                        <p className="break-words">{event.stock_id}</p>
-                        <p><strong>作成日時:</strong></p>
-                        <p className="break-words">{event.memo_at_create}</p>
-                    </div>
-                ))}
+                {content.map((event, index) => {
+                    const localUpdatedAt = new Date(event.updated_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', hour12: false }).replace(/T\d{2}:\d{2}:\d{2}\.\d{6}Z$/, '').replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-'); // 月と日を2桁にする
+                    return (
+                        <div key={index} className={`p-2 grid grid-cols-[100px_500px] gap-2 break-words overflow-hidden ${index !== content.length - 1 ? 'border-b' : ''}`}>
+                            <p><strong>タイトル:</strong></p>
+                            <p className="break-words">{event.memo_title}</p>
+                            <p><strong>メモ:</strong></p>
+                            <p className="break-words">{event.memo}</p>
+                            <p><strong>ID:</strong></p>
+                            <p className="break-words">{event.stock_id}</p>
+                            <p><strong>作成日時:</strong></p>
+                            <p className="break-words">{localUpdatedAt}</p>
+                        </div>
+                    );
+                })}
             </div>
         );
         setTooltip({
@@ -102,11 +149,11 @@ const Calendar = () => {
     const tileContent = ({ date, view }) => {
         if (view === 'month') {
             const formattedDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString().split('T')[0];
-            if (dummyData[formattedDate]) {
+            if (eventsData[formattedDate]) {
                 return (
                     <span
                         className="text-red-500"
-                        onMouseEnter={(e) => showTooltip(e, dummyData[formattedDate])}
+                        onMouseEnter={(e) => showTooltip(e, eventsData[formattedDate])}
                         onMouseLeave={hideTooltip}
                     >
                         ●
@@ -122,10 +169,10 @@ const Calendar = () => {
             <div className="grid grid-cols-[200px_300px_1fr] gap-5 w-full h-4/5">
                 <div className='overflow-auto w-full'>
                     <div className='w-full h-full'>
-                        {Array.from(new Set(Object.values(dummyData).flat().map(event => event.memo_at_create.split('T')[0]))).map((date, index) => (
+                        {Array.from(new Set(Object.keys(eventsData))).map((date, index) => (
                             <div 
                                 key={index} 
-                                className={`hover:bg-gray-100 cursor-pointer p-2 grid grid-cols-[100px_2fr] gap-2 break-words overflow-hidden ${index !== Object.values(dummyData).flat().length - 1 ? 'border-b' : ''}`}
+                                className={`hover:bg-gray-100 cursor-pointer p-2 grid grid-cols-[100px_2fr] gap-2 break-words overflow-hidden ${index !== Object.keys(eventsData).length - 1 ? 'border-b' : ''}`}
                                 onClick={() => handleDateClick(new Date(Date.UTC(new Date(date).getFullYear(), new Date(date).getMonth(), new Date(date).getDate())))}
                             >
                                 <p className="break-words">{new Date(date).toLocaleDateString()}</p>

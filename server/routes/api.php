@@ -30,5 +30,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('mypage/memo_display_number_update', [UserController::class, 'memo_display_number_update']);
     Route::post('mypage/deleteAccount', [UserController::class, 'deleteAccount']);
     Route::get('search/memo', [SearchController::class, 'searchMemo']);
-    Route::post('Log/getAll', [LogController::class, 'getAll']);
+    Route::get('log/getAll', [LogController::class, 'getAll']);
 });
