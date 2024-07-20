@@ -22,6 +22,7 @@ export default function InitFetch() {
         async function fetchData() {
             const data = await getData();
             setInitialData(data);
+            localStorage.setItem('currentPage', 0);
         }
         fetchData();
     }, []);

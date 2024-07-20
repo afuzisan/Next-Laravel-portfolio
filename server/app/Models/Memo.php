@@ -67,7 +67,7 @@ class Memo extends Model
                     'stock_id' => $memo->stock_id,
                     'memo_title' => $memo->memo_title,
                     'user_id' => $memo->user_id,
-                    'updated_at' => $memo->updated_at->format('Y-m-d H:i:s')
+                    'updated_at' => $memo->updated_at->format('Y-m-d')
                 ],
                 [
                     'memo' => $memo->memo,
