@@ -4,26 +4,50 @@ import laravelAxios from '@/lib/laravelAxios';
 import React, { useState, useEffect } from 'react'
 import CalendarComponent from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { Editor, EditorState, convertFromRaw } from 'draft-js';
+import createLinkPlugin from '@draft-js-plugins/anchor';
+import '@draft-js-plugins/anchor/lib/plugin.css';
+import NextLink from 'next/link';
+import { CompositeDecorator } from 'draft-js';
 
-// ダミーデータを追加
-const dummyData = {
-    "2023-10-01": [
-        {
-            memo: "サンプルメモ1",
-            memo_title: "サンプルタイトル1",
-            stock_id: "1",
-            updated_at: "2023-10-01 10:00:00"
-        }
-    ],
-    "2023-10-02": [
-        {
-            memo: "サンプルメモ2",
-            memo_title: "サンプルタイトル2",
-            stock_id: "2",
-            updated_at: "2023-10-02 11:00:00"
-        }
-    ]
+const Link = (props) => {
+    const { url } = props.contentState.getEntity(props.entityKey).getData();
+    return (
+        <NextLink href={url} className='text-blue-600 ' target="_blank">
+            {props.children}
+        </NextLink>
+    );
 };
+
+function findLinkEntities(contentBlock, callback, contentState) {
+    contentBlock.findEntityRanges(
+        (character) => {
+            const entityKey = character.getEntity();
+            return (
+                entityKey !== null &&
+                contentState.getEntity(entityKey).getType() === 'LINK'
+            );
+        },
+        callback
+    );
+}
+
+const decorator = new CompositeDecorator([
+    {
+        strategy: findLinkEntities,
+        component: Link,
+    },
+]);
+
+const linkPlugin = createLinkPlugin({
+    linkComponent: (props) => (
+        <NextLink href={props.href}>
+            <a {...props}>{props.children}</a>
+        </NextLink>
+    ),
+});
+
+const plugins = [linkPlugin]; // 必要なプラグインを追加
 
 const Calendar = () => {
 
@@ -31,8 +55,7 @@ const Calendar = () => {
     const [content, setContent] = useState('');
     const [tooltip, setTooltip] = useState({ visible: false, content: '', x: 0, y: 0 });
     const [activeStartDate, setActiveStartDate] = useState(new Date());
-    const [eventsData, setEventsData] = useState({}); // ダミーデータを使用
-    const [eventsData2, setEventsData2] = useState({}); // 新しいステートを追加
+    const [eventsData, setEventsData] = useState({}); 
 
     useEffect(() => {
         const fetchData = async () => {
@@ -47,7 +70,7 @@ const Calendar = () => {
                             acc[date] = [];
                         }
                         acc[date].push({
-                            memo: JSON.parse(event.memo).blocks[0].text,
+                            memo:  JSON.parse(event.memo),
                             memo_title: event.memo_title,
                             stock_id: event.stock_id,
 
@@ -58,15 +81,14 @@ const Calendar = () => {
                     return acc;
                 }, {});
                 console.log(formattedData);
-                // setEventsData2(formattedData);
                 setEventsData(formattedData)
             } catch (err) {
                 console.log(err);
             }
-            console.log(eventsData2);
-            console.log(eventsData)
+
         };
         fetchData();
+        
     }, []);
     const handleDateClick = (value) => {
         const selectedDate = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate()));
@@ -90,17 +112,27 @@ const Calendar = () => {
     const displayContent = (selectedDate) => {
         const formattedDate = selectedDate.toISOString().split('T')[0];
         const events = eventsData[formattedDate];
+        console.log(events)
         if (events) {
             const eventContent = (
                 <div className="border p-2">
                     {events.map((event, index) => {
                         const localUpdatedAt = new Date(event.updated_at).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' }).replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-'); // 月と日を2桁にする
+                        let editorState;
+                        try {
+                            const contentState = convertFromRaw(event.memo);
+                            console.log(contentState);
+                            editorState = EditorState.createWithContent(contentState, decorator);
+                        } catch (error) {
+                            console.error('Invalid JSON in memo:', event.memo);
+                            editorState = EditorState.createEmpty(decorator);
+                        }
                         return (
                             <div key={index} className={`p-2 grid grid-cols-[100px_2fr] gap-2 break-words overflow-hidden ${index !== events.length - 1 ? 'border-b' : ''}`}>
                                 <p><strong>タイトル:</strong></p>
                                 <p className="break-words">{event.memo_title}</p>
                                 <p><strong>メモ:</strong></p>
-                                <p className="break-words">{event.memo}</p>
+                                <div className="break-words"><Editor editorState={editorState} readOnly={true} /></div>
                                 <p><strong>ID:</strong></p>
                                 <p className="break-words">{event.stock_id}</p>
                                 <p><strong>作成日時:</strong></p>
@@ -121,12 +153,20 @@ const Calendar = () => {
             <div className="border p-2">
                 {content.map((event, index) => {
                     const localUpdatedAt = new Date(event.updated_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', hour12: false }).replace(/T\d{2}:\d{2}:\d{2}\.\d{6}Z$/, '').replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-'); 
+                    let editorState;
+                    try {
+                        const contentState = convertFromRaw(JSON.parse(event.memo));
+                        editorState = EditorState.createWithContent(contentState, decorator);
+                    } catch (error) {
+                        console.error('Invalid JSON in memo:', event.memo);
+                        editorState = EditorState.createEmpty(decorator);
+                    }
                     return (
                         <div key={index} className={`p-2 grid grid-cols-[100px_500px] gap-2 break-words overflow-hidden ${index !== content.length - 1 ? 'border-b' : ''}`}>
                             <p><strong>タイトル:</strong></p>
                             <p className="break-words">{event.memo_title}</p>
                             <p><strong>メモ:</strong></p>
-                            <p className="break-words">{event.memo}</p>
+                            <div className="break-words"><Editor editorState={editorState} readOnly={true} /></div>
                             <p><strong>ID:</strong></p>
                             <p className="break-words">{event.stock_id}</p>
                             <p><strong>作成日時:</strong></p>
@@ -165,7 +205,7 @@ const Calendar = () => {
         }
         return null;
     };
-
+console.log(eventsData);
     return (
         <div className="flex justify-center h-screen w-full p-4">
             <div className="grid grid-cols-[200px_300px_1fr] gap-5 w-full h-4/5">
