@@ -151,7 +151,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex mt-6">
                     <div className="flex-1 w-[280px] border-t border-l border-b border-gray-200 ">
-                        <div className="flex sticky top-0 bg-white z-10">
+                        <div className="flex sticky top-0 bg-white">
                             <button
                                 className={`px-3 py-2 w-[50%] ${activeTab === 'tab1' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
                                 onClick={() => setActiveTab('tab1')}
