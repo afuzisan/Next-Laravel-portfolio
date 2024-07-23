@@ -45,7 +45,7 @@ const Dashboard = () => {
         // ２バイト数字１バイト数字に変換
         const normalizedInput = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
         const stockNumber = parseInt(normalizedInput, 10); // 入力値を整数に変換
-        if (isNaN(stockNumber) || stockNumber < 1000 || stockNumber > 9999) { // 4桁の整数かどうかを確認
+        if (isNaN(stockNumber) || stockNumber < 1000 || stockNumber > 9999) { // 4桁の整数かどうか確認
             setErrorMessage("正しい証券コードを入力してください。");
             return;
         }
@@ -154,13 +154,13 @@ const Dashboard = () => {
                     </nav>
                 </div>
                 <div className="flex mt-6">
-                    <div className="flex-1 w-[280px] border-t border-l border-b border-gray-200 ">
-                        <div className="flex sticky top-0 bg-white">
+                    <div className="flex-1 w-[280px] border-t border-l border-b border-gray-200 overflow-y-auto h-[calc(100vh-100px)] sticky top-0">
+                        <div className="flex bg-white">
                             <button
-                                className={`px-3 py-2 w-[50%] ${activeTab === 'tab1' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
-                                onClick={() => setActiveTab('tab1')}
+                                className={`px-3 py-2 w-[50%] ${activeTab === 'stockList' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+                                onClick={() => setActiveTab('stockList')}
                             >
-                                タブ1
+                                 銘柄リスト
                             </button>
                             <button
                                 className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
@@ -169,12 +169,12 @@ const Dashboard = () => {
                                 タブ2
                             </button>
                         </div>
-                        <div className="mt-4">
-                            {activeTab === 'tab1' && result && <div>{result.stocks.map((stock) => {
+                        <div className="">
+                            {activeTab === 'stockList' && result && <div>{result.stocks.map((stock,index) => {
                                 return (
-                                    <li id={stock.stock_code} className="px-3 py-2 list-none hover:bg-gray-100">
-                                        <a href={`#${stock.stock_code}`} key={stock.stock_code} className="block w-full h-full">
-                                            {stock.stock_code}
+                                    <li className={`list-none`}>
+                                        <a href={`#${stock.stock_code}`} key={stock.stock_code} className="block w-full h-full px-3 py-2 hover:bg-gray-100">
+                                            {stock.stock_name}({stock.stock_code})
                                         </a>
                                     </li>
                                 )
