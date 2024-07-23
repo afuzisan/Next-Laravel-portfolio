@@ -24,6 +24,7 @@ const Dashboard = () => {
     });
     const [result, setResult] = useState(null);
     const [totalStockCount, setTotalStockCount] = useState(0);
+    const [activeTab, setActiveTab] = useState('tab1'); // タブの状態を追加
 
     useEffect(() => {
         localStorage.setItem('itemsPerPage', itemsPerPage);
@@ -65,6 +66,7 @@ const Dashboard = () => {
     return (
         <>
             <div className="py-6">
+
                 <div className="grid grid-cols-2 h-full gap-2">
                     <nav aria-label="Page navigation" className="col-span-2 flex justify-between pr-6">
                         <div className="flex items-center pl-6 relative">
@@ -147,17 +149,39 @@ const Dashboard = () => {
                         </ul>
                     </nav>
                 </div>
-                <div className="grid grid-cols-1 pt-6 pl-6 pr-6 bg-white border-b border-gray-200 ">
-                    <MemoFetch
-                        key={refreshKey}
-                        refreshKey={() => setRefreshKey(prevKey => prevKey + 1)}
-                        sortOrder={sortOrder}
-                        currentPage={currentPage}
-                        itemsPerPage={itemsPerPage}
-                        onDataFetched={setResult}
-                        setItemsPerPage={setItemsPerPage}
-                        setTotalStockCount={setTotalStockCount}
-                    />
+                <div className="flex mt-6">
+                    <div className="flex-1 w-[280px] border-t border-l border-b border-gray-200 ">
+                        <div className="flex sticky top-0 bg-white z-10">
+                            <button
+                                className={`px-3 py-2 w-[50%] ${activeTab === 'tab1' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+                                onClick={() => setActiveTab('tab1')}
+                            >
+                                タブ1
+                            </button>
+                            <button
+                                className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+                                onClick={() => setActiveTab('tab2')}
+                            >
+                                タブ2
+                            </button>
+                        </div>
+                        <div className="mt-4">
+                            {activeTab === 'tab1' && <div>タブ1の内容</div>}
+                            {activeTab === 'tab2' && <div>タブ2の内容</div>}
+                        </div>
+                    </div>
+                    <div className="flex-4 grid grid-cols-1 mr-6 bg-white border-b border-gray-100 w-[1280px]">
+                        <MemoFetch
+                            key={refreshKey}
+                            refreshKey={() => setRefreshKey(prevKey => prevKey + 1)}
+                            sortOrder={sortOrder}
+                            currentPage={currentPage}
+                            itemsPerPage={itemsPerPage}
+                            onDataFetched={setResult}
+                            setItemsPerPage={setItemsPerPage}
+                            setTotalStockCount={setTotalStockCount}
+                        />
+                    </div>
                 </div>
             </div >
         </>
