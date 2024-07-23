@@ -4,6 +4,7 @@ import React, { useEffect, useState, createContext, useContext } from 'react'
 import Memos from '@@/(app)/dashboard/_component/memos.client';
 import LinkComponent from '@@/(app)/dashboard/_component/LinkComponent';
 import laravelAxios from '@/lib/laravelAxios';
+import Modal from 'react-modal';
 
 function formatDateToISO(date) {
     const pad = (num) => String(num).padStart(2, '0');
@@ -25,6 +26,8 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     const [chartImage, setChartImage] = useState(`https://www.kabudragon.com/chart/s=[code]`);
     const [chartCount, setChartCount] = useState(0);
     const [chartImages, setChartImages] = useState({});
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [modalContent, setModalContent] = useState('');
 
     const handleImageClick = (stockCode) => {
         setChartCount(chartCount + 1);
@@ -52,6 +55,26 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                     console.error('Error deleting stock:', error);
                 });
         }
+    };
+    const handleLog = (stockCode) => {
+        if (window.confirm(`${stockCode}を本当に削除しますか？`)) {
+            laravelAxios.post('http://localhost:8080/api/dashboard/stockDelete', {
+                stockNumber: stockCode
+            })
+                .then(() => {
+                    refreshKey();
+                })
+                .catch(error => {
+                    console.error('Error deleting stock:', error);
+                });
+        }
+        console.log(stockCode)
+        setModalContent(stockCode);
+        setModalIsOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalIsOpen(false);
     };
 
     useEffect(() => {
@@ -94,6 +117,17 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
 
     return (
         <EditableContext.Provider value={[isEditable, setIsEditable]}>
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                contentLabel="Stock Code Modal"
+            >
+                <div className="flex justify-between items-center">
+                    <h2>Stock Code</h2>
+                    <button onClick={closeModal} className="bg-none border-none text-2xl cursor-pointer">×</button>
+                </div>
+                <div>{modalContent}</div>
+            </Modal>
             {result && result.stocks && result.stocks.length > 0 ? (
                 result.stocks.map((stock, index) => {
                     return (
@@ -107,6 +141,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                                     <span className="grid-item px-6">{stock.stock_code}</span>
                                 </div>
                                 <div className="col-span-1 flex justify-end">
+                                    <button className="pr-4 pl-4 hover:bg-red-100 bg-gray-100" onClick={() => handleLog(stock.stock_code)}>LOG</button>
                                     <button className="bg-red-500 text-white px-4 py-2 hover:bg-red-700" onClick={() => handleDelete(stock.stock_code)}>{stock.stock_code}を削除</button>
                                 </div>
                             </div>
