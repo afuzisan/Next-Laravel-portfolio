@@ -31,4 +31,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('mypage/deleteAccount', [UserController::class, 'deleteAccount']);
     Route::get('search/memo', [SearchController::class, 'searchMemo']);
     Route::get('log/getAll', [LogController::class, 'getAll']);
+    Route::get('log/getStockLog', [LogController::class, 'getStockLog']);
 });

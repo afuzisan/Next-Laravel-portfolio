@@ -20,4 +20,13 @@ class LogController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+
+    public function getStockLog(Request $request)
+    {
+        $user_id = Auth::id();
+        $stockCode = $request->query('stockCode');
+        $memo_logs = memo_logs::where('stock_id', $stockCode)->where('user_id', $user_id)->get();
+        // クエリパラメータを使った処理
+        return response()->json(['memo_logs' => $memo_logs]);
+    }
 }

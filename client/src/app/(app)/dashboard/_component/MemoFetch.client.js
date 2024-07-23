@@ -6,6 +6,7 @@ import LinkComponent from '@@/(app)/dashboard/_component/LinkComponent';
 import laravelAxios from '@/lib/laravelAxios';
 import Modal from 'react-modal';
 
+
 function formatDateToISO(date) {
     const pad = (num) => String(num).padStart(2, '0');
     const year = date.getUTCFullYear();
@@ -56,20 +57,15 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                 });
         }
     };
-    const handleLog = (stockCode) => {
-        if (window.confirm(`${stockCode}を本当に削除しますか？`)) {
-            laravelAxios.post('http://localhost:8080/api/dashboard/stockDelete', {
-                stockNumber: stockCode
-            })
-                .then(() => {
-                    refreshKey();
-                })
-                .catch(error => {
-                    console.error('Error deleting stock:', error);
-                });
+    const handleLog = async (stockCode) => {
+        try {
+            const response = await laravelAxios.get(`http://localhost:8080/api/log/getStockLog?stockCode=${stockCode}`);
+            const log = response.data; // ここでレスポンスデータを取得
+            console.log(log);
+            setModalContent(log); // モーダルにログを表示
+        } catch (error) {
+            console.error('Error fetching log:', error);
         }
-        console.log(stockCode)
-        setModalContent(stockCode);
         setModalIsOpen(true);
     };
 
@@ -121,12 +117,13 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                 isOpen={modalIsOpen}
                 onRequestClose={closeModal}
                 contentLabel="Stock Code Modal"
+                ariaHideApp={false} 
             >
                 <div className="flex justify-between items-center">
                     <h2>Stock Code</h2>
                     <button onClick={closeModal} className="bg-none border-none text-2xl cursor-pointer">×</button>
                 </div>
-                <div>{modalContent}</div>
+                <div>{JSON.stringify(modalContent)}</div>
             </Modal>
             {result && result.stocks && result.stocks.length > 0 ? (
                 result.stocks.map((stock, index) => {
@@ -154,7 +151,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                                     <img
                                         src={chartImages[stock.stock_code] || chartImage.replace('[code]', stock.stock_code)}
                                         className="h-full w-full object-scale-down border-r cursor-pointer"
-                                        onClick={() => handleImageClick(stock.stock_code)} 
+                                        onClick={() => handleImageClick(stock.stock_code)}
                                     />
                                 </div>
                             </div >

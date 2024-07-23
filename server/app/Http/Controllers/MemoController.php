@@ -41,6 +41,8 @@ class MemoController extends Controller
         return response()->json(['user' => $user, 'totalStockCount' => $totalStockCount]); // ユーザー情報と全体のstocksの数をJSON形式で返す
     }
 
+
+
     public function memo(Request $request)
     {
         $id = $request->input('id');
