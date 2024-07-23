@@ -5,6 +5,7 @@ import laravelAxios from "@/lib/laravelAxios";
 import MemoFetch from '@@/(app)/dashboard/_component/MemoFetch.client';
 import { useReducer, useState, useEffect } from 'react';
 import Danger from '@/components/Danger'
+import '@/styles/global.css'
 
 
 
@@ -38,6 +39,7 @@ const Dashboard = () => {
         localStorage.setItem('currentPage', currentPage);
     }, [currentPage]);
 
+
     const handleRegisterClick = (inputValue) => {
 
         // ２バイト数字１バイト数字に変換
@@ -63,6 +65,8 @@ const Dashboard = () => {
     const handleSort = (order) => {
         setSortOrder(order);
     };
+
+    console.log(result)
     return (
         <>
             <div className="py-6">
@@ -166,7 +170,15 @@ const Dashboard = () => {
                             </button>
                         </div>
                         <div className="mt-4">
-                            {activeTab === 'tab1' && <div>タブ1の内容</div>}
+                            {activeTab === 'tab1' && result && <div>{result.stocks.map((stock) => {
+                                return (
+                                    <li id={stock.stock_code} className="px-3 py-2 list-none hover:bg-gray-100">
+                                        <a href={`#${stock.stock_code}`} key={stock.stock_code} className="block w-full h-full">
+                                            {stock.stock_code}
+                                        </a>
+                                    </li>
+                                )
+                            })}</div>}
                             {activeTab === 'tab2' && <div>タブ2の内容</div>}
                         </div>
                     </div>
