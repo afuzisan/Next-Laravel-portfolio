@@ -3,3 +3,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .scrollbar-radius::-webkit-scrollbar-thumb {
+        border-radius: 8px;
+        background-color: gray; 
+    }
+
+    .scroll-behavior{
+        scroll-behavior: smooth;
+        scroll-padding-top: 70px;
+    }
+
+    .scrollbar-radius::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .scrollbar-radius::-webkit-scrollbar-track {
+        border-radius: 8px;
+    }
+}

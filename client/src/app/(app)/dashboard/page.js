@@ -5,7 +5,7 @@ import laravelAxios from "@/lib/laravelAxios";
 import MemoFetch from '@@/(app)/dashboard/_component/MemoFetch.client';
 import { useReducer, useState, useEffect } from 'react';
 import Danger from '@/components/Danger'
-import '@/styles/global.css'
+import '@/app/global.css'
 
 
 
@@ -159,7 +159,7 @@ const Dashboard = () => {
                     </nav>
                 </div>
                 <div className="flex mt-6 ">
-                    <div className="flex-1 w-[280px] border-t border-l border-b border-gray-200 overflow-y-auto h-[100%] max-h-[calc(100vh-200px)] sticky top-10 mr-4 rounded-lg">
+                    <div className="flex-1 w-[280px] border-t border-l border-b border-r border-gray-200 overflow-y-auto h-[100%] max-h-[calc(100vh-200px)] sticky top-10 mr-4 rounded-lg scrollbar-radius">
                         <div className="flex bg-white border-b border-gray-200">
                             <button
                                 className={`px-3 py-2 w-[50%]  ${activeTab === 'stockList' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}

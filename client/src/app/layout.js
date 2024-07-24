@@ -5,7 +5,7 @@ export const metadata = {
 }
 const RootLayout = ({ children }) => {
     return (
-        <html lang="ja">
+        <html lang="ja" className="scroll-behavior">
             <body className="antialiased">{children}</body>
         </html>
     )
