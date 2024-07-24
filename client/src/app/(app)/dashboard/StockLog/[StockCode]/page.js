@@ -16,16 +16,18 @@ const page = ({ params }) => {
         initStockLog();
     }, []);
 
-    useEffect(() => {
-        if (content && content.length > 0) {
-            const initialDates = content.reduce((acc, item) => {
-                const initialDate = formatDate(item.created_at, '-');
-                acc[item.stock_id] = initialDate;
-                return acc;
-            }, {});
-            setSelectedDates(initialDates);
-        }
-    }, [content]);
+
+    //TODO:いらない処理かもしれない
+    // useEffect(() => {
+    //     if (content && content.length > 0) {
+    //         const initialDates = content.reduce((acc, item) => {
+    //             const initialDate = formatDate(item.created_at, '-');
+    //             acc[item.stock_id] = initialDate;
+    //             return acc;
+    //         }, {});
+    //         setSelectedDates(initialDates);
+    //     }
+    // }, [content]);
 
     const initStockLog = async () => {
         try {
@@ -119,9 +121,9 @@ const page = ({ params }) => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 overflow-hidden">
                 {content && content.map((item, index) => {
-                    const formattedDate = formatDate(item.created_at, '-');
-                    const imageFormattedDate = formatDate(item.created_at, '', 2);
-                    const calendarFormattedDate = formatDate(item.created_at, '', 0);
+                    const formattedDate = formatDate(item.updated_at, '-');
+                    const imageFormattedDate = formatDate(item.updated_at, '', 2);
+                    const calendarFormattedDate = formatDate(item.updated_at, '', 0);
                     console.log(imageFormattedDate)
                     
                     return (
