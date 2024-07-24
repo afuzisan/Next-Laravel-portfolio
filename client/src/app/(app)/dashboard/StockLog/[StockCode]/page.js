@@ -16,19 +16,6 @@ const page = ({ params }) => {
         initStockLog();
     }, []);
 
-
-    //TODO:いらない処理かもしれない
-    // useEffect(() => {
-    //     if (content && content.length > 0) {
-    //         const initialDates = content.reduce((acc, item) => {
-    //             const initialDate = formatDate(item.created_at, '-');
-    //             acc[item.stock_id] = initialDate;
-    //             return acc;
-    //         }, {});
-    //         setSelectedDates(initialDates);
-    //     }
-    // }, [content]);
-
     const initStockLog = async () => {
         try {
             const response = await laravelAxios.get(`http://localhost:8080/api/log/getStockLog?stockCode=${params.StockCode}`);
@@ -82,29 +69,31 @@ const page = ({ params }) => {
 
     };
 
-    const handleImageClick = (stockCode, imageFormattedDate, count, memoTitle, resetCount = false, newDate) => {
+    const handleImageClick = (stockCode, imageFormattedDate, count, memoTitle, resetCount = false, newDate, dateLandmark) => {
         console.log(stockCode, imageFormattedDate, count, memoTitle, resetCount, newDate)
         const key = `${stockCode}-${imageFormattedDate}-${memoTitle}`;
-        const newCount = resetCount ? count : chartCount + count;
-        setChartCount(newCount);
+        const currentCount = chartCount[`${stockCode}-${imageFormattedDate}-${memoTitle}`] || 0;
+        const newCount = resetCount && dateLandmark ? count : currentCount + count;
         let newChartImage;
         let newChartLabel;
-        console.log(newCount)
-        if (newCount === 0) {
+        setChartCount(prevCount => ({ ...prevCount, [key]: newCount }));
+        console.log(newCount);
+        console.log(currentCount);
+
+        if (currentCount === 0) {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${newDate}.png`;
             newChartLabel = '日足';
             console.log('日足 0')
-        } else if (newCount === 1) {
+        } else if (currentCount === 1) {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${newDate}.png`;
             newChartLabel = '週足';
         } else {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=2/e=${newDate}.png`;
             newChartLabel = '月足';
-            setChartCount(-1);
+
+            dateLandmark && setChartCount(prevCount => ({ ...prevCount, [key]: 0 }));
         }
-        console.log(key)
-        console.log(chartImages)
-        console.log(newChartImage)
+
         setChartImages(prevImages => ({ ...prevImages, [key]: newChartImage }));
         setChartLabels(prevLabels => ({ ...prevLabels, [key]: newChartLabel }));
     };
@@ -113,7 +102,7 @@ const page = ({ params }) => {
         const newDate = e.target.value;
         const key = `${stockCode}-${imageFormattedDate}-${memoTitle}`;
         setSelectedDates(prevDates => ({ ...prevDates, [key]: newDate }));
-        handleImageClick(stockId, imageFormattedDate, chartCount, memoTitle, false, newDate.replace(/-/g, '').slice(2));
+        handleImageClick(stockId, imageFormattedDate, 0, memoTitle, false, newDate.replace(/-/g, '').slice(2), false);
     };
     return (
         <>
@@ -134,7 +123,7 @@ const page = ({ params }) => {
                                     className="w-full h-auto mt-8"
                                     src={chartImages[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${selectedDates[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`]?.replace(/-/g, '').slice(2) || imageFormattedDate}.png`}
                                     alt="Stock Image"
-                                    onClick={() => handleImageClick(item.stock_id, imageFormattedDate, 1, item.memo_title, false, selectedDates[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`]?.replace(/-/g, '').slice(2) || calendarFormattedDate)}
+                                    onClick={() => handleImageClick(item.stock_id, imageFormattedDate, 1, item.memo_title, false, selectedDates[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`]?.replace(/-/g, '').slice(2), true || calendarFormattedDate)}
                                 />
                                 <span className="absolute top-[0px] left-[39%] text-black bg-white p-1 rounded">
                                     {chartLabels[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`] || '日足'}
