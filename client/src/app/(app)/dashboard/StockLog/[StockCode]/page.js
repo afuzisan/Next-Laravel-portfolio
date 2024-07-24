@@ -25,10 +25,8 @@ const page = ({ params }) => {
 
     const initStockLog = async () => {
         try {
-            console.log(params.StockCode);
             const response = await laravelAxios.get(`http://localhost:8080/api/log/getStockLog?stockCode=${params.StockCode}`);
             const log = response.data.memo_logs;
-            console.log(log);
             setContent(log);
         } catch (error) {
             console.error('Error fetching log:', error);
@@ -78,12 +76,12 @@ const page = ({ params }) => {
 
     };
 
-    const handleImageClick = (stockCode, imageFormattedDate, count, resetCount = false) => {
+    const handleImageClick = (stockCode, imageFormattedDate, count, memoTitle, resetCount = false) => {
         const newCount = resetCount ? count : chartCount + count;
         setChartCount(newCount);
-        console.log(newCount);
         let newChartImage;
         let newChartLabel;
+        console.log(newCount)
         if (newCount === 0) {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${imageFormattedDate}.png`;
             newChartLabel = '日足';
@@ -93,16 +91,17 @@ const page = ({ params }) => {
         } else {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=2/e=${imageFormattedDate}.png`;
             newChartLabel = '月足';
-            setChartCount(0);
+            setChartCount(-1);
         }
-        setChartImages(prevImages => ({ ...prevImages, [stockCode]: newChartImage }));
-        setChartLabels(prevLabels => ({ ...prevLabels, [stockCode]: newChartLabel }));
+        const key = `${stockCode}-${imageFormattedDate}-${memoTitle}`;
+        setChartImages(prevImages => ({ ...prevImages, [key]: newChartImage }));
+        setChartLabels(prevLabels => ({ ...prevLabels, [key]: newChartLabel }));
     };
 
-    const handleDateChange = (e, stockId, calendarFormattedDate) => {
+    const handleDateChange = (e, stockId, calendarFormattedDate, memoTitle) => {
         const newDate = e.target.value;
         setSelectedDate(newDate);
-        handleImageClick(stockId, newDate.replace(/-/g, ''), chartCount, true);
+        handleImageClick(stockId, newDate.replace(/-/g, ''), chartCount, memoTitle, false);
     };
 
     return (
@@ -110,42 +109,41 @@ const page = ({ params }) => {
             <div className="">
                 {params.StockCode}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 overflow-hidden">
                 {content && content.map((item, index) => {
                     const formattedDate = formatDate(item.created_at, '-');
                     const imageFormattedDate = formatDate(item.created_at, '', 2);
                     const calendarFormattedDate = formatDate(item.created_at, '', 0);
-                    console.log(selectedDate)
                     return (
-                        <div key={index} className="border mb-4 p-4 rounded shadow grid grid-rows-[auto,auto,200px,1fr] gap-2 h-[600px]">
+                        <div key={index} className="border mb-4 p-4 rounded shadow grid grid-rows-[auto,50px,auto,auto] gap-2 h-[600px]">
+                            <div className="relative">
+                                <img
+                                    className="w-full h-auto mt-8"
+                                    src={chartImages[`${item.stock_id}-${selectedDate.replace(/-/g, '')}-${item.memo_title}`] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${imageFormattedDate}.png`}
+                                    alt="Stock Image"
+                                    onClick={() => handleImageClick(item.stock_id, selectedDate.replace(/-/g, ''), 1, item.memo_title, false)}
+                                />
+                                <span className="absolute top-[0px] left-[39%] text-black bg-white p-1 rounded">
+                                    {chartLabels[`${item.stock_id}-${selectedDate.replace(/-/g, '')}-${item.memo_title}`] || '日足'}
+                                </span>
+                            </div>
                             <div className='flex justify-between'>
-                                <div className="mb-2">
+                                <div className="flex items-center">
                                     <span className="text-gray-500 text-lg">{formattedDate}</span>
                                 </div>
-                                <div>
+                                <div className='flex items-center'>
                                     <input
                                         type="date"
                                         id="start"
                                         name="trip-start"
                                         value={selectedDate || calendarFormattedDate}
                                         min="2018-01-01"
-                                        onChange={(e) => handleDateChange(e, item.stock_id, calendarFormattedDate)}
+                                        onChange={(e) => handleDateChange(e, item.stock_id, calendarFormattedDate, item.memo_title)}
                                     />
                                 </div>
                             </div>
-                            <div className="mb-2">
-                                <span className="font-bold text-lg">{item.memo_title}</span>
-                            </div>
-                            <div className="relative">
-                                <img
-                                    className="w-full h-auto mt-2"
-                                    src={chartImages[item.stock_id] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${imageFormattedDate}.png`}
-                                    alt="Stock Image"
-                                    onClick={() => handleImageClick(item.stock_id, selectedDate.replace(/-/g, ''), 1)}
-                                />
-                                <span className="absolute top-0 right-0 bg-white text-black p-1 rounded">
-                                    {chartLabels[item.stock_id] || '日足'}
-                                </span>
+                            <div className="mb-2 break-words overflow-hidden" >
+                                <span className="font-bold text-lg break-words overflow-hidden">{item.memo_title}</span>
                             </div>
                             <div className="mb-2 flex-grow overflow-y-scroll">
                                 {renderDraftContent(item.memo)}
