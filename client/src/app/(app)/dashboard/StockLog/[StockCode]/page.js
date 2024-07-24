@@ -83,25 +83,25 @@ const page = ({ params }) => {
     };
 
     const handleImageClick = (stockCode, imageFormattedDate, count, memoTitle, resetCount = false, newDate) => {
-        console.log(stockCode, imageFormattedDate, count, memoTitle, resetCount)
+        console.log(stockCode, imageFormattedDate, count, memoTitle, resetCount, newDate)
+        const key = `${stockCode}-${imageFormattedDate}-${memoTitle}`;
         const newCount = resetCount ? count : chartCount + count;
         setChartCount(newCount);
         let newChartImage;
         let newChartLabel;
         console.log(newCount)
-        console.log(newDate)
         if (newCount === 0) {
-            newDate === null ? newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${imageFormattedDate}.png` : newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${newDate}.png`;
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${newDate}.png`;
             newChartLabel = '日足';
+            console.log('日足 0')
         } else if (newCount === 1) {
-            newDate === null ? newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${imageFormattedDate}.png` : newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${newDate}.png`;
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${newDate}.png`;
             newChartLabel = '週足';
         } else {
-            newDate === null ? newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=2/e=${imageFormattedDate}.png` : newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=2/e=${newDate}.png`;
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=2/e=${newDate}.png`;
             newChartLabel = '月足';
             setChartCount(-1);
         }
-        const key = `${stockCode}-${imageFormattedDate}-${memoTitle}`;
         console.log(key)
         console.log(chartImages)
         console.log(newChartImage)
@@ -132,10 +132,9 @@ const page = ({ params }) => {
                             <div className="relative">
                                 <img
                                     className="w-full h-auto mt-8"
-                                    // src={chartImages[`${item.stock_id}-240725-${item.memo_title}`] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${imageFormattedDate}.png`}
-                                    src={chartImages[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${imageFormattedDate}.png`}
+                                    src={chartImages[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${selectedDates[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`]?.replace(/-/g, '').slice(2) || imageFormattedDate}.png`}
                                     alt="Stock Image"
-                                    onClick={() => handleImageClick(item.stock_id, imageFormattedDate, 1, item.memo_title, false, calendarFormattedDate)}
+                                    onClick={() => handleImageClick(item.stock_id, imageFormattedDate, 1, item.memo_title, false, selectedDates[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`]?.replace(/-/g, '').slice(2) || calendarFormattedDate)}
                                 />
                                 <span className="absolute top-[0px] left-[39%] text-black bg-white p-1 rounded">
                                     {chartLabels[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`] || '日足'}
