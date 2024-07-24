@@ -18,6 +18,11 @@ module.exports = {
         destination: '/mypage/linkedit',
         permanent: true,
       },
+      {
+        source: '/stocks',
+        destination: '/dashboard',
+        permanent: true,
+      },
     ]
   }
 }
