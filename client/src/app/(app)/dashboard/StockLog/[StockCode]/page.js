@@ -89,6 +89,7 @@ const page = ({ params }) => {
         let newChartImage;
         let newChartLabel;
         console.log(newCount)
+        console.log(newDate)
         if (newCount === 0) {
             newDate === null ? newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${imageFormattedDate}.png` : newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${newDate}.png`;
             newChartLabel = '日足';
@@ -125,7 +126,7 @@ const page = ({ params }) => {
                     const imageFormattedDate = formatDate(item.updated_at, '', 2);
                     const calendarFormattedDate = formatDate(item.updated_at, '', 0);
                     console.log(imageFormattedDate)
-                    
+
                     return (
                         <div key={index} className="border mb-4 p-4 rounded shadow grid grid-rows-[auto,50px,auto,auto] gap-2 h-[600px]">
                             <div className="relative">
@@ -134,10 +135,10 @@ const page = ({ params }) => {
                                     // src={chartImages[`${item.stock_id}-240725-${item.memo_title}`] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${imageFormattedDate}.png`}
                                     src={chartImages[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${imageFormattedDate}.png`}
                                     alt="Stock Image"
-                                    onClick={() => handleImageClick(item.stock_id, selectedDates[item.stock_id]?.replace(/-/g, ''), 1, item.memo_title, false)}
+                                    onClick={() => handleImageClick(item.stock_id, imageFormattedDate, 1, item.memo_title, false, calendarFormattedDate)}
                                 />
                                 <span className="absolute top-[0px] left-[39%] text-black bg-white p-1 rounded">
-                                    {chartLabels[`${item.stock_id}-${selectedDates[item.stock_id]?.replace(/-/g, '')}-${item.memo_title}`] || '日足'}
+                                    {chartLabels[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`] || '日足'}
                                 </span>
                             </div>
                             <div className='flex justify-between'>
