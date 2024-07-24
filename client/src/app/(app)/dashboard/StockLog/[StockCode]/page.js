@@ -7,7 +7,7 @@ import { Editor, EditorState, convertFromRaw, CompositeDecorator } from 'draft-j
 const page = ({ params }) => {
 
     const [content, setContent] = useState(null);
-    const [chartCount, setChartCount] = useState(1);
+    const [chartCount, setChartCount] = useState(0);
     const [chartImages, setChartImages] = useState({});
     const [chartLabels, setChartLabels] = useState({});
     const [selectedDate, setSelectedDate] = useState('');
@@ -78,14 +78,16 @@ const page = ({ params }) => {
 
     };
 
-    const handleImageClick = (stockCode, imageFormattedDate) => {
-        setChartCount(chartCount + 1);
+    const handleImageClick = (stockCode, imageFormattedDate, count, resetCount = false) => {
+        const newCount = resetCount ? count : chartCount + count;
+        setChartCount(newCount);
+        console.log(newCount);
         let newChartImage;
         let newChartLabel;
-        if (chartCount === 0) {
+        if (newCount === 0) {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${imageFormattedDate}.png`;
             newChartLabel = '日足';
-        } else if (chartCount === 1) {
+        } else if (newCount === 1) {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${imageFormattedDate}.png`;
             newChartLabel = '週足';
         } else {
@@ -95,6 +97,12 @@ const page = ({ params }) => {
         }
         setChartImages(prevImages => ({ ...prevImages, [stockCode]: newChartImage }));
         setChartLabels(prevLabels => ({ ...prevLabels, [stockCode]: newChartLabel }));
+    };
+
+    const handleDateChange = (e, stockId, calendarFormattedDate) => {
+        const newDate = e.target.value;
+        setSelectedDate(newDate);
+        handleImageClick(stockId, newDate.replace(/-/g, ''), chartCount, true);
     };
 
     return (
@@ -121,7 +129,7 @@ const page = ({ params }) => {
                                         name="trip-start"
                                         value={selectedDate || calendarFormattedDate}
                                         min="2018-01-01"
-                                        onChange={(e) => setSelectedDate(e.target.value)}
+                                        onChange={(e) => handleDateChange(e, item.stock_id, calendarFormattedDate)}
                                     />
                                 </div>
                             </div>
@@ -133,7 +141,7 @@ const page = ({ params }) => {
                                     className="w-full h-auto mt-2"
                                     src={chartImages[item.stock_id] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${imageFormattedDate}.png`}
                                     alt="Stock Image"
-                                    onClick={() => handleImageClick(item.stock_id, selectedDate.replace(/-/g, ''))}
+                                    onClick={() => handleImageClick(item.stock_id, selectedDate.replace(/-/g, ''), 1)}
                                 />
                                 <span className="absolute top-0 right-0 bg-white text-black p-1 rounded">
                                     {chartLabels[item.stock_id] || '日足'}
