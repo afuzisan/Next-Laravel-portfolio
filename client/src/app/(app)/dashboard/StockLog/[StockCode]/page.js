@@ -69,29 +69,29 @@ const page = ({ params }) => {
 
     };
 
-    const handleImageClick = (stockCode, imageFormattedDate, count, memoTitle, resetCount = false, newDate, dateLandmark) => {
-        console.log(stockCode, imageFormattedDate, count, memoTitle, resetCount, newDate)
+    const handleImageClick = (stockCode, imageFormattedDate, count, memoTitle, resetCount = false, newDate, currentCount) => {
         const key = `${stockCode}-${imageFormattedDate}-${memoTitle}`;
-        const currentCount = chartCount[`${stockCode}-${imageFormattedDate}-${memoTitle}`] || 0;
-        const newCount = resetCount && dateLandmark ? count : currentCount + count;
+        const newCount = resetCount ? count : (currentCount !== undefined ? currentCount : (chartCount[key] || 0)) + count;
         let newChartImage;
         let newChartLabel;
         setChartCount(prevCount => ({ ...prevCount, [key]: newCount }));
         console.log(newCount);
         console.log(currentCount);
 
-        if (currentCount === 0) {
+        if (newCount === 0) {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${newDate}.png`;
             newChartLabel = '日足';
-            console.log('日足 0')
-        } else if (currentCount === 1) {
+            console.log('日足 0');
+        } else if (newCount === 1) {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${newDate}.png`;
             newChartLabel = '週足';
-        } else {
+        } else if (newCount === 2) {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=2/e=${newDate}.png`;
             newChartLabel = '月足';
-
-            dateLandmark && setChartCount(prevCount => ({ ...prevCount, [key]: 0 }));
+        } else {
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${newDate}.png`;
+            newChartLabel = '日足';
+            setChartCount(prevCount => ({ ...prevCount, [key]: 0 }));
         }
 
         setChartImages(prevImages => ({ ...prevImages, [key]: newChartImage }));
@@ -101,8 +101,9 @@ const page = ({ params }) => {
     const handleDateChange = (e, stockId, calendarFormattedDate, memoTitle, imageFormattedDate, stockCode) => {
         const newDate = e.target.value;
         const key = `${stockCode}-${imageFormattedDate}-${memoTitle}`;
+        const currentCount = chartCount[key] || 0; // 現在のカウントを取得
         setSelectedDates(prevDates => ({ ...prevDates, [key]: newDate }));
-        handleImageClick(stockId, imageFormattedDate, 0, memoTitle, false, newDate.replace(/-/g, '').slice(2), false);
+        handleImageClick(stockId, imageFormattedDate, 0, memoTitle, false, newDate.replace(/-/g, '').slice(2), currentCount);
     };
     return (
         <>
@@ -123,7 +124,7 @@ const page = ({ params }) => {
                                     className="w-full h-auto mt-8"
                                     src={chartImages[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${selectedDates[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`]?.replace(/-/g, '').slice(2) || imageFormattedDate}.png`}
                                     alt="Stock Image"
-                                    onClick={() => handleImageClick(item.stock_id, imageFormattedDate, 1, item.memo_title, false, selectedDates[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`]?.replace(/-/g, '').slice(2), true || calendarFormattedDate)}
+                                    onClick={() => handleImageClick(item.stock_id, imageFormattedDate, 1, item.memo_title, false, selectedDates[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`]?.replace(/-/g, '').slice(2) || calendarFormattedDate)}
                                 />
                                 <span className="absolute top-[0px] left-[39%] text-black bg-white p-1 rounded">
                                     {chartLabels[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`] || '日足'}
