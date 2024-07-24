@@ -133,7 +133,7 @@ const page = ({ params }) => {
                                     className="w-full h-auto mt-2"
                                     src={chartImages[item.stock_id] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${imageFormattedDate}.png`}
                                     alt="Stock Image"
-                                    onClick={() => handleImageClick(item.stock_id, imageFormattedDate)}
+                                    onClick={() => handleImageClick(item.stock_id, selectedDate.replace(/-/g, ''))}
                                 />
                                 <span className="absolute top-0 right-0 bg-white text-black p-1 rounded">
                                     {chartLabels[item.stock_id] || '日足'}
