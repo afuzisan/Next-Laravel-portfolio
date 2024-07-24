@@ -10,7 +10,7 @@ const page = ({ params }) => {
     const [chartCount, setChartCount] = useState(0);
     const [chartImages, setChartImages] = useState({});
     const [chartLabels, setChartLabels] = useState({});
-    const [selectedDate, setSelectedDate] = useState('');
+    const [selectedDates, setSelectedDates] = useState({});
 
     useEffect(() => {
         initStockLog();
@@ -18,8 +18,12 @@ const page = ({ params }) => {
 
     useEffect(() => {
         if (content && content.length > 0) {
-            const initialDate = formatDate(content[0].created_at, '-');
-            setSelectedDate(initialDate);
+            const initialDates = content.reduce((acc, item) => {
+                const initialDate = formatDate(item.created_at, '-');
+                acc[item.stock_id] = initialDate;
+                return acc;
+            }, {});
+            setSelectedDates(initialDates);
         }
     }, [content]);
 
@@ -76,34 +80,38 @@ const page = ({ params }) => {
 
     };
 
-    const handleImageClick = (stockCode, imageFormattedDate, count, memoTitle, resetCount = false) => {
+    const handleImageClick = (stockCode, imageFormattedDate, count, memoTitle, resetCount = false, newDate) => {
+        console.log(stockCode, imageFormattedDate, count, memoTitle, resetCount)
         const newCount = resetCount ? count : chartCount + count;
         setChartCount(newCount);
         let newChartImage;
         let newChartLabel;
         console.log(newCount)
         if (newCount === 0) {
-            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${imageFormattedDate}.png`;
+            newDate === null ? newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${imageFormattedDate}.png` : newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${newDate}.png`;
             newChartLabel = '日足';
         } else if (newCount === 1) {
-            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${imageFormattedDate}.png`;
+            newDate === null ? newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${imageFormattedDate}.png` : newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${newDate}.png`;
             newChartLabel = '週足';
         } else {
-            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=2/e=${imageFormattedDate}.png`;
+            newDate === null ? newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=2/e=${imageFormattedDate}.png` : newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=2/e=${newDate}.png`;
             newChartLabel = '月足';
             setChartCount(-1);
         }
         const key = `${stockCode}-${imageFormattedDate}-${memoTitle}`;
+        console.log(key)
+        console.log(chartImages)
+        console.log(newChartImage)
         setChartImages(prevImages => ({ ...prevImages, [key]: newChartImage }));
         setChartLabels(prevLabels => ({ ...prevLabels, [key]: newChartLabel }));
     };
 
-    const handleDateChange = (e, stockId, calendarFormattedDate, memoTitle) => {
+    const handleDateChange = (e, stockId, calendarFormattedDate, memoTitle, imageFormattedDate, stockCode) => {
         const newDate = e.target.value;
-        setSelectedDate(newDate);
-        handleImageClick(stockId, newDate.replace(/-/g, ''), chartCount, memoTitle, false);
+        const key = `${stockCode}-${imageFormattedDate}-${memoTitle}`;
+        setSelectedDates(prevDates => ({ ...prevDates, [key]: newDate }));
+        handleImageClick(stockId, imageFormattedDate, chartCount, memoTitle, false, newDate.replace(/-/g, '').slice(2));
     };
-
     return (
         <>
             <div className="">
@@ -114,17 +122,20 @@ const page = ({ params }) => {
                     const formattedDate = formatDate(item.created_at, '-');
                     const imageFormattedDate = formatDate(item.created_at, '', 2);
                     const calendarFormattedDate = formatDate(item.created_at, '', 0);
+                    console.log(imageFormattedDate)
+                    
                     return (
                         <div key={index} className="border mb-4 p-4 rounded shadow grid grid-rows-[auto,50px,auto,auto] gap-2 h-[600px]">
                             <div className="relative">
                                 <img
                                     className="w-full h-auto mt-8"
-                                    src={chartImages[`${item.stock_id}-${selectedDate.replace(/-/g, '')}-${item.memo_title}`] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${imageFormattedDate}.png`}
+                                    // src={chartImages[`${item.stock_id}-240725-${item.memo_title}`] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${imageFormattedDate}.png`}
+                                    src={chartImages[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`] || `https://www.kabudragon.com/chart/s=${item.stock_id}/e=${imageFormattedDate}.png`}
                                     alt="Stock Image"
-                                    onClick={() => handleImageClick(item.stock_id, selectedDate.replace(/-/g, ''), 1, item.memo_title, false)}
+                                    onClick={() => handleImageClick(item.stock_id, selectedDates[item.stock_id]?.replace(/-/g, ''), 1, item.memo_title, false)}
                                 />
                                 <span className="absolute top-[0px] left-[39%] text-black bg-white p-1 rounded">
-                                    {chartLabels[`${item.stock_id}-${selectedDate.replace(/-/g, '')}-${item.memo_title}`] || '日足'}
+                                    {chartLabels[`${item.stock_id}-${selectedDates[item.stock_id]?.replace(/-/g, '')}-${item.memo_title}`] || '日足'}
                                 </span>
                             </div>
                             <div className='flex justify-between'>
@@ -136,9 +147,9 @@ const page = ({ params }) => {
                                         type="date"
                                         id="start"
                                         name="trip-start"
-                                        value={selectedDate || calendarFormattedDate}
+                                        value={selectedDates[`${item.stock_id}-${imageFormattedDate}-${item.memo_title}`] || formattedDate}
                                         min="2018-01-01"
-                                        onChange={(e) => handleDateChange(e, item.stock_id, calendarFormattedDate, item.memo_title)}
+                                        onChange={(e) => handleDateChange(e, item.stock_id, calendarFormattedDate, item.memo_title, imageFormattedDate, params.StockCode)}
                                     />
                                 </div>
                             </div>
