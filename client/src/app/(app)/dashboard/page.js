@@ -25,7 +25,9 @@ const Dashboard = () => {
     });
     const [result, setResult] = useState(null);
     const [totalStockCount, setTotalStockCount] = useState(0);
-    const [activeTab, setActiveTab] = useState('tab1'); // タブの状態を追加
+    const [activeTab, setActiveTab] = useState(() => {
+        return localStorage.getItem('activeTab') || 'stockList';
+    });
 
     useEffect(() => {
         localStorage.setItem('itemsPerPage', itemsPerPage);
@@ -39,6 +41,9 @@ const Dashboard = () => {
         localStorage.setItem('currentPage', currentPage);
     }, [currentPage]);
 
+    useEffect(() => {
+        localStorage.setItem('activeTab', activeTab);
+    }, [activeTab]);
 
     const handleRegisterClick = (inputValue) => {
 
@@ -153,11 +158,11 @@ const Dashboard = () => {
                         </ul>
                     </nav>
                 </div>
-                <div className="flex mt-6">
-                    <div className="flex-1 w-[280px] border-t border-l border-b border-gray-200 overflow-y-auto h-[calc(100vh-100px)] sticky top-0">
-                        <div className="flex bg-white">
+                <div className="flex mt-6 ">
+                    <div className="flex-1 w-[280px] border-t border-l border-b border-gray-200 overflow-y-auto h-[100%] max-h-[calc(100vh-200px)] sticky top-10 mr-4 rounded-lg">
+                        <div className="flex bg-white border-b border-gray-200">
                             <button
-                                className={`px-3 py-2 w-[50%] ${activeTab === 'stockList' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+                                className={`px-3 py-2 w-[50%]  ${activeTab === 'stockList' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
                                 onClick={() => setActiveTab('stockList')}
                             >
                                  銘柄リスト
@@ -166,14 +171,14 @@ const Dashboard = () => {
                                 className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
                                 onClick={() => setActiveTab('tab2')}
                             >
-                                タブ2
+                                カテゴリ
                             </button>
                         </div>
                         <div className="">
                             {activeTab === 'stockList' && result && <div>{result.stocks.map((stock,index) => {
                                 return (
                                     <li className={`list-none`}>
-                                        <a href={`#${stock.stock_code}`} key={stock.stock_code} className="block w-full h-full px-3 py-2 hover:bg-gray-100">
+                                        <a href={`#${stock.stock_code}`} key={stock.stock_code} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
                                             {stock.stock_name}({stock.stock_code})
                                         </a>
                                     </li>

@@ -168,15 +168,15 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                     return (
                         <div key={stock.stock_code} id={stock.stock_code}>
                             <div className="grid grid-cols-6 border px-3 py-2">
-                                <div className="col-span-5 flex items-center">
+                                <div className="col-span-4 flex items-center">
                                     <span className="grid-item px-6">
                                         {stock.memos.length > 0 ? formatDateToISO(new Date(stock.memos[0].created_at)) : 'N/A'}
                                     </span>
                                     <span className="grid-item px-6">{stock.stock_name}</span>
                                     <span className="grid-item px-6">{stock.stock_code}</span>
                                 </div>
-                                <div className="col-span-1 flex justify-end">
-                                    <button className="pr-4 pl-4 hover:bg-red-100 bg-gray-100" onClick={() => handleLog(stock.stock_code)}>履歴</button>
+                                <div className="col-span-2 flex justify-end">
+                                    <button className="pr-4 pl-4 hover:bg-red-100 bg-gray-100" onClick={() => handleLog(stock.stock_code)}>編集履歴</button>
                                     <button className="bg-red-500 text-white px-4 py-2 hover:bg-red-700" onClick={() => handleDelete(stock.stock_code)}>{stock.stock_code}を削除</button>
                                 </div>
                             </div>
