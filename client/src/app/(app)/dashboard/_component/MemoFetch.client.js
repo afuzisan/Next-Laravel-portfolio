@@ -114,10 +114,9 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     if (!result) {
         return <div>Loading...</div>;
     }
-    // console.log(modalContent.memo_logs[0]);
     return (
         <EditableContext.Provider value={[isEditable, setIsEditable]}>
-            <LogModal  modalIsOpen={modalIsOpen} closeModal={closeModal} modalContent={modalContent} />
+            <LogModal  modalIsOpen={modalIsOpen} closeModal={closeModal} modalContent={modalContent} resultStocks={result.stocks}/>
 
             {result && result.stocks && result.stocks.length > 0 ? (
                 result.stocks.map((stock, index) => {
