@@ -4,8 +4,9 @@ import React, { useEffect, useState, createContext, useContext } from 'react'
 import Memos from '@@/(app)/dashboard/_component/memos.client';
 import LinkComponent from '@@/(app)/dashboard/_component/LinkComponent';
 import laravelAxios from '@/lib/laravelAxios';
-import Modal from 'react-modal';
-import { Editor, EditorState, convertFromRaw, CompositeDecorator } from 'draft-js';
+
+
+import LogModal from '@@/(app)/dashboard/_component/_MemoFetchComponents/LogModal.client';
 
 
 function formatDateToISO(date) {
@@ -74,35 +75,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         setModalIsOpen(false);
     };
 
-    const renderDraftContent = (rawContent) => {
-        const contentState = convertFromRaw(JSON.parse(rawContent));
-        const decorator = new CompositeDecorator([
-            {
-                strategy: (contentBlock, callback, contentState) => {
-                    contentBlock.findEntityRanges(
-                        (character) => {
-                            const entityKey = character.getEntity();
-                            return (
-                                entityKey !== null &&
-                                contentState.getEntity(entityKey).getType() === 'LINK'
-                            );
-                        },
-                        callback
-                    );
-                },
-                component: (props) => {
-                    const { url } = props.contentState.getEntity(props.entityKey).getData();
-                    return (
-                        <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }}>
-                            {props.children}
-                        </a>
-                    );
-                },
-            },
-        ]);
-        const editorState = EditorState.createWithContent(contentState, decorator);
-        return <Editor editorState={editorState} readOnly={true} />;
-    };
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -144,25 +117,8 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     // console.log(modalContent.memo_logs[0]);
     return (
         <EditableContext.Provider value={[isEditable, setIsEditable]}>
-            <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={closeModal}
-                contentLabel="Stock Code Modal"
-                ariaHideApp={false}
-            >
-                <div className="flex justify-between items-center">
-                    <h2>Stock Code</h2>
-                    <button onClick={closeModal} className="bg-none border-none text-2xl cursor-pointer">×</button>
-                </div>
-                <div>{modalContent.memo_logs && modalContent.memo_logs.map((log, index) => {
-                    return (
-                        <div key={index}>
-                            <h3>{log.memo_title}</h3>
-                            {renderDraftContent(log.memo)}
-                        </div>
-                    )
-                })}</div>
-            </Modal>
+            <LogModal  modalIsOpen={modalIsOpen} closeModal={closeModal} modalContent={modalContent} />
+
             {result && result.stocks && result.stocks.length > 0 ? (
                 result.stocks.map((stock, index) => {
                     return (
