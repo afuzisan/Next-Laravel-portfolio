@@ -33,6 +33,11 @@ class Stock extends Model
         return $this->hasMany(Memo::class, 'stock_id');
     }
 
+    public function categories()
+    {
+        return $this->hasMany(Category::class, 'stock_id');
+    }
+
     // モデルのイベントをフックしてタイムゾーンを設定
     protected static function booted()
     {

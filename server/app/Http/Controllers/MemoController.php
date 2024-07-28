@@ -29,7 +29,7 @@ class MemoController extends Controller
             $query->where('user_id', $user_id)->with(['memos' => function ($query) use ($user_id) {
                 $query->where('user_id', $user_id);
             }])->skip($pagination * $viewStocks)->take($viewStocks);
-        }, 'links'])->where('id', $user_id)->first();
+        }, 'links', 'categories'])->where('id', $user_id)->first(); // categoriesリレーションを追加
 
         if (!$user || $user->stocks->isEmpty()) {
             return response()->json(['message' => 'Stocks not found']);
@@ -268,7 +268,7 @@ class MemoController extends Controller
                     Log::info("Before save: oldMemo=" . json_encode($oldMemo->toArray()));
 
                     $newMemo->save();
-                    $oldMemo->save(); // コメントを解除
+                    $oldMemo->save(); // コメントを解
 
                     // 保存後のログ出力
                     Log::info("After save: newMemo=" . json_encode($newMemo->toArray()));

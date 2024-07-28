@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\categoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MemoController;
@@ -23,13 +24,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('dashboard/memoTitleCreate', [MemoController::class, 'memoTitleCreate']);
     Route::post('dashboard/memo/exchange', [MemoController::class, 'exchange']);
     Route::delete('dashboard/memoDelete', [MemoController::class, 'memoDelete']);
+
     Route::get('mypage/externallinks', [ExternalLinkController::class, 'index']);
     Route::post('mypage/externallinks/create', [ExternalLinkController::class, 'create']);
     Route::post('mypage/externallinks/delete', [ExternalLinkController::class, 'destroy']);
     Route::get('mypage/memo_display_number', [UserController::class, 'memo_display_number']);
     Route::post('mypage/memo_display_number_update', [UserController::class, 'memo_display_number_update']);
     Route::post('mypage/deleteAccount', [UserController::class, 'deleteAccount']);
+
     Route::get('search/memo', [SearchController::class, 'searchMemo']);
+
     Route::get('log/getAll', [LogController::class, 'getAll']);
     Route::get('log/getStockLog', [LogController::class, 'getStockLog']);
+
+    Route::get('category/index', [categoryController::class, 'index']);
+    // Route::post('category/store', [categoryController::class, 'store']);
+    // Route::post('category/update', [categoryController::class, 'update']);
+    // Route::post('category/delete', [categoryController::class, 'delete']);
+
 });

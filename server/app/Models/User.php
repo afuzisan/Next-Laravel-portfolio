@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Notifications\VerifyEmail; 
 use Carbon\Carbon;
+use App\Models\Category; // Categoryモデルをインポート
 
 class User extends Authenticatable implements MustVerifyEmailContract
 {
@@ -63,6 +64,11 @@ class User extends Authenticatable implements MustVerifyEmailContract
     public function links()
     {
         return $this->hasMany(ExternalLink::class);
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class, 'user_id');
     }
 
     /**

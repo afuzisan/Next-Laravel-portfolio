@@ -80,9 +80,9 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage); // ページ番号を渡す
+                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage); 
                 setItemsPerPage(data.memo_display_number)
-                // console.log(data.memo_display_number)
+                console.log(data)
 
                 // ソート処理を追加
                 if (sortOrder === 'dateDesc') {

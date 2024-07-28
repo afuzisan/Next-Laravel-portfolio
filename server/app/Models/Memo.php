@@ -110,6 +110,11 @@ class Memo extends Model
         return $this->belongsTo(Stock::class, 'stock_id');
     }
 
+    public function categories()
+    {
+        return $this->hasMany(Category::class, 'stock_id', 'stock_id');
+    }
+
     /**
      * モデルのインデックスを定義
      */
