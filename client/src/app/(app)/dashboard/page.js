@@ -184,7 +184,15 @@ const Dashboard = () => {
                                     </li>
                                 )
                             })}</div>}
-                            {activeTab === 'tab2' && <div>タブ2の内容</div>}
+                            {activeTab === 'tab2' && result && <div>{result.categories.map((category,index) => {
+                                return (
+                                    <li className={`list-none`}>
+                                        <a href={`dashboard/Category/${encodeURIComponent(category.name)}`} key={category.id} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                            {category.name}
+                                        </a>
+                                    </li>
+                                )
+                            })}</div>}
                         </div>
                     </div>
                     <div className="flex-4 grid grid-cols-1 mr-6 bg-white border-b border-gray-100 w-[1280px]">
