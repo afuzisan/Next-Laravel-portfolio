@@ -36,6 +36,7 @@ RUN composer require fruitcake/laravel-cors
 
 # Node.jsのインストール
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get update --fix-missing \
     && apt-get install -y nodejs \
     && npm install -g npm
 
@@ -46,3 +47,6 @@ RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
 # パーミッションの設定
 RUN chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data /var/www/storage
+
+# PHP設定ファイルのコピー
+COPY php.ini /usr/local/etc/php/

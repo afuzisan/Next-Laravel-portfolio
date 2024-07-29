@@ -46,7 +46,7 @@ class MemoController extends Controller
     public function memo(Request $request)
     {
         $id = $request->input('id');
-        
+
         Log::info('Received id: ' . $id); // 取得したIDをログに出力
 
         // 特定のメモ情報を取得
@@ -104,8 +104,8 @@ class MemoController extends Controller
 
         // 既存のメモを確認
         $existingMemo = Memo::where('stock_id', $request->input('stockNumber'))
-                            ->where('user_id', Auth::id())
-                            ->first();
+            ->where('user_id', Auth::id())
+            ->first();
 
         if ($existingMemo) {
             return response()->json(['message' => 'Memo already exists for this stock'], 400);
@@ -140,7 +140,7 @@ class MemoController extends Controller
     public function memoTitleUpdate(Request $request)
     {
         $memoData = $request->input('memos');
-        Log::info('Received memo:', ['memos' => $memoData]); 
+        Log::info('Received memo:', ['memos' => $memoData]);
 
         foreach ($memoData as $data) {
             $memo = Memo::find($data['id']);
@@ -230,8 +230,8 @@ class MemoController extends Controller
     }
     public function exchange(Request $request)
     {
-        $pairs = $request->input('pairs'); 
-        Log::info('Received pairs:', $pairs); 
+        $pairs = $request->input('pairs');
+        Log::info('Received pairs:', $pairs);
 
         DB::transaction(function () use ($pairs) {
             // すべてのペアを一度に処理するためのマッピング
@@ -283,4 +283,7 @@ class MemoController extends Controller
 
         return response()->json(['message' => 'Memos exchanged successfully']);
     }
+
+
+
 }

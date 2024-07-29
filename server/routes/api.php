@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Categories;
 use App\Http\Controllers\categoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,9 +38,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('log/getAll', [LogController::class, 'getAll']);
     Route::get('log/getStockLog', [LogController::class, 'getStockLog']);
 
-    Route::get('category/index', [categoryController::class, 'index']);
-    // Route::post('category/store', [categoryController::class, 'store']);
-    // Route::post('category/update', [categoryController::class, 'update']);
-    // Route::post('category/delete', [categoryController::class, 'delete']);
+    Route::get('Categories/index', [Categories::class, 'index']);
 
 });
