@@ -165,7 +165,7 @@ const Dashboard = ({ params }) => {
                                 className={`px-3 py-2 w-[50%]  ${activeTab === 'stockList' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
                                 onClick={() => setActiveTab('stockList')}
                             >
-                                 銘柄リスト
+                                銘柄リスト
                             </button>
                             <button
                                 className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
@@ -175,7 +175,7 @@ const Dashboard = ({ params }) => {
                             </button>
                         </div>
                         <div className="">
-                            {activeTab === 'stockList' && result && <div>{result.stocks.map((stock,index) => {
+                            {activeTab === 'stockList' && result && <div>{result.stocks.map((stock, index) => {
                                 return (
                                     <li className={`list-none`}>
                                         <a href={`#${stock.stock_code}`} key={stock.stock_code} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
@@ -184,15 +184,21 @@ const Dashboard = ({ params }) => {
                                     </li>
                                 )
                             })}</div>}
-                            {activeTab === 'tab2' && result && <div>{result.categories.map((category,index) => {
-                                return (
-                                    <li className={`list-none`}>
-                                        <a href={`${encodeURIComponent(category.name)}`} key={category.id} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
-                                            {category.name}
-                                        </a>
-                                    </li>
-                                )
-                            })}</div>}
+                            {activeTab === 'tab2' && result && (() => {
+                                const categorySet = new Set(result.categories.map(category => category.name));
+                                console.log(categorySet)
+                                return Array.from(categorySet).map((category, index) => {
+                                    return (
+                                        <div key={index}>
+                                            <li className="list-none">
+                                                <a href={`${encodeURIComponent(category)}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                                    {category}
+                                                </a>
+                                            </li>
+                                        </div>
+                                    );
+                                });
+                            })()}
                         </div>
                     </div>
                     <div className="flex-4 grid grid-cols-1 mr-6 bg-white border-b border-gray-100 w-[1280px]">
