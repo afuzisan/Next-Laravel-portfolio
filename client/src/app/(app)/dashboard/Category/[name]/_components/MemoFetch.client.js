@@ -21,7 +21,7 @@ function formatDateToISO(date) {
 // 編集可能か判定するコンテキストを作成
 export const EditableContext = createContext();
 
-const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsPerPage, onDataFetched, param, setTotalStockCount }) => {
+const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsPerPage, onDataFetched, param, setTotalStockCount, params }) => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
     const [MemoRefreshKey, setMemoRefreshKey] = useState(0);
@@ -80,7 +80,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage); 
+                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage, params); 
                 setItemsPerPage(data.memo_display_number)
                 console.log(data)
 
@@ -157,9 +157,9 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         </EditableContext.Provider>
     )
 }
-const initFetch = async (param, itemsPerPage, setTotalStockCount, setItemsPerPage) => {
+const initFetch = async (param, itemsPerPage, setTotalStockCount, setItemsPerPage, params) => {
     try {
-        const result = await laravelAxios.get(`http://localhost:8080/api/Categories/index?param=${param}&page=${itemsPerPage}`, { cache: 'no-cache' });
+        const result = await laravelAxios.get(`http://localhost:8080/api/Categories/index?param=${param}&page=${itemsPerPage}&category=${params.name}`, { cache: 'no-cache' });
         setTotalStockCount(result.data.totalStockCount)
         console.log(result.data)
         // setItemsPerPage(result.data.memo_display_number)

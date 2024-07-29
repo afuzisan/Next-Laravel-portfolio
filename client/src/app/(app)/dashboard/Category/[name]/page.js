@@ -9,7 +9,7 @@ import '@/app/global.css'
 
 
 
-const Dashboard = () => {
+const Dashboard = ({ params }) => {
 
     const [inputValue, setInputValue] = useState("");
     const [refreshKey, setRefreshKey] = useState(0);
@@ -205,6 +205,7 @@ const Dashboard = () => {
                             onDataFetched={setResult}
                             setItemsPerPage={setItemsPerPage}
                             setTotalStockCount={setTotalStockCount}
+                            params={params}
                         />
                     </div>
                 </div>
