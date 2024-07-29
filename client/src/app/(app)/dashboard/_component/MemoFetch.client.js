@@ -31,6 +31,21 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     const [chartImages, setChartImages] = useState({});
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState('');
+    const [selectedCategories, setSelectedCategories] = useState({});
+
+    useEffect(() => {
+        if (result && onDataResult) {
+            console.log(result)
+            console.log(onDataResult)
+            const initialCategories = result.stocks.reduce((acc, stock, index) => {
+                acc[stock.stock_code] = onDataResult.categories[index]?.name || '未分類';
+                return acc;
+            }, {});
+            console.log(initialCategories)
+            setSelectedCategories(initialCategories);
+        }
+    }, [result, onDataResult]);
+
 
     const handleImageClick = (stockCode) => {
         setChartCount(chartCount + 1);
@@ -75,7 +90,9 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         setModalIsOpen(false);
     };
 
-
+    const handleCategoryChange = (stockCode, value) => {
+        setSelectedCategories(prev => ({ ...prev, [stockCode]: value }));
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -134,7 +151,8 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                                 </div>
                                 <div className='col-span-1 flex justify-end'>
                                     <div className="relative inline-block">
-                                        <select id="mySelect" className="">
+                                        <select id="mySelect" className="" value={selectedCategories[stock.stock_code] || '未分類'} onChange={(e) => handleCategoryChange(stock.stock_code, e.target.value)}>
+                                            <option className='bg-white text-gray-700' value='未分類' key='未分類'>未分類</option>
                                             {onDataResult.categories.map((category, index) => (
                                                 <option className='bg-white text-gray-700' value={category.name} key={index}>{category.name}</option>
                                             ))}
