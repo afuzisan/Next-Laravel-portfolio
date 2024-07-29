@@ -133,6 +133,8 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     }
 
     console.log(onDataResult)
+    const uniqueCategories = Array.from(new Set(onDataResult.categories.map(category => category.name)));
+
     return (
         <EditableContext.Provider value={[isEditable, setIsEditable]}>
             <LogModal modalIsOpen={modalIsOpen} closeModal={closeModal} modalContent={modalContent} resultStocks={result.stocks} />
@@ -152,9 +154,8 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                                 <div className='col-span-1 flex justify-end'>
                                     <div className="relative inline-block">
                                         <select id="mySelect" className="" value={selectedCategories[stock.stock_code] || '未分類'} onChange={(e) => handleCategoryChange(stock.stock_code, e.target.value)}>
-                                            <option className='bg-white text-gray-700' value='未分類' key='未分類'>未分類</option>
-                                            {onDataResult.categories.map((category, index) => (
-                                                <option className='bg-white text-gray-700' value={category.name} key={index}>{category.name}</option>
+                                            {uniqueCategories.map((category, index) => (
+                                                <option className='bg-white text-gray-700' value={category} key={index}>{category}</option>
                                             ))}
                                         </select>
                                     </div>
