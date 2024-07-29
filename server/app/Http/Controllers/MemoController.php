@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use App\Models\Memo;
 use App\Models\User;
@@ -110,6 +111,12 @@ class MemoController extends Controller
         if ($existingMemo) {
             return response()->json(['message' => 'Memo already exists for this stock'], 400);
         }
+
+        Category::create([
+            'name' => '未分類',
+            'user_id' => Auth::id(),
+            'stock_id' => $request->input('stockNumber'),
+        ]);
 
         // 新しいメモを作成
         $memo = Memo::create([
