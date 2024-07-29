@@ -21,7 +21,7 @@ function formatDateToISO(date) {
 // 編集可能か判定するコンテキストを作成
 export const EditableContext = createContext();
 
-const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsPerPage, onDataFetched, param, setTotalStockCount }) => {
+const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsPerPage, onDataFetched, param, setTotalStockCount, onDataResult }) => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
     const [MemoRefreshKey, setMemoRefreshKey] = useState(0);
@@ -80,7 +80,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage); 
+                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage);
                 setItemsPerPage(data.memo_display_number)
                 console.log(data)
 
@@ -114,21 +114,32 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     if (!result) {
         return <div>Loading...</div>;
     }
+
+    console.log(onDataResult)
     return (
         <EditableContext.Provider value={[isEditable, setIsEditable]}>
-            <LogModal  modalIsOpen={modalIsOpen} closeModal={closeModal} modalContent={modalContent} resultStocks={result.stocks}/>
+            <LogModal modalIsOpen={modalIsOpen} closeModal={closeModal} modalContent={modalContent} resultStocks={result.stocks} />
 
             {result && result.stocks && result.stocks.length > 0 ? (
                 result.stocks.map((stock, index) => {
                     return (
                         <div key={stock.stock_code} id={stock.stock_code}>
                             <div className="grid grid-cols-6 border px-3 py-2">
-                                <div className="col-span-4 flex items-center">
+                                <div className="col-span-3 flex items-center">
                                     <span className="grid-item px-6">
                                         {stock.memos.length > 0 ? formatDateToISO(new Date(stock.memos[0].created_at)) : 'N/A'}
                                     </span>
                                     <span className="grid-item px-6">{stock.stock_name}</span>
                                     <span className="grid-item px-6">{stock.stock_code}</span>
+                                </div>
+                                <div className='col-span-1 flex justify-end'>
+                                    <div className="relative inline-block">
+                                        <select id="mySelect" className="">
+                                            {onDataResult.categories.map((category, index) => (
+                                                <option className='bg-white text-gray-700' value={category.name} key={index}>{category.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
                                 <div className="col-span-2 flex justify-end">
                                     <button className="pr-4 pl-4 hover:bg-red-100 bg-gray-100" onClick={() => handleLog(stock.stock_code)}>編集履歴</button>

@@ -165,7 +165,7 @@ const Dashboard = () => {
                                 className={`px-3 py-2 w-[50%]  ${activeTab === 'stockList' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
                                 onClick={() => setActiveTab('stockList')}
                             >
-                                 銘柄リスト
+                                銘柄リスト
                             </button>
                             <button
                                 className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
@@ -175,7 +175,7 @@ const Dashboard = () => {
                             </button>
                         </div>
                         <div className="">
-                            {activeTab === 'stockList' && result && <div>{result.stocks.map((stock,index) => {
+                            {activeTab === 'stockList' && result && <div>{result.stocks.map((stock, index) => {
                                 return (
                                     <li className={`list-none`}>
                                         <a href={`#${stock.stock_code}`} key={stock.stock_code} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
@@ -184,7 +184,7 @@ const Dashboard = () => {
                                     </li>
                                 )
                             })}</div>}
-                            {activeTab === 'tab2' && result && <div>{result.categories.map((category,index) => {
+                            {activeTab === 'tab2' && result && <div>{result.categories.map((category, index) => {
                                 return (
                                     <li className={`list-none`}>
                                         <a href={`dashboard/Category/${encodeURIComponent(category.name)}`} key={category.id} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
@@ -203,6 +203,7 @@ const Dashboard = () => {
                             currentPage={currentPage}
                             itemsPerPage={itemsPerPage}
                             onDataFetched={setResult}
+                            onDataResult={result}
                             setItemsPerPage={setItemsPerPage}
                             setTotalStockCount={setTotalStockCount}
                         />
