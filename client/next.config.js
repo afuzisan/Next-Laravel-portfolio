@@ -5,7 +5,7 @@ module.exports = {
   },
   webpackDevMiddleware: config => {
     config.watchOptions = {
-      poll: 2000, //チェック時間を増やす
+      poll: 1000, //チェック時間を増やす
       aggregateTimeout: 300, // 遅延時間を減らす
       ignored: ["node_modules"],
     };

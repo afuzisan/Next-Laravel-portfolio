@@ -185,14 +185,12 @@ const Dashboard = () => {
                                 )
                             })}</div>}
                             {activeTab === 'tab2' && result && (() => {
-                                const categorySet = new Set(result.categories.map(category => category.name));
-                                console.log(categorySet)
-                                return Array.from(categorySet).map((category, index) => {
+                                return result.stocks.map((stock, index) => {
                                     return (
                                         <div key={index}>
                                             <li className="list-none">
-                                                <a href={`dashboard/Category/${encodeURIComponent(category)}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
-                                                    {category}
+                                                <a href={`dashboard/Category/${encodeURIComponent(stock.categories[0].name)}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                                    {stock.categories[0].name}
                                                 </a>
                                             </li>
                                         </div>
@@ -212,6 +210,7 @@ const Dashboard = () => {
                             onDataResult={result}
                             setItemsPerPage={setItemsPerPage}
                             setTotalStockCount={setTotalStockCount}
+
                         />
                     </div>
                 </div>

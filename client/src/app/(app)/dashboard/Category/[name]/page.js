@@ -185,14 +185,12 @@ const Dashboard = ({ params }) => {
                                 )
                             })}</div>}
                             {activeTab === 'tab2' && result && (() => {
-                                const categorySet = new Set(result.categories.map(category => category.name));
-                                console.log(categorySet)
-                                return Array.from(categorySet).map((category, index) => {
+                                return result.stocks.map((item, index) => {
                                     return (
                                         <div key={index}>
                                             <li className="list-none">
-                                                <a href={`${encodeURIComponent(category)}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
-                                                    {category}
+                                                <a href={`${encodeURIComponent(item.categories[0].name)}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                                    {item.categories[0].name}
                                                 </a>
                                             </li>
                                         </div>

@@ -29,8 +29,8 @@ class MemoController extends Controller
         $user = User::with(['stocks' => function ($query) use ($user_id, $pagination, $viewStocks) {
             $query->where('user_id', $user_id)->with(['memos' => function ($query) use ($user_id) {
                 $query->where('user_id', $user_id);
-            }])->skip($pagination * $viewStocks)->take($viewStocks);
-        }, 'links', 'categories'])->where('id', $user_id)->first(); // categoriesリレーションを追加
+            }, 'categories'])->skip($pagination * $viewStocks)->take($viewStocks); // categoriesリレーションを追加
+        }, 'links'])->where('id', $user_id)->first();
 
         if (!$user || $user->stocks->isEmpty()) {
             return response()->json(['message' => 'Stocks not found']);
