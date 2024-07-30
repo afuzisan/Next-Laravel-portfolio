@@ -131,8 +131,10 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     if (!result) {
         return <div>Loading...</div>;
     }
-
-    console.log(onDataResult)
+    const categoryName = result.stocks.map((stock, index) => {
+        return stock.categories[0].name
+    })
+    console.log(categoryName)
 
     return (
         <EditableContext.Provider value={[isEditable, setIsEditable]}>
@@ -153,8 +155,8 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                                 <div className='col-span-1 flex justify-end'>
                                     <div className="relative inline-block">
                                         <select id="mySelect" className="" value={selectedCategories[stock.stock_code] || '未分類'} onChange={(e) => handleCategoryChange(stock.stock_code, e.target.value)}>
-                                            {stock.categories.map((category, index) => (
-                                                <option className='bg-white text-gray-700' value={category.name} key={index}>{category.name}</option>
+                                            {categoryName.map((category, index) => (
+                                                <option className='bg-white text-gray-700' value={category} key={index}>{category}</option>
                                             ))}
                                         </select>
                                     </div>
