@@ -269,11 +269,11 @@ const Dashboard = () => {
                                                     {category}
                                                 </a>
                                                 {category !== '未分類' && (
-                                                    <span className="flex items-center border border-gray-200 rounded-lg pr-1 pl-1">
-                                                        <span className="mr-1 ml-1 flex items-center">
-                                                            <FaEdit className="hover:text-red-500 cursor-pointer " onClick={() => handleEditCategoryList(category)} />
+                                                    <span className="flex items-center border border-gray-200 rounded-lg pr-1 pl-1 hover:bg-white">
+                                                        <span className="mr-1 ml-1 flex items-center hover:text-gray-500 cursor-pointer">
+                                                            <FaEdit className="text-gray-200 hover:text-black cursor-pointer " onClick={() => handleEditCategoryList(category)} />
                                                         </span >
-                                                        <span className="mr-1 ml-1 hover:text-red-500 cursor-pointer" onClick={() => handleDeleteCategoryList(category)}>✕</span>
+                                                        <span className="text-gray-200 mr-1 ml-1 hover:text-black cursor-pointer" onClick={() => handleDeleteCategoryList(category)}>✕</span>
                                                     </span>
                                                 )}
                                             </li>
