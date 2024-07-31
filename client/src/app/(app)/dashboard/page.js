@@ -80,6 +80,23 @@ const Dashboard = () => {
             });
     };
 
+    const handleCategoryRegisterClick = (inputValue) => {
+        const normalizedInput = inputValue.replace(/[Ａ-Ｚａ-ｚ]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+        if (normalizedInput === '') {
+            setErrorMessage('カテゴリ名を入力してください');
+            return;
+        }
+        laravelAxios.post('http://localhost:8080/api/Categories/AddCategoryList', { "categoryName": normalizedInput })
+            .then(() => {
+                router.refresh({ keepCache: true });
+                setInputValue('');
+                setErrorMessage(''); // 成功時にエラーメッセージをクリア
+            })
+            .catch((error) => {
+                setErrorMessage(error.response.data.message);
+            });
+    };
+
     const handleSort = (order) => {
         setSortOrder(order);
     };
@@ -130,10 +147,14 @@ const Dashboard = () => {
                         <div className="flex items-center pl-6 relative">
                             <input
                                 type="text"
-                                className="px-3 py-2 leading-tight text-gray-700 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="証券コードか銘柄名を入力"
+                                className="w-[250px] px-3 py-2 leading-tight text-gray-700 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="証券コードまたはカテゴリ名を入力"
                                 value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
+                                onChange={(e) => {
+                                    const normalizedInput = e.target.value
+                                        .replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+                                    setInputValue(normalizedInput);
+                                }}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
                                         handleRegisterClick(inputValue);
@@ -144,7 +165,13 @@ const Dashboard = () => {
                                 className="px-3 py-2 leading-tight text-white bg-blue-500 border border-blue-500 hover:bg-blue-600 hover:border-blue-600"
                                 onClick={() => handleRegisterClick(inputValue)}
                             >
-                                銘柄を登録
+                                銘柄登録
+                            </button>
+                            <button
+                                className="px-3 py-2 leading-tight text-white bg-green-800 border border-green-800 hover:bg-green-900 hover:border-green-900"
+                                onClick={() => handleCategoryRegisterClick(inputValue)}
+                            >
+                                カテゴリ登録
                             </button>
                             {errorMessage && (
                                 <Danger errorMessage={errorMessage} setErrorMessage={setErrorMessage} className="absolute top-full left-6 mt-2 w-full text-white bg-red-400  border border-red-500 p-2 cursor-pointer text-center flex items-center z-50" />
@@ -217,7 +244,7 @@ const Dashboard = () => {
                                 銘柄リスト
                             </button>
                             <button
-                                className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+                                className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-green-800 text-white' : 'bg-gray-100 text-gray-700'}`}
                                 onClick={() => setActiveTab('tab2')}
                             >
                                 カテゴリ
@@ -242,11 +269,11 @@ const Dashboard = () => {
                                                     {category}
                                                 </a>
                                                 {category !== '未分類' && (
-                                                <span className="flex items-center border border-gray-200 rounded-lg pr-1 pl-1">
-                                                    <span className="mr-2 ml-1 flex items-center">
-                                                        <FaEdit className="hover:text-red-500 cursor-pointer " onClick={() => handleEditCategoryList(category)} />
-                                                    </span>
-                                                        <span className="hover:text-red-500 cursor-pointer" onClick={() => handleDeleteCategoryList(category)}>✕</span>
+                                                    <span className="flex items-center border border-gray-200 rounded-lg pr-1 pl-1">
+                                                        <span className="mr-1 ml-1 flex items-center">
+                                                            <FaEdit className="hover:text-red-500 cursor-pointer " onClick={() => handleEditCategoryList(category)} />
+                                                        </span >
+                                                        <span className="mr-1 ml-1 hover:text-red-500 cursor-pointer" onClick={() => handleDeleteCategoryList(category)}>✕</span>
                                                     </span>
                                                 )}
                                             </li>

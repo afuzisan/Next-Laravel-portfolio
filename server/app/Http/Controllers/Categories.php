@@ -116,4 +116,12 @@ class Categories extends Controller
             return response()->json(['message' => 'エラーが発生しました'], 500);
         }
     }
+
+    public function AddCategoryList(Request $request)
+    {
+        $categoryName = $request->categoryName;
+        $user_id = Auth::id();
+        $category = CategoriesList::create(['name' => $categoryName, 'user_id' => $user_id]);
+        return response()->json(['message' => 'カテゴリ「'.$categoryName.'」を追加しました'], 200);
+    }
 }

@@ -168,7 +168,7 @@ const Dashboard = ({ params }) => {
                                 銘柄リスト
                             </button>
                             <button
-                                className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+                                className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-yellow-500 text-white' : 'bg-gray-100 text-gray-700'}`}
                                 onClick={() => setActiveTab('tab2')}
                             >
                                 カテゴリ

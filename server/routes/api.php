@@ -43,5 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('Categories/getCategoryList',[Categories::class, 'getCategoryList']);
     Route::delete('Categories/deleteCategoryList/{category}',[Categories::class, 'deleteCategoryList']);
     Route::put('Categories/editCategoryList/{newCategory}/{category}',[Categories::class, 'editCategoryList']);
+    Route::post('Categories/AddCategoryList',[Categories::class, 'AddCategoryList']);
+    
 
 });
