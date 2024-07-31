@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\User;
 use App\Models\Stock;
+use App\Models\Category;
 use Illuminate\Support\Facades\Schema; 
 use Illuminate\Database\Schema\Blueprint; 
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class Memo extends Model
 {
@@ -32,7 +34,7 @@ class Memo extends Model
     {
         static::deleting(function ($memo) {
             if ($stock = $memo->stock) {
-                $stock->users()->detach(); // stock_userの関連を削除
+                $stock->users()->detach(); 
             }
         });
 

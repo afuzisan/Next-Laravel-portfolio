@@ -38,7 +38,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
             console.log(result)
             console.log(onDataResult)
             const initialCategories = result.stocks.reduce((acc, stock, index) => {
-                acc[stock.stock_code] = stock.categories[0].name || '未分類';
+                acc[stock.stock_code] = stock.categories && stock.categories[0] ? stock.categories[0].name : '未分類';
                 return acc;
             }, {});
             console.log(initialCategories)
@@ -92,13 +92,20 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
 
     const handleCategoryChange = (stockCode, value) => {
         setSelectedCategories(prev => ({ ...prev, [stockCode]: value }));
+        console.log(selectedCategories,stockCode, value)
+        laravelAxios.post('http://localhost:8080/api/Categories/update',{
+            "stockCode":stockCode,
+            "category":value
+        })
     };
-
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage);
-                setItemsPerPage(data.memo_display_number)
+                if (data && data.memo_display_number) {
+                    setItemsPerPage(data.memo_display_number)
+                }
                 console.log(data)
 
                 // ソート処理を追加
@@ -132,7 +139,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         return <div>Loading...</div>;
     }
     const categoryName = result.stocks.map((stock, index) => {
-        return stock.categories[0].name
+        return stock.categories && stock.categories[0] ? stock.categories[0].name : '未分類';
     })
     console.log(categoryName)
 
@@ -156,7 +163,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                                     <div className="relative inline-block">
                                         <select id="mySelect" className="" value={selectedCategories[stock.stock_code] || '未分類'} onChange={(e) => handleCategoryChange(stock.stock_code, e.target.value)}>
                                             {categoryName.map((category, index) => (
-                                                <option className='bg-white text-gray-700' value={category} key={index}>{category}</option>
+                                                <option className='bg-white text-gray-700' value={category} key={index}>{category} </option>
                                             ))}
                                         </select>
                                     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CategoriesList;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use App\Models\Memo;
@@ -30,7 +31,7 @@ class MemoController extends Controller
             $query->where('user_id', $user_id)->with(['memos' => function ($query) use ($user_id) {
                 $query->where('user_id', $user_id);
             }, 'categories'])->skip($pagination * $viewStocks)->take($viewStocks); // categoriesリレーションを追加
-        }, 'links'])->where('id', $user_id)->first();
+        }, 'links', 'categoriesLists'])->where('id', $user_id)->first();
 
         if (!$user || $user->stocks->isEmpty()) {
             return response()->json(['message' => 'Stocks not found']);
@@ -103,7 +104,7 @@ class MemoController extends Controller
             'memo_title' => 'nullable|string',
         ]);
 
-        // 既存のメモを確認
+        // 既��のメモを確認
         $existingMemo = Memo::where('stock_id', $request->input('stockNumber'))
             ->where('user_id', Auth::id())
             ->first();
@@ -112,11 +113,22 @@ class MemoController extends Controller
             return response()->json(['message' => 'Memo already exists for this stock'], 400);
         }
 
-        Category::create([
+        $userId = Auth::id();
+
+        // 「未分類」カテゴリ取得or作成
+        $uncategorized = CategoriesList::firstOrCreate(
+            ['name' => '未分類', 'user_id' => $userId],
+            ['order' => 0]
+        );
+
+        $category = new Category([
             'name' => '未分類',
-            'user_id' => Auth::id(),
+            'user_id' => $userId,
             'stock_id' => $request->input('stockNumber'),
+            'categories_list_id' => $uncategorized->id,
         ]);
+
+        $category->save();
 
         // 新しいメモを作成
         $memo = Memo::create([
@@ -177,6 +189,11 @@ class MemoController extends Controller
                 ->where('user_id', $userId)
                 ->Delete();
 
+            DB::table('categories')
+                ->where('stock_id', $stockNumber)
+                ->where('user_id', $userId)
+                ->Delete();
+
             return response()->json(['message' => 'Stock deleted successfully']);
         } else {
             return response()->json(['message' => 'Stock not found'], 404);
@@ -209,7 +226,7 @@ class MemoController extends Controller
             'memo' => $request->input('memo'), // 修正: リクエストからメモを取得
         ]);
 
-        return response()->json(['message' => 'Memo title created successfully']); // 修正: レスポンスを追加
+        return response()->json(['message' => 'Memo title created successfully']); // 修���: レスポンスを追加
     }
 
     /**

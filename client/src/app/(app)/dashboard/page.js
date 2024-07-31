@@ -186,11 +186,12 @@ const Dashboard = () => {
                             })}</div>}
                             {activeTab === 'tab2' && result && (() => {
                                 return result.stocks.map((stock, index) => {
+                                    const categoryName = stock.categories && stock.categories[0] ? stock.categories[0].name : '未分類';
                                     return (
                                         <div key={index}>
                                             <li className="list-none">
-                                                <a href={`dashboard/Category/${encodeURIComponent(stock.categories[0].name)}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
-                                                    {stock.categories[0].name}
+                                                <a href={`dashboard/Category/${encodeURIComponent(categoryName)}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                                    {categoryName}
                                                 </a>
                                             </li>
                                         </div>

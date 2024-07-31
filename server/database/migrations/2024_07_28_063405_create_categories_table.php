@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('order')->default(0);
+            $table->unsignedBigInteger('categories_list_id')->default(0);
             $table->foreignId('stock_id')->references('id')->on('stocks')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
-      
+
         });
     }
     /**

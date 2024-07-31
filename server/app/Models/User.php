@@ -71,6 +71,11 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return $this->hasMany(Category::class, 'user_id');
     }
 
+    public function categoriesLists()
+    {
+        return $this->hasMany(CategoriesList::class);
+    }
+
     /**
      * Send the email verification notification.
      *

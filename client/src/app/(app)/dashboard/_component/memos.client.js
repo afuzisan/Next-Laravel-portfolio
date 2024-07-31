@@ -93,10 +93,33 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
                     name={name}
                 />
 
-                {memos.length >= 0 && memos[1] ? 
-                    <MyEditor editorKey={editorKey} setEditorKey={setEditorKey} initMemo={memos[initMemoIndex].memo} initId={memos[initMemoIndex].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} activeOrder={activeOrder}/> : 
-                    <MyEditor editorKey={editorKey} setEditorKey={setEditorKey} initMemo={memos[0].memo} initId={memos[0].id} stock={stock} setMemoRefreshKey={setMemoRefreshKey} name={name} memosLength={memos.length} activeOrder={activeOrder}/>
-                }
+                {memos.length > 0 ? (
+                    memos[1] ? 
+                        <MyEditor 
+                            editorKey={editorKey} 
+                            setEditorKey={setEditorKey} 
+                            initMemo={memos[initMemoIndex].memo} 
+                            initId={memos[initMemoIndex].id} 
+                            stock={stock} 
+                            setMemoRefreshKey={setMemoRefreshKey} 
+                            name={name} 
+                            memosLength={memos.length} 
+                            activeOrder={activeOrder}
+                        /> : 
+                        <MyEditor 
+                            editorKey={editorKey} 
+                            setEditorKey={setEditorKey} 
+                            initMemo={memos[0].memo} 
+                            initId={memos[0].id} 
+                            stock={stock} 
+                            setMemoRefreshKey={setMemoRefreshKey} 
+                            name={name} 
+                            memosLength={memos.length} 
+                            activeOrder={activeOrder}
+                        />
+                ) : (
+                    <div>メモがありません</div>
+                )}
             </div>
 
             <Modal

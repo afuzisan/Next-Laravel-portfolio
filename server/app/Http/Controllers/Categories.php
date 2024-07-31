@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,5 +45,27 @@ class Categories extends Controller
         $totalStockCount = User::withCount('stocks')->where('id', $user_id)->first()->stocks_count;
 
         return response()->json(['user' => $user, 'totalStockCount' => $totalStockCount]); // ユーザー情報と全体のstocksの数をJSON形式で返す
+    }
+
+    public function update(Request $request)
+    {
+        try {
+            $stockCode = $request->stockCode;
+            $category = $request->category;
+            $user_id = Auth::id();
+            
+            $updated = Category::where('user_id', $user_id)
+                ->where('stock_id', $stockCode)
+                ->update(['name' => $category]);
+
+            if ($updated) {
+                return response()->json(['message' => 'カテゴリを「'.$category.'」に変更しました'], 200);
+            } else {
+                return response()->json(['message' => 'カテゴリ更新失敗'], 404);
+            }
+        } catch (\Exception $e) {
+            Log::error('カテゴリ更新エラー: ' . $e->getMessage());
+            return response()->json(['message' => 'エラー発生'], 500);
+        }
     }
 }

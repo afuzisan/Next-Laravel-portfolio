@@ -39,5 +39,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('log/getStockLog', [LogController::class, 'getStockLog']);
 
     Route::get('Categories/index', [Categories::class, 'index']);
+    Route::post('Categories/update',[Categories::class, 'update']);
 
 });
