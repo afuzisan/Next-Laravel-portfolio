@@ -76,4 +76,43 @@ class Categories extends Controller
         $categories = CategoriesList::where('user_id', $user_id)->pluck('name');
         return response()->json($categories);
     }
+
+    public function deleteCategoryList($category)
+    {
+        try {
+            $user_id = Auth::id();
+            if($category !== '未分類'){
+                $deleted = CategoriesList::where('user_id', $user_id)->where('name', $category)->delete();
+                if($deleted === 0) {
+                    return response()->json(['message' => 'カテゴリが見つかりません'], 404);
+                }
+                $updated = DB::table('categories')->where('user_id', $user_id)->where('name', $category)->update(['name' => '未分類']);
+                return response()->json(['message' => 'カテゴリ「'.$category.'」を削除しました'], 200);
+            } else {
+                return response()->json(['message' => '未分類は削除できません'], 400);
+            }
+        } catch (\Exception $e) {
+            Log::error('カテゴリ削除エラー: ' . $e->getMessage());
+            return response()->json(['message' => 'エラーが発生しました'], 500);
+        }
+    }
+
+    public function editCategoryList($newCategory, $category)
+    {
+        try {
+            $user_id = Auth::id();
+            if($newCategory !== '未分類'){
+                $updated = CategoriesList::where('user_id', $user_id)->where('name', $category)->update(['name' => $newCategory]);
+                if($updated === 0) {
+                    return response()->json(['message' => 'カテゴリが見つかりません'], 404);
+                }
+                return response()->json(['message' => 'カテゴリ「'.$newCategory.'」を編集しました'], 200);
+            } else {
+                return response()->json(['message' => '未分類は編集できません'], 400);
+            }
+        } catch (\Exception $e) {
+            Log::error('カテゴリ編集エラー: ' . $e->getMessage());
+            return response()->json(['message' => 'エラーが発生しました'], 500);
+        }
+    }
 }

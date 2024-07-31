@@ -98,7 +98,7 @@ const Dashboard = ({ params }) => {
                                 銘柄を登録
                             </button>
                             {errorMessage && (
-                                <Danger errorMessage={errorMessage} setErrorMessage={setErrorMessage} className="absolute top-full left-6 mt-2 w-full text-white bg-red-400 bg-opacity-75 border border-red-500 p-2 cursor-pointer text-center flex items-center" />
+                                <Danger errorMessage={errorMessage} setErrorMessage={setErrorMessage} className="absolute top-full left-6 mt-2 w-full text-white bg-red-400  border border-red-500 p-2 cursor-pointer text-center flex items-center z-50" />
                             )}
                         </div>
                         <div className="flex items-center">

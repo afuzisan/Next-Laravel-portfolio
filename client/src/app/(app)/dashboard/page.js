@@ -6,8 +6,8 @@ import MemoFetch from '@@/(app)/dashboard/_component/MemoFetch.client';
 import { useReducer, useState, useEffect } from 'react';
 import Danger from '@/components/Danger'
 import '@/app/global.css'
-
-
+import { useRouter } from 'next/navigation';
+import { FaEdit } from "react-icons/fa";
 
 const Dashboard = () => {
 
@@ -29,6 +29,7 @@ const Dashboard = () => {
         return localStorage.getItem('activeTab') || 'stockList';
     });
     const [categoryList, setCategoryList] = useState([]);
+    const router = useRouter();
 
     useEffect(() => {
         localStorage.setItem('itemsPerPage', itemsPerPage);
@@ -83,10 +84,46 @@ const Dashboard = () => {
         setSortOrder(order);
     };
 
-    console.log(result)
+    const handleDeleteCategoryList = (category) => {
+        if (category === '未分類') {
+            setErrorMessage('未分類は削除できません');
+            return;
+        }
+        if (window.confirm(`${category}を削除してもよろしいですか？`)) {
+            laravelAxios.delete(`http://localhost:8080/api/Categories/deleteCategoryList/${category}`)
+                .then(() => {
+                    router.refresh({ keepCache: true });
+                    setErrorMessage('');
+                })
+                .catch(() => {
+                    setErrorMessage('エラーが発生しました');
+                });
+        }
+    }
+
+    const handleEditCategoryList = (category) => {
+        const newCategory = prompt('新しいカテゴリ名を入力してください');
+        if (newCategory === null || newCategory === '') {
+            return;
+        }
+        if (category === '未分類') {
+            setErrorMessage('未分類は編集できません');
+            return;
+        }
+        laravelAxios.put(`http://localhost:8080/api/Categories/editCategoryList/${newCategory}/${category}`)
+            .then(() => {
+                setCategoryList(prevList => prevList.map(c => c === category ? newCategory : c));
+                setRefreshKey(prevKey => prevKey + 1);
+                setErrorMessage('');
+            })
+            .catch(() => {
+                setErrorMessage('エラーが発生しました');
+            });
+    }
+
     return (
         <>
-            <div className="py-6">
+            <div className="py-6" key={refreshKey}>
 
                 <div className="grid grid-cols-2 h-full gap-2">
                     <nav aria-label="Page navigation" className="col-span-2 flex justify-between pr-6">
@@ -110,7 +147,7 @@ const Dashboard = () => {
                                 銘柄を登録
                             </button>
                             {errorMessage && (
-                                <Danger errorMessage={errorMessage} setErrorMessage={setErrorMessage} className="absolute top-full left-6 mt-2 w-full text-white bg-red-400 bg-opacity-75 border border-red-500 p-2 cursor-pointer text-center flex items-center" />
+                                <Danger errorMessage={errorMessage} setErrorMessage={setErrorMessage} className="absolute top-full left-6 mt-2 w-full text-white bg-red-400  border border-red-500 p-2 cursor-pointer text-center flex items-center z-50" />
                             )}
                         </div>
                         <div className="flex items-center">
@@ -186,7 +223,7 @@ const Dashboard = () => {
                                 カテゴリ
                             </button>
                         </div>
-                        <div className="">
+                        <div>
                             {activeTab === 'stockList' && result && <div>{result.stocks.map((stock, index) => {
                                 return (
                                     <li className={`list-none`}>
@@ -200,11 +237,18 @@ const Dashboard = () => {
                                 return categoryList.map((category, index) => {
                                     return (
                                         <div key={index}>
-                                            <li className="list-none">
-                                                <a href={`dashboard/Category/${encodeURIComponent(category)}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                            <li className="list-none flex justify-between block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                                <a href={`dashboard/Category/${encodeURIComponent(category)}`} className="block w-full h-full">
                                                     {category}
                                                 </a>
+                                                <span className="flex items-center border border-gray-200 rounded-lg pr-1 pl-1">
+                                                    <span className="mr-2 ml-1 flex items-center">
+                                                        <FaEdit className="hover:text-red-500 cursor-pointer " onClick={() => handleEditCategoryList(category)} />
+                                                    </span>
+                                                    <span className="hover:text-red-500 cursor-pointer" onClick={() => handleDeleteCategoryList(category)}>✕</span>
+                                                </span>
                                             </li>
+
                                         </div>
                                     );
                                 });

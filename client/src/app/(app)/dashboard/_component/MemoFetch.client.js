@@ -158,16 +158,12 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                                     <span className="grid-item px-6">{stock.stock_name}</span>
                                     <span className="grid-item px-6">{stock.stock_code}</span>
                                 </div>
-                                <div className='col-span-1 flex justify-end'>
-                                    <div className="relative inline-block">
-                                        <select id="mySelect" className="" value={selectedCategories[stock.stock_code] || '未分類'} onChange={(e) => handleCategoryChange(stock.stock_code, e.target.value)}>
-                                            {categoryList && categoryList.map((category, index) => (
-                                                <option className='bg-white text-gray-700' value={category} key={index}>{category} </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="col-span-2 flex justify-end">
+                                <div className="col-span-3 flex justify-end ">
+                                    <select id="mySelect" className="max-w-60 mr-4 border border-gray-300 rounded-md" value={selectedCategories[stock.stock_code] || '未分類'} onChange={(e) => handleCategoryChange(stock.stock_code, e.target.value)}>
+                                        {categoryList && categoryList.map((category, index) => (
+                                            <option className='bg-white text-gray-700' value={category} key={index}>{category} </option>
+                                        ))}
+                                    </select>
                                     <button className="pr-4 pl-4 hover:bg-red-100 bg-gray-100" onClick={() => handleLog(stock.stock_code)}>編集履歴</button>
                                     <button className="bg-red-500 text-white px-4 py-2 hover:bg-red-700" onClick={() => handleDelete(stock.stock_code)}>{stock.stock_code}を削除</button>
                                 </div>
