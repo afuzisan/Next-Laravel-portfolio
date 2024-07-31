@@ -241,12 +241,14 @@ const Dashboard = () => {
                                                 <a href={`dashboard/Category/${encodeURIComponent(category)}`} className="block w-full h-full">
                                                     {category}
                                                 </a>
+                                                {category !== '未分類' && (
                                                 <span className="flex items-center border border-gray-200 rounded-lg pr-1 pl-1">
                                                     <span className="mr-2 ml-1 flex items-center">
                                                         <FaEdit className="hover:text-red-500 cursor-pointer " onClick={() => handleEditCategoryList(category)} />
                                                     </span>
-                                                    <span className="hover:text-red-500 cursor-pointer" onClick={() => handleDeleteCategoryList(category)}>✕</span>
-                                                </span>
+                                                        <span className="hover:text-red-500 cursor-pointer" onClick={() => handleDeleteCategoryList(category)}>✕</span>
+                                                    </span>
+                                                )}
                                             </li>
 
                                         </div>

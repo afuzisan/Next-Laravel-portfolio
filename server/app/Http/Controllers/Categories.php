@@ -103,6 +103,7 @@ class Categories extends Controller
             $user_id = Auth::id();
             if($newCategory !== '未分類'){
                 $updated = CategoriesList::where('user_id', $user_id)->where('name', $category)->update(['name' => $newCategory]);
+                DB::table('categories')->where('user_id', $user_id)->where('name', $category)->update(['name' => $newCategory]);
                 if($updated === 0) {
                     return response()->json(['message' => 'カテゴリが見つかりません'], 404);
                 }
