@@ -21,7 +21,7 @@ function formatDateToISO(date) {
 // 編集可能か判定するコンテキストを作成
 export const EditableContext = createContext();
 
-const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsPerPage, onDataFetched, param, setTotalStockCount, onDataResult }) => {
+const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsPerPage, onDataFetched, param, setTotalStockCount, onDataResult, categoryList }) => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
     const [MemoRefreshKey, setMemoRefreshKey] = useState(0);
@@ -32,6 +32,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState('');
     const [selectedCategories, setSelectedCategories] = useState({});
+
 
     useEffect(() => {
         if (result && onDataResult) {
@@ -92,13 +93,13 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
 
     const handleCategoryChange = (stockCode, value) => {
         setSelectedCategories(prev => ({ ...prev, [stockCode]: value }));
-        console.log(selectedCategories,stockCode, value)
-        laravelAxios.post('http://localhost:8080/api/Categories/update',{
-            "stockCode":stockCode,
-            "category":value
+        console.log(selectedCategories, stockCode, value)
+        laravelAxios.post('http://localhost:8080/api/Categories/update', {
+            "stockCode": stockCode,
+            "category": value
         })
     };
-    
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -131,6 +132,8 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         fetchData();
     }, [MemoRefreshKey, sortOrder, currentPage, param]); // paramを依存に追加
 
+
+
     if (error) {
         return <div>新しく銘柄を登録してください</div>;
     }
@@ -138,10 +141,6 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     if (!result) {
         return <div>Loading...</div>;
     }
-    const categoryName = result.stocks.map((stock, index) => {
-        return stock.categories && stock.categories[0] ? stock.categories[0].name : '未分類';
-    })
-    console.log(categoryName)
 
     return (
         <EditableContext.Provider value={[isEditable, setIsEditable]}>
@@ -162,7 +161,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                                 <div className='col-span-1 flex justify-end'>
                                     <div className="relative inline-block">
                                         <select id="mySelect" className="" value={selectedCategories[stock.stock_code] || '未分類'} onChange={(e) => handleCategoryChange(stock.stock_code, e.target.value)}>
-                                            {categoryName.map((category, index) => (
+                                            {categoryList && categoryList.map((category, index) => (
                                                 <option className='bg-white text-gray-700' value={category} key={index}>{category} </option>
                                             ))}
                                         </select>

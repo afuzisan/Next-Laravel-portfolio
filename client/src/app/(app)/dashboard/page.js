@@ -28,6 +28,7 @@ const Dashboard = () => {
     const [activeTab, setActiveTab] = useState(() => {
         return localStorage.getItem('activeTab') || 'stockList';
     });
+    const [categoryList, setCategoryList] = useState([]);
 
     useEffect(() => {
         localStorage.setItem('itemsPerPage', itemsPerPage);
@@ -44,6 +45,17 @@ const Dashboard = () => {
     useEffect(() => {
         localStorage.setItem('activeTab', activeTab);
     }, [activeTab]);
+
+    useEffect(() => {
+        laravelAxios.get('http://localhost:8080/api/Categories/getCategoryList')
+            .then(response => {
+                console.log(response.data)
+                setCategoryList(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }, []);
 
     const handleRegisterClick = (inputValue) => {
 
@@ -185,13 +197,12 @@ const Dashboard = () => {
                                 )
                             })}</div>}
                             {activeTab === 'tab2' && result && (() => {
-                                return result.stocks.map((stock, index) => {
-                                    const categoryName = stock.categories && stock.categories[0] ? stock.categories[0].name : '未分類';
+                                return categoryList.map((category, index) => {
                                     return (
                                         <div key={index}>
                                             <li className="list-none">
-                                                <a href={`dashboard/Category/${encodeURIComponent(categoryName)}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
-                                                    {categoryName}
+                                                <a href={`dashboard/Category/${encodeURIComponent(category)}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                                    {category}
                                                 </a>
                                             </li>
                                         </div>
@@ -211,7 +222,7 @@ const Dashboard = () => {
                             onDataResult={result}
                             setItemsPerPage={setItemsPerPage}
                             setTotalStockCount={setTotalStockCount}
-
+                            categoryList={categoryList}
                         />
                     </div>
                 </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\CategoriesList;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -67,5 +68,12 @@ class Categories extends Controller
             Log::error('カテゴリ更新エラー: ' . $e->getMessage());
             return response()->json(['message' => 'エラー発生'], 500);
         }
+    }
+
+    public function getCategoryList()
+    {
+        $user_id = Auth::id();
+        $categories = CategoriesList::where('user_id', $user_id)->pluck('name');
+        return response()->json($categories);
     }
 }
