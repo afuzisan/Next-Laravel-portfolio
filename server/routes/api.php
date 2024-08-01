@@ -25,6 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('dashboard/memoTitleCreate', [MemoController::class, 'memoTitleCreate']);
     Route::post('dashboard/memo/exchange', [MemoController::class, 'exchange']);
     Route::delete('dashboard/memoDelete', [MemoController::class, 'memoDelete']);
+    Route::post('dashboard/PhantomJS',[MemoController::class, 'PhantomJS']);
 
     Route::get('mypage/externallinks', [ExternalLinkController::class, 'index']);
     Route::post('mypage/externallinks/create', [ExternalLinkController::class, 'create']);
@@ -44,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('Categories/deleteCategoryList/{category}',[Categories::class, 'deleteCategoryList']);
     Route::put('Categories/editCategoryList/{newCategory}/{category}',[Categories::class, 'editCategoryList']);
     Route::post('Categories/AddCategoryList',[Categories::class, 'AddCategoryList']);
+   
     
 
 });

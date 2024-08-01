@@ -1,0 +1,109 @@
+<!-- https://nikkeiyosoku.com/stock/all/
+https://jpx-jquants.com/ -->
+
+
+use Illuminate\Support\Facades\Http;
+
+class MemoController extends Controller
+{
+    // ... 既存のメソッド ...
+
+    public function captureWebPage(Request $request)
+    {
+        $url = 'http://PhantomJScloud.com/api/browser/v2/a-demo-key-with-low-quota-per-ip-address/';
+        $payload = [
+            'url' => 'http://example.com',
+            'renderType' => 'plainText',
+            'outputAsJson' => true
+        ];
+
+        $response = Http::post($url, $payload);
+
+        if ($response->successful()) {
+            $result = $response->json();
+            Storage::put('capture.json', json_encode($result));
+            return response()->json(['message' => 'ページ取得成功']);
+        }
+
+        return response()->json(['message' => 'ページ取得失敗'], 500);
+    }
+}
+
+JSONの一部取得方法：
+Arr::only使用で簡単に
+特定キーのみ取得可能です。
+$response = Http::post($url, $payload);
+
+if ($response->successful()) {
+    $result = $response->json();
+    
+    // 特定のキーのみ取得
+    $partialData = [
+        'title' => $result['title'] ?? null,
+        'content' => $result['content'] ?? null
+    ];
+    
+    // または配列の一部を取得
+    $partialData = Arr::only($result, ['title', 'content']);
+    
+    // DBに保存
+    Capture::create([
+        'data' => json_encode($partialData)
+    ]);
+    
+    return response()->json(['message' => '保存成功']);
+}
+
+
+<!-- https://jpx-jquants.com/ -->
+
+use Illuminate\Support\Facades\Http;
+
+function getAuthToken()
+{
+    $data = [
+        "mailaddress" => env('JQUANTS_EMAIL'),
+        "password" => env('JQUANTS_PASSWORD')
+    ];
+
+    $response = Http::post('https://api.jquants.com/v1/token/auth_user', $data);
+
+    return $response->json();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+	"url":"http://example.com",
+	"renderType":"plainText",
+	"outputAsJson":true
+}
+php code
+$url = 'http://PhantomJScloud.com/api/browser/v2/a-demo-key-with-low-quota-per-ip-address/';
+$payload = file_get_contents ( 'request.json' );
+$options = array(
+    'http' => array(
+        'header'  => "Content-type: application/json\r\n",
+        'method'  => 'POST',
+        'content' => $payload
+    )
+);
+$context  = stream_context_create($options);
+$result = file_get_contents($url, false, $context);
+if ($result === FALSE) { /* Handle error */ }
+file_put_contents('capture.json',$result);

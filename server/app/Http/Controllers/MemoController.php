@@ -6,6 +6,7 @@ use App\Models\CategoriesList;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use App\Models\Memo;
+use App\Models\Stock;
 use App\Models\User;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
@@ -14,6 +15,8 @@ use Throwable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class MemoController extends Controller
 {
@@ -67,7 +70,7 @@ class MemoController extends Controller
 
     public function memoUpdate(Request $request)
     {
-        // リクエストから memo_id を取得
+        // リクエストから memo_id 取
         $memoId = $request->input('memo_id');
         $newContent = $request->input('memo');
         $order = $request->input('order');
@@ -104,8 +107,9 @@ class MemoController extends Controller
             'memo_title' => 'nullable|string',
         ]);
 
-        // 既��のメモを確認
-        $existingMemo = Memo::where('stock_id', $request->input('stockNumber'))
+        $stock = Stock::where('stock_code', $request->input('stockNumber'))->first();
+        // 既のメモを確認
+        $existingMemo = Memo::where('stock_id', $stock->id)
             ->where('user_id', Auth::id())
             ->first();
 
@@ -124,7 +128,7 @@ class MemoController extends Controller
         $category = new Category([
             'name' => '未分類',
             'user_id' => $userId,
-            'stock_id' => $request->input('stockNumber'),
+            'stock_id' => $stock->id,
             'categories_list_id' => $uncategorized->id,
         ]);
 
@@ -132,7 +136,7 @@ class MemoController extends Controller
 
         // 新しいメモを作成
         $memo = Memo::create([
-            'stock_id' => $request->input('stockNumber'),
+            'stock_id' => $stock->id,
             'user_id' => Auth::id(),
             'memo' => $request->input('memo', '{"blocks":[{"key":"cchb4","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}'),
             'memo_title' => $request->input('memo_title', null),
@@ -226,14 +230,14 @@ class MemoController extends Controller
             'memo' => $request->input('memo'), // 修正: リクエストからメモを取得
         ]);
 
-        return response()->json(['message' => 'Memo title created successfully']); // 修���: レスポンスを追加
+        return response()->json(['message' => 'Memo title created successfully']); // 修: レス���ンスを追加
     }
 
     /**
-     * メモを削除する
+     * を削除する
      * TODO:更新したメモを保存する新しいテーブルの作成
      * TODO:削除したメモを保存する新しいテーブルの成
-     * TODO:メモを削除する前に削除したメモをコピーして、したメモを保存する新しいテーブルにコピー
+     * TODO:メモを削除する前に削除メモをコピーして、したメモを保存する新しいテーブルにコピー
      */
     public function memoDelete(Request $request)
     {
@@ -279,12 +283,12 @@ class MemoController extends Controller
                     $newMemo->memo = $oldMemo->memo;
                     $oldMemo->memo = $tempMemo;
 
-                    // メモのタイトルを交換
+                    // のタイトルを交換
                     $tempTitle = $newMemo->memo_title;
                     $newMemo->memo_title = $oldMemo->memo_title;
                     $oldMemo->memo_title = $tempTitle;
 
-                    // orderをnewOrderの値に書換え
+                    // orderをnewOrder値に書換え
                     $newMemo->order = $newOrder;
 
                     // 保存前のログ出力
@@ -308,6 +312,110 @@ class MemoController extends Controller
         return response()->json(['message' => 'Memos exchanged successfully']);
     }
 
+    public function PhantomJS(Request $request)
+    {
+        $url = 'http://PhantomJScloud.com/api/browser/v2/ak-f67y3-c9qxt-800gk-kpab0-jstwb/';
+        $payload = [
+            'url' => 'https://nikkeiyosoku.com/stock/all/',
+            'renderType' => 'html',
+            'outputAsJson' => true
+        ];
 
+        try {
+            $response = Http::timeout(60)
+                ->withOptions(['verify' => false])
+                ->retry(3, 1000)
+                ->post($url, $payload);
 
+            if ($response->successful()) {
+                $result = $response->json();
+                
+                // HTMLコンテンツ取得方法変更
+                $htmlContent = $result['content']['data'] ?? '';
+                
+                if (is_string($htmlContent)) {
+                    Log::info('受信HTMLコンテンツ', ['content' => substr($htmlContent, 0, 1000)]);
+                    
+                    $dom = new \DOMDocument();
+                    @$dom->loadHTML($htmlContent);
+                    $xpath = new \DOMXPath($dom);
+
+                    // stock-txt-xsクラスを持つ要素を取得
+                    $elements = $xpath->query("//*[contains(@class, 'stock-txt-xs')]");
+
+                    $stockInfo = [];
+                    foreach ($elements as $element) {
+                        $stockInfo[] = trim($element->textContent);
+                    }
+
+                    Log::info('取得データ', ['stockInfo' => $stockInfo]);
+
+                    $tdElements = $xpath->query('//table[@class="table table-bordered table-striped"]/tbody//td');
+
+                    $stockData = [];
+                    foreach ($tdElements as $index => $td) {
+                        $key = $index % 4;
+                        $value = trim($td->textContent);
+                        
+                        if ($key == 0) {
+                            $stockData[] = [
+                                'stock_code' => $value,
+                                'stock_name' => '',
+                                'Industry' => '',
+                                'market' => ''
+                            ];
+                        } else {
+                            $lastIndex = count($stockData) - 1;
+                            switch ($key) {
+                                case 1:
+                                    $stockData[$lastIndex]['stock_name'] = $value;
+                                    break;
+                                case 2:
+                                    $stockData[$lastIndex]['Industry'] = $value;
+                                    break;
+                                case 3:
+                                    $stockData[$lastIndex]['market'] = $value;
+                                    break;
+                            }
+                        }
+                    }
+
+                    Log::info('取得データ', ['stockData' => $stockData]);
+
+                    // JSON形式に変換
+                    $jsonData = json_encode($stockData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+                    $updatedStockCodes = [];
+
+                    foreach ($stockData as $stock) {
+                        DB::table('stocks')->updateOrInsert(
+                            ['stock_code' => $stock['stock_code']],
+                            [
+                                'stock_name' => $stock['stock_name'],
+                                'stock_at_edit' => now(),
+                                'updated_at' => now(),
+                            ]
+                        );
+                        $updatedStockCodes[] = $stock['stock_code'];
+                    }
+
+                    // 更新されなかった銘柄を削除
+                    DB::table('stocks')
+                        ->whereNotIn('stock_code', $updatedStockCodes)
+                        ->delete();
+
+                    return response()->json(['message' => 'データ更新・削除成功', 'data' => $stockData]);
+                } else {
+                    Log::error('HTMLコンテンツが文字列でない', ['content' => $htmlContent]);
+                    return response()->json(['error' => 'HTMLコンテンツ無効'], 500);
+                }
+            } else {
+                Log::error('PhantomJSCloud APIエラー', ['status' => $response->status(), 'body' => $response->body()]);
+                return response()->json(['error' => 'APIエラー'], 500);
+            }
+        } catch (\Exception $e) {
+            Log::error('PhantomJSCloud接続エラー', ['message' => $e->getMessage()]);
+            return response()->json(['error' => '接続エラー'], 500);
+        }
+    }
 }
