@@ -132,7 +132,10 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
 
   const getStockInfo = () => {
     if (modalContent?.memo_logs?.length > 0 && resultStocks) {
-      const stock = resultStocks.find(stock => Number(stock.id) === Number(modalContent.memo_logs[0].stock_id));
+      let stock = resultStocks.find(stock => Number(stock.id) === Number(modalContent.memo_logs[0].stock_id));
+      if (!stock) {
+        stock = resultStocks[0];
+      }
       return stock ? { stock_name: stock.stock_name, stock_code: stock.stock_code } : null;
     }
     return null;
@@ -157,7 +160,7 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
           return (
             <div
               key={index}
-              className={`border mb-4 p-4 w-[400px] min-w-[400px] rounded shadow grid grid-rows-[200px,50px,50px,auto] gap-2 h-[600px] min-h-[600px] mx-2 flex-grow-0 flex-shrink-0 basis-[calc(100%-1rem)] sm:basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-1rem)] ${isFullScreen && fullScreenLog === log ? 'fixed top-0 left-0 w-full h-full bg-white z-50 grid-rows-[300px,50px,50px,auto] justify-center p-6' : ''}`}
+              className={`border mb-4 p-4 w-[400px] rounded shadow grid grid-rows-[200px,50px,50px,auto] gap-2 h-[600px] mx-2 flex-grow-0 flex-shrink-0 basis-[calc(100%-1rem)] sm:basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-1rem)] ${isFullScreen && fullScreenLog === log ? 'fixed top-0 left-0 w-full h-full bg-white z-50 grid-rows-[300px,50px,50px,auto] justify-center p-6' : ''}`}
             >
               <div className="relative">
                 <img
