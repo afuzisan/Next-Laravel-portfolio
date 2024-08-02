@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import laravelAxios from "@/lib/laravelAxios";
 import { Editor, EditorState, convertFromRaw, CompositeDecorator } from 'draft-js';
-import { FaExpand } from 'react-icons/fa'; 
+import { FaExpand } from 'react-icons/fa';
 
 const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
-
+  console.log(modalContent && modalContent)
   const [content, setContent] = useState(null);
   const [chartCount, setChartCount] = useState(0);
   const [chartImages, setChartImages] = useState({});
@@ -52,8 +52,11 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
 
   const initStockLog = async () => {
     try {
+      console.log(modalContent)
+      console.log(modalContent.StockCode)
       const response = await laravelAxios.get(`http://localhost:8080/api/log/getStockLog?stockCode=${modalContent.StockCode}`);
       const log = response.data.memo_logs;
+      console.log(log)
       setContent(log);
     } catch (error) {
       console.error('Error fetching log:', error);
@@ -128,10 +131,11 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
   };
 
   const getStockInfo = () => {
-    if (modalContent.memo_logs && modalContent.memo_logs.length > 0) {
-      const stock = resultStocks.find(stock => Number(stock.stock_code) === Number(modalContent.memo_logs[0].stock_id));
-      return `${stock.stock_name} (${stock.stock_code})`;
+    if (modalContent?.memo_logs?.length > 0 && resultStocks) {
+      const stock = resultStocks.find(stock => Number(stock.id) === Number(modalContent.memo_logs[0].stock_id));
+      return stock ? { stock_name: stock.stock_name, stock_code: stock.stock_code } : null;
     }
+    return null;
   }
 
 
@@ -142,8 +146,7 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
       contentLabel="Stock Code Modal"
       ariaHideApp={false}
     >
-      <div className="flex justify-between items-center">
-        <h2>{getStockInfo()}</h2>
+      <div className="flex justify-end items-center">
         <button onClick={closeModal} className="bg-none border-none text-2xl cursor-pointer">×</button>
       </div>
       <div className="flex flex-wrap -mx-2 justify-center mt-6">
@@ -154,17 +157,18 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
           return (
             <div
               key={index}
-              className={`border mb-4 p-4 w-[400px] rounded shadow grid grid-rows-[200px,50px,50px,auto] gap-2 h-[600px] mx-2  ${isFullScreen && fullScreenLog === log ? 'fixed top-0 left-0 w-full h-full bg-white z-50 grid-rows-[300px,50px,50px,auto] justify-center p-6 ' : ''}`}
+              className={`border mb-4 p-4 w-[400px] min-w-[400px] rounded shadow grid grid-rows-[200px,50px,50px,auto] gap-2 h-[600px] min-h-[600px] mx-2 flex-grow-0 flex-shrink-0 basis-[calc(100%-1rem)] sm:basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-1rem)] ${isFullScreen && fullScreenLog === log ? 'fixed top-0 left-0 w-full h-full bg-white z-50 grid-rows-[300px,50px,50px,auto] justify-center p-6' : ''}`}
             >
               <div className="relative">
                 <img
                   className={`w-full h-[200px] mt-8 object-cover rounded cursor-pointer ${isFullScreen && fullScreenLog === log ? 'w-[800px] h-[300px] mt-8 object-cover rounded cursor-pointer object-contain' : ''}`}
-                  src={chartImages[`${log.stock_id}-${imageFormattedDate}-${log.memo_title}`] || `https://www.kabudragon.com/chart/s=${log.stock_id}/e=${selectedDates[`${log.stock_id}-${imageFormattedDate}-${log.memo_title}`]?.replace(/-/g, '').slice(2) || imageFormattedDate}.png`}
+                  src={chartImages[`${getStockInfo().stock_code}-${imageFormattedDate}-${log.memo_title}`] || `https://www.kabudragon.com/chart/s=${getStockInfo().stock_code}/e=${selectedDates[`${getStockInfo().stock_code}-${imageFormattedDate}-${log.memo_title}`]?.replace(/-/g, '').slice(2) || imageFormattedDate}.png`}
                   alt="Stock Image"
-                  onClick={(e) => { e.stopPropagation(); handleImageClick(log.stock_id, imageFormattedDate, 1, log.memo_title, false, selectedDates[`${log.stock_id}-${imageFormattedDate}-${log.memo_title}`]?.replace(/-/g, '').slice(2) || calendarFormattedDate); }}
+                  onClick={(e) => { e.stopPropagation(); handleImageClick(getStockInfo().stock_code, imageFormattedDate, 1, log.memo_title, false, selectedDates[`${getStockInfo().stock_code}-${imageFormattedDate}-${log.memo_title}`]?.replace(/-/g, '').slice(2) || calendarFormattedDate); }}
                 />
+                <span className="border absolute top-[-3px] left-[50px] transform -translate-x-1/2 text-black bg-white p-1 rounded ">{getStockInfo().stock_name}({getStockInfo().stock_code})</span>
                 <span className="absolute top-2 left-1/2 transform -translate-x-1/2 text-black bg-white p-1 rounded ">
-                  {chartLabels[`${log.stock_id}-${imageFormattedDate}-${log.memo_title}`] || '日足'}
+                  {chartLabels[`${getStockInfo().stock_code}-${imageFormattedDate}-${log.memo_title}`] || '日足'}
                 </span>
                 <button
                   className={`absolute top-1 right-1 bg-none border-none text-gray-500 cursor-pointer ${isFullScreen && fullScreenLog === log ? 'hidden' : ''}`}
@@ -173,22 +177,22 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
                   <FaExpand />
                 </button>
               </div>
-              <div className={`flex justify-between items-center mt-8 ${isFullScreen && fullScreenLog === log ? 'w-[800px] mt-12' : ''}`}>
+              <div className={`flex justify-between items-center mt-10 ${isFullScreen && fullScreenLog === log ? 'w-[800px] mt-12' : ''}`}>
                 <div className="flex items-center">
                   <span className="text-lg">編集日：</span>
-                  <button className="text-lg hover:bg-gray-100 p-1 rounded" onClick={() => handleFormattedDate(formattedDate, log.stock_id, imageFormattedDate, log.memo_title)}>{formattedDate}</button>
+                  <button className="text-lg hover:bg-gray-100 p-1 rounded" onClick={() => handleFormattedDate(formattedDate, getStockInfo().stock_code, imageFormattedDate, log.memo_title)}>{formattedDate}</button>
                 </div>
                 <input
                   type="date"
                   id="start"
                   name="trip-start"
-                  value={selectedDates[`${log.stock_id}-${imageFormattedDate}-${log.memo_title}`] || formattedDate}
+                  value={selectedDates[`${getStockInfo().stock_code}-${imageFormattedDate}-${log.memo_title}`] || formattedDate}
                   min="2018-01-01"
-                  onChange={(e) => handleDateChange(e, log.stock_id, calendarFormattedDate, log.memo_title, imageFormattedDate, log.stock_id)}
+                  onChange={(e) => handleDateChange(e, getStockInfo().stock_code, calendarFormattedDate, log.memo_title, imageFormattedDate, getStockInfo().stock_code)}
                   className="border rounded p-1"
                 />
               </div>
-              <div className={`mb-2 break-words overflow-hidden flex items-center ${isFullScreen && fullScreenLog === log ? 'w-[800px] mt-6' : ''}`} >
+              <div className={`mt-2 mb-2 break-words overflow-hidden flex items-center ${isFullScreen && fullScreenLog === log ? 'w-[800px] mt-6' : ''}`} >
                 <span className="font-bold text-lg">{log.memo_title}</span>
               </div>
               <div className="mb-2 flex-grow overflow-y-scroll">

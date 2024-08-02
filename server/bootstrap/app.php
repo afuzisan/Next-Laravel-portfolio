@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Console\Commands\UpdateStockData;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -24,4 +25,11 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
-    })->create();
+    })
+    ->withCommands([
+        UpdateStockData::class
+    ])
+    ->withSchedule(function ($schedule) {
+        $schedule->command(UpdateStockData::class)->everyTenMinutes();
+    })
+    ->create();

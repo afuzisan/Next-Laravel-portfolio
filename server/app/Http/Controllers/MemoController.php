@@ -151,9 +151,10 @@ class MemoController extends Controller
     public function memoEdit(Request $request)
     {
         $stockNumber = $request->input('stock');
+        $stock = Stock::where('stock_code', $stockNumber)->first();
         $userId = Auth::id();
 
-        $memo = Memo::where('stock_id', $stockNumber)
+        $memo = Memo::where('stock_id', $stock->id)
             ->where('user_id', $userId)
             ->get();
 
@@ -181,20 +182,21 @@ class MemoController extends Controller
     public function stockDelete(Request $request)
     {
         $stockNumber = $request->input('stockNumber');
+        $stock = Stock::where('stock_code', $stockNumber)->first();
         $userId = Auth::id();
 
-        $deletedRows = Memo::where('stock_id', $stockNumber)
+        $deletedRows = Memo::where('stock_id', $stock->id)
             ->where('user_id', $userId)
             ->forceDelete();
 
         if ($deletedRows) {
             DB::table('stock_user')
-                ->where('stock_id', $stockNumber)
+                ->where('stock_id', $stock->id)
                 ->where('user_id', $userId)
                 ->Delete();
 
             DB::table('categories')
-                ->where('stock_id', $stockNumber)
+                ->where('stock_id', $stock->id)
                 ->where('user_id', $userId)
                 ->Delete();
 
@@ -210,14 +212,15 @@ class MemoController extends Controller
     public function memoTitleCreate(Request $request)
     {
         $user = Auth::id();
+        $stock = Stock::where('stock_code', $request->input('stockNumber'))->first();
         $request->validate([
             'stockNumber' => 'required|integer',
             'memo_title' => [
                 'required',
                 'string',
-                Rule::unique('memos')->where(function ($query) use ($request, $user) {
+                Rule::unique('memos')->where(function ($query) use ($stock, $user) {
                     return $query->where('user_id', $user)
-                        ->where('stock_id', $request->input('stockNumber'));
+                        ->where('stock_id',  $stock->id);
                 }),
             ],
             'memo' => 'required|string',
@@ -225,7 +228,7 @@ class MemoController extends Controller
 
         DB::table('memos')->insert([
             'user_id' => $user,
-            'stock_id' => $request->input('stockNumber'),
+            'stock_id' => $stock->id,
             'memo_title' => $request->input('memo_title'),
             'memo' => $request->input('memo'), // 修正: リクエストからメモを取得
         ]);
@@ -242,11 +245,11 @@ class MemoController extends Controller
     public function memoDelete(Request $request)
     {
         $user = Auth::id();
-        $stockNumber = $request->input('stockNumber');
+        $stock = Stock::where('stock_code', $request->input('stockNumber'))->first();
         $memoNumber = $request->input('memoNumber');
 
         $deletedRows = Memo::where('user_id', $user)
-            ->where('stock_id', $stockNumber)
+            ->where('stock_id', $stock->id)
             ->where('id', $memoNumber)
             ->forceDelete();
 
@@ -312,9 +315,10 @@ class MemoController extends Controller
         return response()->json(['message' => 'Memos exchanged successfully']);
     }
 
-    public function PhantomJS(Request $request)
+    public function PhantomJS()
     {
-        $url = 'http://PhantomJScloud.com/api/browser/v2/ak-f67y3-c9qxt-800gk-kpab0-jstwb/';
+        $key = env('PHANTOMJS_API_KEY');
+        $url = 'http://PhantomJScloud.com/api/browser/v2/'.$key.'/';
         $payload = [
             'url' => 'https://nikkeiyosoku.com/stock/all/',
             'renderType' => 'html',

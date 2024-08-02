@@ -77,6 +77,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     };
     const handleLog = async (stockCode) => {
         try {
+            console.log(stockCode)
             const response = await laravelAxios.get(`http://localhost:8080/api/log/getStockLog?stockCode=${stockCode}`);
             const log = response.data; // ここでレスポンスデータを取得
             console.log(log);
