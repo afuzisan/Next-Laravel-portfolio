@@ -107,6 +107,10 @@ class MemoController extends Controller
             'memo_title' => 'nullable|string',
         ]);
 
+        // アルファベットを1バイト文字に変換
+        $memo = mb_convert_kana($request->input('memo', ''), 'a');
+        $memoTitle = mb_convert_kana($request->input('memo_title', ''), 'a');
+
         $stock = Stock::where('stock_code', $request->input('stockNumber'))->first();
         // 既のメモを確認
         $existingMemo = Memo::where('stock_id', $stock->id)
@@ -138,8 +142,8 @@ class MemoController extends Controller
         $memo = Memo::create([
             'stock_id' => $stock->id,
             'user_id' => Auth::id(),
-            'memo' => $request->input('memo', '{"blocks":[{"key":"cchb4","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}'),
-            'memo_title' => $request->input('memo_title', null),
+            'memo' => $memo ?: '{"blocks":[{"key":"cchb4","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',
+            'memo_title' => $memoTitle,
             'order' => 0
         ]);
 
@@ -233,7 +237,7 @@ class MemoController extends Controller
             'memo' => $request->input('memo'), // 修正: リクエストからメモを取得
         ]);
 
-        return response()->json(['message' => 'Memo title created successfully']); // 修: レス���ンスを追加
+        return response()->json(['message' => 'Memo title created successfully']); // 修: レスンスを追加
     }
 
     /**
