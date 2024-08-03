@@ -15,7 +15,9 @@ class SearchController extends Controller
     {
         $user = Auth::user();
         $memos = Memo::with('stock')->where('user_id', $user->id)->get();
-        Log::info($memos);
+        // Log::info('$memos'.$memos);
+        // $stock = Stock::where('id', $memos->stock_id)->first();
+        // Log::info('$stock'.$stock);
         return response()->json($memos);
     }
 }

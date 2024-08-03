@@ -35,12 +35,12 @@ const SearchGet = () => {
                 {data.filter(item => item.memo && convertMemoToText(item.memo).includes(search)).map((item, index) => (
                     <div key={index} className="border mb-4 p-4 rounded shadow grid grid-rows-[auto,auto,200px,1fr] gap-2 h-[600px]">
                         <div className="mb-2">
-                            <span className="font-bold">{item.stock.stock_name}({item.stock_id})</span>
+                            <span className="font-bold">{item.stock.stock_name}({item.stock.stock_code})</span>
                         </div>
                         <div className="mb-2">
                             <span className="">{item.memo_title}</span>
                         </div>
-                        <img className="w-full h-auto mt-2" src={`https://www.kabudragon.com/chart/s=${item.stock_id}`} alt="Stock Image" />
+                        <img className="w-full h-auto mt-2" src={`https://www.kabudragon.com/chart/s=${item.stock.stock_code}`} alt="Stock Image" />
                         <div className="mb-2 flex-grow overflow-y-scroll">
                             <Editor
                                 editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(item.memo)))}
