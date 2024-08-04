@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\CategoriesList;
 use App\Models\Category;
+use App\Models\Stock;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,9 +55,11 @@ class Categories extends Controller
             $stockCode = $request->stockCode;
             $category = $request->category;
             $user_id = Auth::id();
-            
+
+            $stock = Stock::where('stock_code', $stockCode)->first();
+            $stockId = $stock->id;
             $updated = Category::where('user_id', $user_id)
-                ->where('stock_id', $stockCode)
+                ->where('stock_id', $stockId)
                 ->update(['name' => $category]);
 
             if ($updated) {
