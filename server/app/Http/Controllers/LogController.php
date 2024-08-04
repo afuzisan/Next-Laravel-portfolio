@@ -16,7 +16,16 @@ class LogController extends Controller
         try {
             $user = Auth::id();
             $logs = memo_logs::where('user_id', $user)->get();
-            return response()->json($logs);
+            $stockIds = $logs->pluck('stock_id')->unique();
+            $stocks = Stock::whereIn('id', $stockIds)->get();
+            
+            // logsにstocksを追加
+            $logsWithStocks = $logs->map(function ($log) use ($stocks) {
+                $log->stock = $stocks->firstWhere('id', $log->stock_id);
+                return $log;
+            });
+            
+            return response()->json(['logs' => $logsWithStocks]);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return response()->json(['error' => 'Internal Server Error'], 500);

@@ -111,6 +111,9 @@ class MemoController extends Controller
         $memo = mb_convert_kana($request->input('memo', ''), 'a');
         $memoTitle = mb_convert_kana($request->input('memo_title', ''), 'a');
 
+        Log::info('Received memo:', ['memo' => $memo]);
+        Log::info('Received memo_title:', ['memo_title' => $memoTitle]);
+
         $stock = Stock::where('stock_code', $request->input('stockNumber'))->first();
         // 既のメモを確認
         $existingMemo = Memo::where('stock_id', $stock->id)
@@ -218,7 +221,7 @@ class MemoController extends Controller
         $user = Auth::id();
         $stock = Stock::where('stock_code', $request->input('stockNumber'))->first();
         $request->validate([
-            'stockNumber' => 'required|integer',
+            'stockNumber' => 'required',
             'memo_title' => [
                 'required',
                 'string',

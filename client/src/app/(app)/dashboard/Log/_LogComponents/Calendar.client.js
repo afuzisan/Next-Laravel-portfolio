@@ -55,31 +55,34 @@ const Calendar = () => {
     const [content, setContent] = useState('');
     const [tooltip, setTooltip] = useState({ visible: false, content: '', x: 0, y: 0 });
     const [activeStartDate, setActiveStartDate] = useState(new Date());
-    const [eventsData, setEventsData] = useState({}); 
+    const [eventsData, setEventsData] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await laravelAxios.get('http://localhost:8080/api/log/getAll', { cache: 'no-store' });
-                console.log(res.data);
-                const formattedData = res.data.reduce((acc, event) => {
+                console.log(res.data.logs);
+                const formattedData = {};
+                for (const event of res.data.logs) {
                     if (event.updated_at) {
-                        const date = new Date(new Date(event.updated_at).getTime() - (9 * 60 * 60 * 1000)).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' }).replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-').replace(/-(\d)$/, '-0$1');
-
-                        if (!acc[date]) {
-                            acc[date] = [];
+                        const date = new Date(new Date(event.updated_at).getTime() - (9 * 60 * 60 * 1000))
+                            .toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' })
+                            .replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-').replace(/-(\d)$/, '-0$1');
+                        console.log(date);
+                        if (!formattedData[date]) {
+                            formattedData[date] = [];
                         }
-                        acc[date].push({
-                            memo:  JSON.parse(event.memo),
+                        formattedData[date].push({
+                            memo: JSON.parse(event.memo),
                             memo_title: event.memo_title,
-                            stock_id: event.stock_id,
-
-                            updated_at: new Date(new Date(event.updated_at).getTime() - (9 * 60 * 60 * 1000)).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' }).replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-').replace(/-(\d)$/, '-0$1')
+                            stock_id: event.stock ? event.stock.stock_code : null,
+                            stock_name: event.stock ? event.stock.stock_name : null,
+                            updated_at: new Date(new Date(event.updated_at).getTime() - (9 * 60 * 60 * 1000))
+                                .toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })
+                                .replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-').replace(/-(\d)$/, '-0$1')
                         });
-                        console.log(acc);
                     }
-                    return acc;
-                }, {});
+                }
                 console.log(formattedData);
                 setEventsData(formattedData)
             } catch (err) {
@@ -88,7 +91,7 @@ const Calendar = () => {
 
         };
         fetchData();
-        
+
     }, []);
     const handleDateClick = (value) => {
         const selectedDate = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate()));
@@ -96,7 +99,7 @@ const Calendar = () => {
         setDate(selectedDate);
         checkIfToday(selectedDate);
         displayContent(selectedDate);
-        setActiveStartDate(new Date(Date.UTC(value.getFullYear(), value.getMonth(), 1))); 
+        setActiveStartDate(new Date(Date.UTC(value.getFullYear(), value.getMonth(), 1)));
     };
 
     const handleActiveStartDateChange = ({ activeStartDate }) => {
@@ -109,36 +112,58 @@ const Calendar = () => {
         console.log('Is today:', isToday);
     };
 
+    const formatDate = (dateString, type, sliceNumber) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear().toString().slice(sliceNumber);
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        if (type === '-') {
+            return `${year}-${month}-${day}`;
+        } else {
+            return `${year}${month}${day}`;
+        }
+    };
+
     const displayContent = (selectedDate) => {
+        console.log(eventsData)
         const formattedDate = selectedDate.toISOString().split('T')[0];
         const events = eventsData[formattedDate];
-        console.log(events)
         if (events) {
             const eventContent = (
                 <div className="border p-2">
                     {events.map((event, index) => {
-                        const localUpdatedAt = new Date(event.updated_at).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' }).replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-'); // 月と日を2桁にする
-                        let editorState;
-                        try {
-                            const contentState = convertFromRaw(event.memo);
-                            console.log(contentState);
-                            editorState = EditorState.createWithContent(contentState, decorator);
-                        } catch (error) {
-                            console.error('Invalid JSON in memo:', event.memo);
-                            editorState = EditorState.createEmpty(decorator);
+                        if (event.stock_name && event.memo && event.memo_title) {
+                            const localUpdatedAt = new Date(event.updated_at).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' }).replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-').replace(/-(\d)$/, '-0$1'); // 月と日を2桁にする
+                            let editorState;
+                            try {
+                                const contentState = convertFromRaw(event.memo);
+                                console.log(contentState);
+                                editorState = EditorState.createWithContent(contentState, decorator);
+                            } catch (error) {
+                                console.error('Invalid JSON in memo:', event.memo);
+                                editorState = EditorState.createEmpty(decorator);
+                            }
+                            console.log(event);
+                            return (
+                                <div className='flex justify-between'>
+                                    <img
+                                        className={`flex w-[50%] h-[200px] my-auto object-cover rounded cursor-pointer`}
+                                        src={`https://www.kabudragon.com/chart/s=${event.stock_id}/e=${formatDate(localUpdatedAt, '-', 2)}`}
+                                    // onClick={(e) => { e.stopPropagation(); handleImageClick(getStockInfo().stock_code, imageFormattedDate, 1, log.memo_title, false, selectedDates[`${getStockInfo().stock_code}-${imageFormattedDate}-${log.memo_title}`]?.replace(/-/g, '').slice(2) || calendarFormattedDate); }}
+                                    />
+                                    <div key={index} className={`w-[50%] p-2 grid grid-cols-[100px_2fr] gap-2 break-words overflow-hidden ${index !== events.length - 1 ? 'border-b' : ''}`}>
+                                        <p><strong>銘柄名</strong></p>
+                                        <p className="break-words">{event.stock_name}({event.stock_id})</p>
+                                        <p><strong>タイトル:</strong></p>
+                                        <p className="break-words">{event.memo_title}</p>
+                                        <p><strong>メモ:</strong></p>
+                                        <div className="break-words"><Editor editorState={editorState} readOnly={true} /></div>
+                                        <p><strong>作成日時:</strong></p>
+                                        <p className="break-words">{localUpdatedAt}</p>
+                                    </div>
+                                </div>
+                            );
                         }
-                        return (
-                            <div key={index} className={`p-2 grid grid-cols-[100px_2fr] gap-2 break-words overflow-hidden ${index !== events.length - 1 ? 'border-b' : ''}`}>
-                                <p><strong>タイトル:</strong></p>
-                                <p className="break-words">{event.memo_title}</p>
-                                <p><strong>メモ:</strong></p>
-                                <div className="break-words"><Editor editorState={editorState} readOnly={true} /></div>
-                                <p><strong>ID:</strong></p>
-                                <p className="break-words">{event.stock_id}</p>
-                                <p><strong>作成日時:</strong></p>
-                                <p className="break-words">{localUpdatedAt}</p>
-                            </div>
-                        );
                     })}
                 </div>
             );
@@ -152,7 +177,7 @@ const Calendar = () => {
         const tooltipContent = (
             <div className="border p-2">
                 {content.map((event, index) => {
-                    const localUpdatedAt = new Date(event.updated_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', hour12: false }).replace(/T\d{2}:\d{2}:\d{2}\.\d{6}Z$/, '').replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-'); 
+                    const localUpdatedAt = new Date(event.updated_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo', hour12: false }).replace(/T\d{2}:\d{2}:\d{2}\.\d{6}Z$/, '').replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-');
                     let editorState;
                     try {
                         const contentState = convertFromRaw(JSON.parse(event.memo));
@@ -205,7 +230,7 @@ const Calendar = () => {
         }
         return null;
     };
-console.log(eventsData);
+    console.log(eventsData);
     return (
         <div className="flex justify-center h-screen w-full p-4">
             <div className="grid grid-cols-[200px_300px_1fr] gap-5 w-full h-4/5">
