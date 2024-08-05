@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import laravelAxios from "@/lib/laravelAxios";
 
 const InputChange = ({placeholder, initialValue, type}) => {
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [inputValue, setInputValue] = useState(initialValue);
     const formRef = useRef(null); // useRef added
 
@@ -15,7 +16,7 @@ const InputChange = ({placeholder, initialValue, type}) => {
     const handleSubmit = async () => {
         try {
             console.log('inputValue:', inputValue);
-            const response = await laravelAxios.post('http://localhost:8080/api/mypage/memo_display_number_update', { 
+            const response = await laravelAxios.post(`${apiUrl}/api/mypage/memo_display_number_update`, { 
                 memo_display_number: inputValue 
             });
             localStorage.setItem('itemsPerPage', inputValue); 

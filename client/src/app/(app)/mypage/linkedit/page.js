@@ -7,11 +7,12 @@ import laravelAxios from "@/lib/laravelAxios"
 import { useEffect, useState } from "react"
 
 const Component = () => {
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [data, setData] = useState(null)
     const [fetchTrigger, setFetchTrigger] = useState(false)
 
     const fetchData = () => {
-        laravelAxios.get('http://localhost:8080/api/mypage/externallinks', { cache: 'no-store' })
+        laravelAxios.get(`${apiUrl}/api/mypage/externallinks`, { cache: 'no-store' })
             .then(response => {
                 setData(response.data)
             })

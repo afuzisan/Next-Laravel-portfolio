@@ -34,8 +34,10 @@ class LogController extends Controller
 
     public function getStockLog(Request $request)
     {
-        $stock = Stock::where('stock_code', $request->stock_code)->first();
-        
+        $stockCode = $request->query('stockCode');
+        Log::info($stockCode);
+        $stock = Stock::where('stock_code', $stockCode)->first();
+        Log::info($stock);
         if (!$stock) {
             return response()->json(['message' => 'Stock not found'], 404);
         }

@@ -6,7 +6,7 @@ import { Editor, EditorState, convertFromRaw, CompositeDecorator } from 'draft-j
 import { FaExpand } from 'react-icons/fa';
 
 const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
-  console.log(modalContent && modalContent)
+  const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [content, setContent] = useState(null);
   const [chartCount, setChartCount] = useState(0);
   const [chartImages, setChartImages] = useState({});
@@ -47,14 +47,14 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
 
 
   useEffect(() => {
-    initStockLog();
+    initStockLog(apiUrl);
   }, []);
 
-  const initStockLog = async () => {
+  const initStockLog = async (apiUrl) => {
     try {
       console.log(modalContent)
       console.log(modalContent.StockCode)
-      const response = await laravelAxios.get(`http://localhost:8080/api/log/getStockLog?stockCode=${modalContent.StockCode}`);
+      const response = await laravelAxios.get(`${apiUrl}/api/log/getStockLog?stockCode=${modalContent.StockCode}`);
       const log = response.data.memo_logs;
       console.log(log)
       setContent(log);

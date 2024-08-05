@@ -5,7 +5,7 @@ import { Editor, EditorState, convertFromRaw, CompositeDecorator } from 'draft-j
 // import Calendar from '@/app/(app)/stocks/[stock]/_LogComponent/Calendar.client';
 
 const page = ({ params }) => {
-
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [content, setContent] = useState(null);
     const [chartCount, setChartCount] = useState(0);
     const [chartImages, setChartImages] = useState({});
@@ -18,7 +18,7 @@ const page = ({ params }) => {
 
     const initStockLog = async () => {
         try {
-            const response = await laravelAxios.get(`http://localhost:8080/api/log/getStockLog?stockCode=${params.StockCode}`);
+            const response = await laravelAxios.get(`${apiUrl}/api/log/getStockLog?stockCode=${params.StockCode}`);
             const log = response.data.memo_logs;
             setContent(log);
         } catch (error) {

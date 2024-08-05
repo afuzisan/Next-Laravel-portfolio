@@ -12,7 +12,7 @@ import Danger from '@/components/Danger';
 
 
 const Memos = ({ memos, stock, name, setMemoRefreshKey }) => {
-
+    
     const sortedItems = [...memos].sort((a, b) => a.order - b.order);
     const [activeOrder, setActiveOrder] = useState(memos.length > 0 ? sortedItems[1]?.order : null);
     const [MemoTitleRefreshKey, setMemoTitleRefreshKey] = useState(0); // Moved here
@@ -35,6 +35,7 @@ const Memos = ({ memos, stock, name, setMemoRefreshKey }) => {
 
 
 const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoRefreshKey, MemoTitleRefreshKey, setMemoTitleRefreshKey }) => {
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -65,7 +66,7 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
 
             // ２バイト数字を１バイト数字に変換
             const convertedInputValue = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-            await laravelAxios.post('http://localhost:8080/api/dashboard/memoTitleCreate', {
+            await laravelAxios.post(`${apiUrl}/api/dashboard/memoTitleCreate`, {
                 "stockNumber": stock,
                 "memo_title": convertedInputValue,
                 "memo": '{"blocks":[{"key":"cchb4","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}'

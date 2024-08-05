@@ -5,6 +5,7 @@ import { Button } from "@@/(app)/mypage/linkedit/_component/Button"
 import laravelAxios from '@/lib/laravelAxios';
 
 const LinkForm = ({ onRefetch }) => {
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [url, setUrl] = useState('');
     const [site_name, setName] = useState('');
 
@@ -13,7 +14,7 @@ const LinkForm = ({ onRefetch }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await laravelAxios.post('http://localhost:8080/api/mypage/externallinks/create', {
+            await laravelAxios.post(`${apiUrl}/api/mypage/externallinks/create`, {
                 url,
                 site_name
             }, {

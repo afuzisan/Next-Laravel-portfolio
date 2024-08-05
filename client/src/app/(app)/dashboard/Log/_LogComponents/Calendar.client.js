@@ -50,7 +50,7 @@ const linkPlugin = createLinkPlugin({
 const plugins = [linkPlugin]; // 必要なプラグインを追加
 
 const Calendar = () => {
-
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [date, setDate] = useState(new Date());
     const [content, setContent] = useState('');
     const [tooltip, setTooltip] = useState({ visible: false, content: '', x: 0, y: 0 });
@@ -60,7 +60,7 @@ const Calendar = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await laravelAxios.get('http://localhost:8080/api/log/getAll', { cache: 'no-store' });
+                const res = await laravelAxios.get(`${apiUrl}/api/log/getAll`, { cache: 'no-store' });
                 console.log(res.data.logs);
                 const formattedData = {};
                 for (const event of res.data.logs) {

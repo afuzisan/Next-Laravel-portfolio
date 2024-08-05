@@ -23,6 +23,11 @@ module.exports = {
         destination: '/dashboard',
         permanent: true,
       },
+      {
+        source: '/dashboard/Category',
+        destination: '/dashboard',
+        permanent: true,
+      },
     ]
   },
 }

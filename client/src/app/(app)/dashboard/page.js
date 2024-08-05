@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { FaEdit } from "react-icons/fa";
 
 const Dashboard = () => {
-
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [inputValue, setInputValue] = useState("");
     const [refreshKey, setRefreshKey] = useState(0);
     const [errorMessage, setErrorMessage] = useState(""); // エラーメッセージの状態を追加
@@ -48,7 +48,7 @@ const Dashboard = () => {
     }, [activeTab]);
 
     useEffect(() => {
-        laravelAxios.get('http://localhost:8080/api/Categories/getCategoryList')
+        laravelAxios.get(`${apiUrl}/api/Categories/getCategoryList`)
             .then(response => {
                 console.log(response.data)
                 setCategoryList(response.data);
@@ -68,7 +68,7 @@ const Dashboard = () => {
         //     return;
         // }
 
-        laravelAxios.post('http://localhost:8080/api/dashboard/stockStore', { "stockNumber": stockNumber })
+        laravelAxios.post(`${apiUrl}/api/dashboard/stockStore`, { "stockNumber": stockNumber })
             .then(() => {
                 setRefreshKey(prevKey => prevKey + 1);
                 setInputValue('');
@@ -86,7 +86,7 @@ const Dashboard = () => {
             setErrorMessage('カテゴリ名を入力してください');
             return;
         }
-        laravelAxios.post('http://localhost:8080/api/Categories/AddCategoryList', { "categoryName": normalizedInput })
+        laravelAxios.post(`${apiUrl}/api/Categories/AddCategoryList`, { "categoryName": normalizedInput })
             .then(() => {
                 router.refresh({ keepCache: true });
                 setInputValue('');
@@ -107,7 +107,7 @@ const Dashboard = () => {
             return;
         }
         if (window.confirm(`${category}を削除してもよろしいですか？`)) {
-            laravelAxios.delete(`http://localhost:8080/api/Categories/deleteCategoryList/${category}`)
+            laravelAxios.delete(`${apiUrl}/api/Categories/deleteCategoryList/${category}`)
                 .then(() => {
                     router.refresh({ keepCache: true });
                     setErrorMessage('');
@@ -127,7 +127,7 @@ const Dashboard = () => {
             setErrorMessage('未分類は編集できません');
             return;
         }
-        laravelAxios.put(`http://localhost:8080/api/Categories/editCategoryList/${newCategory}/${category}`)
+        laravelAxios.put(`${apiUrl}/api/Categories/editCategoryList/${newCategory}/${category}`)
             .then(() => {
                 setCategoryList(prevList => prevList.map(c => c === category ? newCategory : c));
                 setRefreshKey(prevKey => prevKey + 1);

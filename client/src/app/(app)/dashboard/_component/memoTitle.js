@@ -19,6 +19,7 @@ import Modal from 'react-modal';
 
 
 const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRefreshKey, MemoTitleRefreshKey, setEditorKey, stock, name }) => {
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [items, setItems] = useState(memos);
     const [minOrder, setMinOrder] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,7 +29,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
 
     const handleEdit = async () => {
         try {
-            const response = await laravelAxios.post(`http://localhost:8080/api/dashboard/memoEdit`, {
+            const response = await laravelAxios.post(`${apiUrl}/api/dashboard/memoEdit`, {
                 stock: stock,
             });
             setEditedMemos(response.data.memo);
@@ -58,7 +59,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
 
     const saveChanges = async () => {
         try {
-            await laravelAxios.post('http://localhost:8080/api/dashboard/memoTitle/update', {
+            await laravelAxios.post(`${apiUrl}/api/dashboard/memoTitle/update`, {
                 memos: editedMemos,
             });
         } catch (error) {
@@ -123,7 +124,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
                         });
                     }
                 }
-                await laravelAxios.post(`http://localhost:8080/api/dashboard/memo/exchange`, {
+                await laravelAxios.post(`${apiUrl}/api/dashboard/memo/exchange`, {
                     pairs: pairs,
                 });
             }

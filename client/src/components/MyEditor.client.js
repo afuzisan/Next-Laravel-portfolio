@@ -46,7 +46,7 @@ const Link = (props) => {
 };
 
 const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, editorKey, setEditorKey, activeOrder }) => {
-
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 
   const [indexSaveState, setIndexSave] = useIndexSave()
@@ -115,7 +115,7 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, edi
   const saveContent = async () => {
     const contentState = editor.getCurrentContent();
     const raw = convertToRaw(contentState);
-    const url = 'http://localhost:8080/api/dashboard/memoUpdate';
+    const url = `${apiUrl}/api/dashboard/memoUpdate`;
 
     try {
 
@@ -196,7 +196,7 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, edi
 
   const deleteMemo = async (memoId) => {
     try {
-      const response = await laravelAxios.delete('http://localhost:8080/api/dashboard/memoDelete', {
+      const response = await laravelAxios.delete(`${apiUrl}/api/dashboard/memoDelete`, {
         data: {
           stockNumber: stock,
           memoNumber: initId

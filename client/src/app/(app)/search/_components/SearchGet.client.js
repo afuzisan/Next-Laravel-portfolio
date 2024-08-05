@@ -12,6 +12,7 @@ const convertMemoToText = (memo) => {
 };
 
 const SearchGet = () => {
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const searchParams = useSearchParams()
     const [data, setData] = useState([]) // stateを追加
     const [search, setSearch] = useState(searchParams.get('search') || '');
@@ -19,7 +20,7 @@ const SearchGet = () => {
     useEffect(() => {
         setSearch(searchParams.get('search'));
         const searchType = searchParams.get('searchType');
-        laravelAxios.get(`http://localhost:8080/api/search/memo`)
+            laravelAxios.get(`${apiUrl}/api/search/memo`)
             .then(response => {
                 console.log(search, searchType, response.data);
                 setData(response.data); // stateにデータをセット

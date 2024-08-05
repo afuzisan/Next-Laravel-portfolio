@@ -5,9 +5,10 @@ import laravelAxios from "@/lib/laravelAxios"
 import { useEffect, useState } from 'react';
 
 async function getData() {
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     let data = { memo_display_number: 90 } // デフォルト値をオブジェクトに変更
     try {
-        const response = await laravelAxios.get('http://localhost:8080/api/mypage/memo_display_number', { cache: 'no-cache' })
+        const response = await laravelAxios.get(`${apiUrl}/api/mypage/memo_display_number`, { cache: 'no-cache' })
         data.memo_display_number = response.data.memo_display_number 
     } catch (error) {
         console.error('Error fetching data:', error.response ? error.response.data : error.message)

@@ -6,9 +6,10 @@ import axios from 'axios';
 import React from 'react'
 
 const page = () => {
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const handleClick = async () => {
         try {
-            const response = await laravelAxios.post('http://localhost:8080/api/dashboard/PhantomJS');
+            const response = await laravelAxios.post(`${apiUrl}/api/dashboard/PhantomJS`);
             console.log(response.data);
                 console.log(response.data.result);
                 console.log(response.data.result.content);

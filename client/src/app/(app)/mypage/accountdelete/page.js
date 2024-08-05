@@ -7,13 +7,14 @@ import laravelAxios from "@/lib/laravelAxios"
 import { useEffect, useState } from "react"
 
 const Component = () => {
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [data, setData] = useState(null)
     const [fetchTrigger, setFetchTrigger] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false) // モーダルの状態
 
     const fetchData = async () => {
         try {
-            const response = await laravelAxios.post('http://localhost:8080/api/mypage/deleteAccount');
+            const response = await laravelAxios.post(`${apiUrl}/api/mypage/deleteAccount`);
             console.log(response)
             if (response.status !== 200) {
                 throw new Error('アカウント削除に失敗しました。');

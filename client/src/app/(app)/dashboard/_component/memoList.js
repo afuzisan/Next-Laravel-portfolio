@@ -17,6 +17,7 @@ import { CSS } from '@dnd-kit/utilities';
 import laravelAxios from '@/lib/laravelAxios';
 
 const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, order, setMemoRefreshKey }) => {
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [, setEditor] = useEditorContext()
     const [loading, setLoading] = useState(false);
 
@@ -66,7 +67,7 @@ const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, ord
             setEditor(EditorState.createEmpty(decorator));
             // setMemoRefreshKey(prev=>prev+1)
             console.log(id)
-            const URL = 'http://localhost:8080/api/dashboard/memo';
+            const URL = `${apiUrl}/api/dashboard/memo`;
             console.log(URL)
             const response = await laravelAxios.post(URL, {
                 id: id,

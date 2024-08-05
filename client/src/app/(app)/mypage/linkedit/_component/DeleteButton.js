@@ -5,10 +5,10 @@ import laravelAxios from '@/lib/laravelAxios'
 
 
 const DeleteButton = ({ id, onRefetch }) => {
-
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const handleDelete = async () => {
         try {
-            await laravelAxios.post('http://localhost:8080/api/mypage/externallinks/delete', {
+            await laravelAxios.post(`${apiUrl}/api/mypage/externallinks/delete`, {
                 'id': id
             })
             onRefetch()

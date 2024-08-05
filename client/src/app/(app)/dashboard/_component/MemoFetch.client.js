@@ -22,6 +22,7 @@ function formatDateToISO(date) {
 export const EditableContext = createContext();
 
 const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsPerPage, onDataFetched, param, setTotalStockCount, onDataResult, categoryList }) => {
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
     const [MemoRefreshKey, setMemoRefreshKey] = useState(0);
@@ -84,7 +85,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
 
     const handleDelete = (stockCode) => {
         if (window.confirm(`${stockCode}を本当に削除しますか？`)) {
-            laravelAxios.post('http://localhost:8080/api/dashboard/stockDelete', {
+            laravelAxios.post(`${apiUrl}/api/dashboard/stockDelete`, {
                 stockNumber: stockCode
             })
                 .then(() => {
@@ -97,6 +98,8 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     };
     const handleLog = async (stockCode) => {
         try {
+            console.log(`${apiUrl}/api/log/getStockLog?stockCode=${stockCode}`)
+            // const response = await laravelAxios.get(`${apiUrl}/api/log/getStockLog?stockCode=${stockCode}`);
             const response = await laravelAxios.get(`http://localhost:8080/api/log/getStockLog?stockCode=${stockCode}`);
             const log = response.data; // ここでレスポンスデータを取得
             console.log(log);
@@ -114,7 +117,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     const handleCategoryChange = (stockCode, value) => {
         setSelectedCategories(prev => ({ ...prev, [stockCode]: value }));
         console.log(selectedCategories, stockCode, value)
-        laravelAxios.post('http://localhost:8080/api/Categories/update', {
+        laravelAxios.post(`${apiUrl}/api/Categories/update`, {
             "stockCode": stockCode,
             "category": value
         })
@@ -155,7 +158,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage);
+                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage,apiUrl);
                 if (data && data.memo_display_number) {
                     setItemsPerPage(data.memo_display_number)
                 }
@@ -252,9 +255,9 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         </EditableContext.Provider>
     )
 }
-const initFetch = async (param, itemsPerPage, setTotalStockCount, setItemsPerPage) => {
+const initFetch = async (param, itemsPerPage, setTotalStockCount, setItemsPerPage,apiUrl) => {
     try {
-        const result = await laravelAxios.get(`http://localhost:8080/api/dashboard/reviews?param=${param}&page=${itemsPerPage}`, { cache: 'no-cache' });
+        const result = await laravelAxios.get(`${apiUrl}/api/dashboard/reviews?param=${param}&page=${itemsPerPage}`, { cache: 'no-cache' });
         setTotalStockCount(result.data.totalStockCount)
         // setItemsPerPage(result.data.memo_display_number)
         return result.data.user;
