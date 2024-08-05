@@ -6,8 +6,8 @@ import MemoFetch from '@@/(app)/dashboard/Category/[name]/_components/MemoFetch.
 import { useReducer, useState, useEffect } from 'react';
 import Danger from '@/components/Danger'
 import '@/app/global.css'
-
-
+import { useRouter } from 'next/navigation';
+import { FaEdit } from "react-icons/fa";
 
 const Dashboard = ({ params }) => {
 
@@ -28,6 +28,9 @@ const Dashboard = ({ params }) => {
     const [activeTab, setActiveTab] = useState(() => {
         return localStorage.getItem('activeTab') || 'stockList';
     });
+    const [categoryList, setCategoryList] = useState([]);
+    const [showAllCategory, setShowAllCategory] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         localStorage.setItem('itemsPerPage', itemsPerPage);
@@ -45,15 +48,26 @@ const Dashboard = ({ params }) => {
         localStorage.setItem('activeTab', activeTab);
     }, [activeTab]);
 
+    useEffect(() => {
+        laravelAxios.get('http://localhost:8080/api/Categories/getCategoryList')
+            .then(response => {
+                console.log(response.data)
+                setCategoryList(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }, []);
+
     const handleRegisterClick = (inputValue) => {
 
         // ２バイト数字１バイト数字に変換
         const normalizedInput = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
         const stockNumber = parseInt(normalizedInput, 10); // 入力値を整数に変換
-        if (isNaN(stockNumber) || stockNumber < 1000 || stockNumber > 9999) { // 4桁の整数かどうか確認
-            setErrorMessage("正しい証券コードを入力してください。");
-            return;
-        }
+        // if (isNaN(stockNumber) || stockNumber < 1000 || stockNumber > 9999) { // 4桁の整数かどうか確認
+        //     setErrorMessage("正しい証券コードを入力してください。");
+        //     return;
+        // }
 
         laravelAxios.post('http://localhost:8080/api/dashboard/stockStore', { "stockNumber": stockNumber })
             .then(() => {
@@ -67,24 +81,81 @@ const Dashboard = ({ params }) => {
             });
     };
 
+    const handleCategoryRegisterClick = (inputValue) => {
+        const normalizedInput = inputValue.replace(/[Ａ-Ｚａ-ｚ]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+        if (normalizedInput === '') {
+            setErrorMessage('カテゴリ名を入力してください');
+            return;
+        }
+        laravelAxios.post('http://localhost:8080/api/Categories/AddCategoryList', { "categoryName": normalizedInput })
+            .then(() => {
+                router.refresh({ keepCache: true });
+                setInputValue('');
+                setErrorMessage(''); // 成功時にエラーメッセージをクリア
+            })
+            .catch((error) => {
+                setErrorMessage(error.response.data.message);
+            });
+    };
+
     const handleSort = (order) => {
         setSortOrder(order);
     };
 
-    console.log(result)
+    const handleDeleteCategoryList = (category) => {
+        if (category === '未分類') {
+            setErrorMessage('未分類は削除できません');
+            return;
+        }
+        if (window.confirm(`${category}を削除してもよろしいですか？`)) {
+            laravelAxios.delete(`http://localhost:8080/api/Categories/deleteCategoryList/${category}`)
+                .then(() => {
+                    router.refresh({ keepCache: true });
+                    setErrorMessage('');
+                })
+                .catch(() => {
+                    setErrorMessage('エラーが発生しました');
+                });
+        }
+    }
+
+    const handleEditCategoryList = (category) => {
+        const newCategory = prompt('新しいカテゴリ名を入力してください');
+        if (newCategory === null || newCategory === '') {
+            return;
+        }
+        if (category === '未分類') {
+            setErrorMessage('未分類は編集できません');
+            return;
+        }
+        laravelAxios.put(`http://localhost:8080/api/Categories/editCategoryList/${newCategory}/${category}`)
+            .then(() => {
+                setCategoryList(prevList => prevList.map(c => c === category ? newCategory : c));
+                setRefreshKey(prevKey => prevKey + 1);
+                setErrorMessage('');
+            })
+            .catch(() => {
+                setErrorMessage('エラーが発生しました');
+            });
+    }
+
     return (
         <>
-            <div className="py-6">
+            <div className="py-6" key={refreshKey}>
 
                 <div className="grid grid-cols-2 h-full gap-2">
                     <nav aria-label="Page navigation" className="col-span-2 flex justify-between pr-6">
                         <div className="flex items-center pl-6 relative">
                             <input
                                 type="text"
-                                className="px-3 py-2 leading-tight text-gray-700 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="証券コードか銘柄名を入力"
+                                className="w-[250px] px-3 py-2 leading-tight text-gray-700 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="証券コードまたはカテゴリ名を入力"
                                 value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
+                                onChange={(e) => {
+                                    const normalizedInput = e.target.value
+                                        .replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+                                    setInputValue(normalizedInput);
+                                }}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
                                         handleRegisterClick(inputValue);
@@ -95,7 +166,13 @@ const Dashboard = ({ params }) => {
                                 className="px-3 py-2 leading-tight text-white bg-blue-500 border border-blue-500 hover:bg-blue-600 hover:border-blue-600"
                                 onClick={() => handleRegisterClick(inputValue)}
                             >
-                                銘柄を登録
+                                銘柄登録
+                            </button>
+                            <button
+                                className="px-3 py-2 leading-tight text-white bg-green-800 border border-green-800 hover:bg-green-900 hover:border-green-900"
+                                onClick={() => handleCategoryRegisterClick(inputValue)}
+                            >
+                                カテゴリ登録
                             </button>
                             {errorMessage && (
                                 <Danger errorMessage={errorMessage} setErrorMessage={setErrorMessage} className="absolute top-full left-6 mt-2 w-full text-white bg-red-400  border border-red-500 p-2 cursor-pointer text-center flex items-center z-50" />
@@ -168,13 +245,13 @@ const Dashboard = ({ params }) => {
                                 銘柄リスト
                             </button>
                             <button
-                                className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-yellow-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+                                className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-green-800 text-white' : 'bg-gray-100 text-gray-700'}`}
                                 onClick={() => setActiveTab('tab2')}
                             >
                                 カテゴリ
                             </button>
                         </div>
-                        <div className="">
+                        <div>
                             {activeTab === 'stockList' && result && <div>{result.stocks.map((stock, index) => {
                                 return (
                                     <li className={`list-none`}>
@@ -184,18 +261,36 @@ const Dashboard = ({ params }) => {
                                     </li>
                                 )
                             })}</div>}
-                            {activeTab === 'tab2' && result && (() => {
-                                return result.stocks.map((item, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <li className="list-none">
-                                                <a href={`${encodeURIComponent(item.categories[0].name)}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
-                                                    {item.categories[0].name}
+                            {activeTab === 'tab2' && (() => {
+                                return (
+                                    <>
+                                        {showAllCategory && (
+                                            <li className="list-none flex justify-between w-full h-full border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                                <a href={`http://localhost:3000/dashboard`} className="block w-full h-full px-3 py-2">
+                                                    すべて
                                                 </a>
                                             </li>
-                                        </div>
-                                    );
-                                });
+                                        )}
+                                        {categoryList.map((category, index) => {
+                                            const isCurrentCategory = decodeURIComponent(params.name) === category;
+                                            return (
+                                                <li className={`list-none flex justify-between w-full h-full border-b-2 border-dotted border-gray-200 ${isCurrentCategory ? 'bg-gray-100' : 'hover:bg-gray-100'}`}>
+                                                    <a href={`${encodeURIComponent(category)}`} className={`block w-full h-full px-3 py-2`}>
+                                                        {category}
+                                                    </a>
+                                                    {category !== '未分類' && (
+                                                        <span className="flex items-center pr-1 pl-1 hover:bg-white">
+                                                            <span className="mr-1 ml-1 flex items-center hover:text-gray-500 cursor-pointer">
+                                                                <FaEdit className="text-gray-200 hover:text-black cursor-pointer " onClick={() => handleEditCategoryList(category)} />
+                                                            </span>
+                                                            <span className="text-gray-200 mr-1 ml-1 hover:text-black cursor-pointer" onClick={() => handleDeleteCategoryList(category)}>✕</span>
+                                                        </span>
+                                                    )}
+                                                </li>
+                                            );
+                                        })}
+                                    </>
+                                );
                             })()}
                         </div>
                     </div>
@@ -207,8 +302,10 @@ const Dashboard = ({ params }) => {
                             currentPage={currentPage}
                             itemsPerPage={itemsPerPage}
                             onDataFetched={setResult}
+                            onDataResult={result}
                             setItemsPerPage={setItemsPerPage}
                             setTotalStockCount={setTotalStockCount}
+                            categoryList={categoryList}
                             params={params}
                         />
                     </div>

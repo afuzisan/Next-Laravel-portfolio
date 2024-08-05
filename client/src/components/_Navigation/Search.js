@@ -7,10 +7,13 @@ const Search = () => {
     const [search, setSearch] = useState('')
     const [searchType, setSearchType] = useState('title')
     const router = useRouter()
+    const [isSearching, setIsSearching] = useState(false)
 
-    const searchSubmit = () => {
+    const searchSubmit = async () => {
         if (search.trim() === '') return;
-        router.push(`/search?search=${search}&searchType=${searchType}`)
+        setIsSearching(true)
+        await router.push(`/search?search=${search}&searchType=${searchType}`)
+        setIsSearching(false)
     }
 
     return (
@@ -25,6 +28,7 @@ const Search = () => {
                         }}
                         onChange={(e) => setSearch(e.target.value)}
                         value={search}
+                        disabled={isSearching}
                     />
                     {search && (
                         <button
@@ -34,6 +38,7 @@ const Search = () => {
                             ✕
                         </button>
                     )}
+                    {isSearching && <span className="absolute right-10 top-1/2 transform -translate-y-1/2">検索中...</span>}
                 </div>
                 <select
                     className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300"

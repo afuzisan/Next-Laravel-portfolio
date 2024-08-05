@@ -33,11 +33,14 @@ class Categories extends Controller
 
         $user = User::with(['stocks' => function ($query) use ($user_id, $pagination, $viewStocks, $stockIds) {
             $query->where('user_id', $user_id)
-                  ->whereIn('id', $stockIds) // stock_idで絞り込み
+                  ->whereIn('id', $stockIds)
                   ->with(['memos' => function ($query) use ($user_id) {
                       $query->where('user_id', $user_id);
-                  }])->skip($pagination * $viewStocks)->take($viewStocks);
-        }, 'links', 'categories'])->where('id', $user_id)->first(); 
+                  }, 'categories' => function ($query) use ($user_id) {
+                      $query->where('user_id', $user_id);
+                  }])
+                  ->skip($pagination * $viewStocks)->take($viewStocks);
+        }, 'links'])->where('id', $user_id)->first(); 
 
         if (!$user || $user->stocks->isEmpty()) {
             return response()->json(['message' => 'Stocks not found']);
@@ -45,6 +48,9 @@ class Categories extends Controller
 
         // 全体のstocksの数を取得
         $totalStockCount = User::withCount('stocks')->where('id', $user_id)->first()->stocks_count;
+
+        Log::info('user:' . $user);
+        Log::info('totalStockCount:' . $totalStockCount);
 
         return response()->json(['user' => $user, 'totalStockCount' => $totalStockCount]); // ユーザー情報と全体のstocksの数をJSON形式で返す
     }

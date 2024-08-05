@@ -4,8 +4,6 @@ import React, { useEffect, useState, createContext, useContext } from 'react'
 import Memos from '@@/(app)/dashboard/_component/memos.client';
 import LinkComponent from '@@/(app)/dashboard/_component/LinkComponent';
 import laravelAxios from '@/lib/laravelAxios';
-
-
 import LogModal from '@@/(app)/dashboard/_component/_MemoFetchComponents/LogModal.client';
 
 
@@ -21,30 +19,67 @@ function formatDateToISO(date) {
 // 編集可能か判定するコンテキストを作成
 export const EditableContext = createContext();
 
-const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsPerPage, onDataFetched, param, setTotalStockCount, params }) => {
+const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsPerPage, onDataFetched, param, setTotalStockCount, onDataResult, categoryList, params }) => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
     const [MemoRefreshKey, setMemoRefreshKey] = useState(0);
     const [isEditable, setIsEditable] = useState(true);
-    const [chartImage, setChartImage] = useState(`https://www.kabudragon.com/chart/s=[code]`);
+    const [formattedDate, setFormattedDate] = useState('');
+    const [InitialChartImage, setInitialChartImage] = useState('');
     const [chartCount, setChartCount] = useState(0);
     const [chartImages, setChartImages] = useState({});
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState('');
+    const [selectedCategories, setSelectedCategories] = useState({});
+    const [chartLabels, setChartLabels] = useState({});
+    const [selectedDates, setSelectedDates] = useState({});
 
-    const handleImageClick = (stockCode) => {
-        setChartCount(chartCount + 1);
-        let newChartImage;
-        if (chartCount === 0) {
-            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/volb=1.png`;
-        } else if (chartCount === 1) {
-            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/volb=1/a=1.png`;
-        } else {
-            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/volb=1/a=2.png`;
-            setChartCount(0);
+
+
+    useEffect(() => {
+        if (result && onDataResult) {
+            console.log(result)
+            console.log(onDataResult)
+            const initialCategories = {};
+            result.stocks.forEach(stock => {
+                initialCategories[stock.stock_code] = stock.categories && stock.categories[0] ? stock.categories[0].name : '未分類';
+            });
+            console.log(initialCategories)
+            console.log(result)
+            setSelectedCategories(initialCategories);
         }
+    }, [result, onDataResult]);
+
+
+    const handleImageClick = (stockCode, DateChange, newDate) => {
+        const key = `${stockCode}-handleDateChange`;
+        const selectedDate = formatDate(newDate, '', 2)
+
+        const newCount = DateChange ? chartCount : (chartCount + 1) % 3;
+
+        let newChartImage;
+        let newChartLabel;
+
+        if (newCount === 0) {
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${selectedDate}.png`;
+            newChartLabel = '日足';
+        } else if (newCount === 1) {
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${selectedDate}.png`;
+            newChartLabel = '週足';
+        } else {
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=2/e=${selectedDate}.png`;
+            newChartLabel = '月足';
+        }
+
         setChartImages(prevImages => ({ ...prevImages, [stockCode]: newChartImage }));
-    };
+        setChartLabels(prevLabels => ({ ...prevLabels, [stockCode]: newChartLabel }));
+
+
+        if (!DateChange) {
+            setChartCount(newCount);
+        }
+    }
+
 
     const handleDelete = (stockCode) => {
         if (window.confirm(`${stockCode}を本当に削除しますか？`)) {
@@ -75,13 +110,53 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         setModalIsOpen(false);
     };
 
+    const handleCategoryChange = (stockCode, value) => {
+        setSelectedCategories(prev => ({ ...prev, [stockCode]: value }));
+        console.log(selectedCategories, stockCode, value)
+        laravelAxios.post('http://localhost:8080/api/Categories/update', {
+            "stockCode": stockCode,
+            "category": value
+        })
+    };
 
+    const handleDateChange = (e, stockCode) => {
+        const newDate = e.target.value;
+        console.log(newDate)
+        const key = `${stockCode}-handleDateChange`;
+        let DateChange = true;
+        setSelectedDates(prevDates => ({ ...prevDates, [key]: newDate }));
+        handleImageClick(stockCode, DateChange, newDate);
+
+    };
+
+    const formatDate = (dateString, type, sliceNumber) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear().toString().slice(sliceNumber);
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        if (type !== '') {
+            return `${year}${type}${month}${type}${day}`;
+        }
+        return `${year}${month}${day}`;
+
+    };
+    useEffect(() => {
+        // const newDate = new Date();
+        const formattedCalender = formatDate(new Date(), '-', 2);
+        const formattedURL = formatDate(new Date(), '', 2);
+        setFormattedDate(formattedCalender);
+        setInitialChartImage(`https://www.kabudragon.com/chart/s=[code]/e=${formattedURL}.png`);
+        console.log(InitialChartImage)
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage, params); 
-                setItemsPerPage(data.memo_display_number)
+                console.log(params.name)
+                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage, params);
+                if (data && data.memo_display_number) {
+                    setItemsPerPage(data.memo_display_number)
+                }
                 console.log(data)
 
                 // ソート処理を追加
@@ -107,30 +182,38 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         fetchData();
     }, [MemoRefreshKey, sortOrder, currentPage, param]); // paramを依存に追加
 
+
+
     if (error) {
-        return <div>新しく銘柄を登録してください</div>;
+        return <div>カテゴリに登録された銘柄はありません</div>;
     }
 
     if (!result) {
         return <div>Loading...</div>;
     }
+
     return (
         <EditableContext.Provider value={[isEditable, setIsEditable]}>
-            <LogModal  modalIsOpen={modalIsOpen} closeModal={closeModal} modalContent={modalContent} resultStocks={result.stocks}/>
+            <LogModal modalIsOpen={modalIsOpen} closeModal={closeModal} modalContent={modalContent} resultStocks={result.stocks} />
 
             {result && result.stocks && result.stocks.length > 0 ? (
                 result.stocks.map((stock, index) => {
                     return (
                         <div key={stock.stock_code} id={stock.stock_code}>
                             <div className="grid grid-cols-6 border px-3 py-2">
-                                <div className="col-span-4 flex items-center">
+                                <div className="col-span-3 flex items-center">
                                     <span className="grid-item px-6">
                                         {stock.memos.length > 0 ? formatDateToISO(new Date(stock.memos[0].created_at)) : 'N/A'}
                                     </span>
                                     <span className="grid-item px-6">{stock.stock_name}</span>
                                     <span className="grid-item px-6">{stock.stock_code}</span>
                                 </div>
-                                <div className="col-span-2 flex justify-end">
+                                <div className="col-span-3 flex justify-end ">
+                                    <select id="mySelect" className="max-w-60 mr-4 border border-gray-300 rounded-md" value={selectedCategories[stock.stock_code] || '未分類'} onChange={(e) => handleCategoryChange(stock.stock_code, e.target.value)}>
+                                        {categoryList && categoryList.map((category, index) => (
+                                            <option className='bg-white text-gray-700' value={category} key={index}>{category} </option>
+                                        ))}
+                                    </select>
                                     <button className="pr-4 pl-4 hover:bg-red-100 bg-gray-100" onClick={() => handleLog(stock.stock_code)}>編集履歴</button>
                                     <button className="bg-red-500 text-white px-4 py-2 hover:bg-red-700" onClick={() => handleDelete(stock.stock_code)}>{stock.stock_code}を削除</button>
                                 </div>
@@ -140,11 +223,21 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                                     <LinkComponent links={result.links} stock={stock.stock_code} />
                                 </div>
                                 <Memos key={`${stock.stock_code}-${MemoRefreshKey}`} memos={stock.memos} stock={stock.stock_code} name={stock.stock_name} setMemoRefreshKey={setMemoRefreshKey} />
-                                <div className="grid-item pl-2">
+                                <div className="grid-item pl-2 relative">
+                                    <span className="absolute top-2 left-1/2 transform -translate-x-1/2 text-black bg-white p-1 rounded ">{chartLabels[stock.stock_code] || '日足'}</span>
                                     <img
-                                        src={chartImages[stock.stock_code] || chartImage.replace('[code]', stock.stock_code)}
+                                        src={chartImages[stock.stock_code] || InitialChartImage.replace('[code]', stock.stock_code)}
                                         className="h-full w-full object-scale-down border-r cursor-pointer"
-                                        onClick={() => handleImageClick(stock.stock_code)}
+                                        onClick={() => handleImageClick(stock.stock_code, false)}
+                                    />
+                                    <input
+                                        type="date"
+                                        id="start"
+                                        name="trip-start"
+                                        value={`${selectedDates[`${stock.stock_code}-handleDateChange`] || formatDate(new Date(), '-', 0)}`}
+                                        min="2018-01-01"
+                                        onChange={(e) => handleDateChange(e, stock.stock_code)}
+                                        className="border rounded p-1 absolute top-2 right-2 text-black bg-white p-1"
                                     />
                                 </div>
                             </div >
@@ -159,6 +252,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
 }
 const initFetch = async (param, itemsPerPage, setTotalStockCount, setItemsPerPage, params) => {
     try {
+        console.log( params.name)
         const result = await laravelAxios.get(`http://localhost:8080/api/Categories/index?param=${param}&page=${itemsPerPage}&category=${params.name}`, { cache: 'no-cache' });
         setTotalStockCount(result.data.totalStockCount)
         console.log(result.data)

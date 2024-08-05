@@ -34,10 +34,15 @@ class LogController extends Controller
 
     public function getStockLog(Request $request)
     {
+        $stock = Stock::where('stock_code', $request->stock_code)->first();
+        
+        if (!$stock) {
+            return response()->json(['message' => 'Stock not found'], 404);
+        }
+
+        $stockId = $stock->id;
         $user_id = Auth::id();
-        $stock = Stock::where('stock_code', $request->query('stockCode'))->first();
-        Log::info('stock'.$stock);
-        $memo_logs = memo_logs::where('stock_id', $stock->id)->where('user_id', $user_id)->get();
+        $memo_logs = memo_logs::where('stock_id', $stockId)->where('user_id', $user_id)->get();
         Log::info('$memo_logs'.$memo_logs);
         // クエリパラメータを使った処理
         return response()->json(['memo_logs' => $memo_logs]);
