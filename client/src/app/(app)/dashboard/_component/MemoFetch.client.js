@@ -26,12 +26,16 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     const [error, setError] = useState(null);
     const [MemoRefreshKey, setMemoRefreshKey] = useState(0);
     const [isEditable, setIsEditable] = useState(true);
-    const [chartImage, setChartImage] = useState(`https://www.kabudragon.com/chart/s=[code]`);
+    const [formattedDate, setFormattedDate] = useState('');
+    const [InitialChartImage, setInitialChartImage] = useState('');
     const [chartCount, setChartCount] = useState(0);
     const [chartImages, setChartImages] = useState({});
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState('');
     const [selectedCategories, setSelectedCategories] = useState({});
+    const [chartLabels, setChartLabels] = useState({});
+    const [selectedDates, setSelectedDates] = useState({});
+
 
 
     useEffect(() => {
@@ -48,19 +52,35 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
     }, [result, onDataResult]);
 
 
-    const handleImageClick = (stockCode) => {
-        setChartCount(chartCount + 1);
+    const handleImageClick = (stockCode, DateChange,newDate) => {
+        const key = `${stockCode}-handleDateChange`;
+        const selectedDate =  formatDate(newDate, '', 2) 
+
+        const newCount = DateChange ? chartCount : (chartCount + 1) % 3;
+
         let newChartImage;
-        if (chartCount === 0) {
-            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/volb=1.png`;
-        } else if (chartCount === 1) {
-            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/volb=1/a=1.png`;
+        let newChartLabel;
+
+        if (newCount === 0) {
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${selectedDate}.png`;
+            newChartLabel = '日足';
+        } else if (newCount === 1) {
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${selectedDate}.png`;
+            newChartLabel = '週足';
         } else {
-            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/volb=1/a=2.png`;
-            setChartCount(0);
+            newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=2/e=${selectedDate}.png`;
+            newChartLabel = '月足';
         }
-        setChartImages(prevImages => ({ ...prevImages, [stockCode]: newChartImage }));
-    };
+
+            setChartImages(prevImages => ({ ...prevImages, [stockCode]: newChartImage }));
+            setChartLabels(prevLabels => ({ ...prevLabels, [stockCode]: newChartLabel }));
+
+
+        if (!DateChange) {
+            setChartCount(newCount);
+        }
+    }
+
 
     const handleDelete = (stockCode) => {
         if (window.confirm(`${stockCode}を本当に削除しますか？`)) {
@@ -99,6 +119,38 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
             "category": value
         })
     };
+
+    const handleDateChange = (e, stockCode) => {
+        const newDate = e.target.value;
+        console.log(newDate)
+        const key = `${stockCode}-handleDateChange`;
+        let DateChange = true;
+        setSelectedDates(prevDates => ({ ...prevDates, [key]: newDate }));
+        handleImageClick(stockCode, DateChange,newDate);
+        
+    };
+
+    const formatDate = (dateString, type, sliceNumber) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear().toString().slice(sliceNumber);
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        if (type !== '') {
+            return `${year}${type}${month}${type}${day}`;
+        }
+        return `${year}${month}${day}`;
+
+    };
+    useEffect(() => {
+        // const newDate = new Date();
+        const formattedCalender = formatDate(new Date(), '-', 2);
+        const formattedURL = formatDate(new Date(), '', 2);
+        console.log(formattedURL)
+        console.log(formattedCalender)
+        setFormattedDate(formattedCalender);
+        setInitialChartImage(`https://www.kabudragon.com/chart/s=[code]/e=${formattedURL}.png`);
+        console.log(InitialChartImage)
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -173,11 +225,21 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                                     <LinkComponent links={result.links} stock={stock.stock_code} />
                                 </div>
                                 <Memos key={`${stock.stock_code}-${MemoRefreshKey}`} memos={stock.memos} stock={stock.stock_code} name={stock.stock_name} setMemoRefreshKey={setMemoRefreshKey} />
-                                <div className="grid-item pl-2">
+                                <div className="grid-item pl-2 relative">
+                                    <span className="absolute top-2 left-1/2 transform -translate-x-1/2 text-black bg-white p-1 rounded ">{chartLabels[stock.stock_code] || '日足'}</span>
                                     <img
-                                        src={chartImages[stock.stock_code] || chartImage.replace('[code]', stock.stock_code)}
+                                        src={chartImages[stock.stock_code] || InitialChartImage.replace('[code]', stock.stock_code)}
                                         className="h-full w-full object-scale-down border-r cursor-pointer"
-                                        onClick={() => handleImageClick(stock.stock_code)}
+                                        onClick={() => handleImageClick(stock.stock_code,false)}
+                                    />
+                                    <input
+                                        type="date"
+                                        id="start"
+                                        name="trip-start"
+                                        value={`${selectedDates[`${stock.stock_code}-handleDateChange`] || formatDate(new Date(), '-', 0)}`}
+                                        min="2018-01-01"
+                                        onChange={(e) => handleDateChange(e, stock.stock_code)}
+                                        className="border rounded p-1 absolute top-2 right-2 text-black bg-white p-1"
                                     />
                                 </div>
                             </div >

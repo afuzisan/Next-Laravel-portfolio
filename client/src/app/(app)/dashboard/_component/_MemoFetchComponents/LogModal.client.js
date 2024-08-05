@@ -81,13 +81,10 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
     let newChartImage;
     let newChartLabel;
     setChartCount(prevCount => ({ ...prevCount, [key]: newCount }));
-    console.log(newCount);
-    console.log(currentCount);
 
     if (newCount === 0) {
       newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${newDate}.png`;
       newChartLabel = '日足';
-      console.log('日足 0');
     } else if (newCount === 1) {
       newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${newDate}.png`;
       newChartLabel = '週足';
@@ -152,7 +149,7 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
       <div className="flex justify-end items-center">
         <button onClick={closeModal} className="bg-none border-none text-2xl cursor-pointer">×</button>
       </div>
-      <div className="flex flex-wrap -mx-2 justify-center mt-6">
+      <div className="flex flex-wrap justify-start mt-6">
         {modalContent.memo_logs && modalContent.memo_logs.map((log, index) => {
           const formattedDate = formatDate(log.updated_at, '-');
           const imageFormattedDate = formatDate(log.updated_at, '', 2);
@@ -169,7 +166,7 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
                   alt="Stock Image"
                   onClick={(e) => { e.stopPropagation(); handleImageClick(getStockInfo().stock_code, imageFormattedDate, 1, log.memo_title, false, selectedDates[`${getStockInfo().stock_code}-${imageFormattedDate}-${log.memo_title}`]?.replace(/-/g, '').slice(2) || calendarFormattedDate); }}
                 />
-                <span className="border absolute top-[-3px] left-[50px] transform -translate-x-1/2 text-black bg-white p-1 rounded ">{getStockInfo().stock_name}({getStockInfo().stock_code})</span>
+                <span className="border absolute top-[-3px] left-0 text-black bg-white p-1 rounded truncate max-w-[200px]">{getStockInfo().stock_name}({getStockInfo().stock_code})</span>
                 <span className="absolute top-2 left-1/2 transform -translate-x-1/2 text-black bg-white p-1 rounded ">
                   {chartLabels[`${getStockInfo().stock_code}-${imageFormattedDate}-${log.memo_title}`] || '日足'}
                 </span>
