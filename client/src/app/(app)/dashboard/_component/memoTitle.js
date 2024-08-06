@@ -71,6 +71,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
         }
     }
     const deleteMemoTitle = async (memo) => {
+        if (window.confirm(`${memo.memo_title}を本当に削除しますか？`)) {
         try {
             await laravelAxios.post(`${apiUrl}/api/dashboard/memoTitle/delete`, {
 
@@ -82,7 +83,8 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
             console.error('Error deleting memo:', error);
         } finally {
             setMemoRefreshKey(prevKey => prevKey + 1);
-            closeModal();
+                closeModal();
+            }
         }
     }
 
