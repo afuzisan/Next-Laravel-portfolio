@@ -190,7 +190,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
             <Modal
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
-                contentLabel="編集モダール"
+                contentLabel="編集モーダル"
                 style={{
                     content: {
                         top: '50%',
@@ -201,41 +201,41 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
                         transform: 'translate(-50%, -50%)',
                         maxHeight: '80vh',
                         overflowY: 'auto',
-                        padding: '0px 20px 20px 10px',
+                        padding: '0',
                         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
                         borderRadius: '8px',
                         border: 'none',
-                        minWidth: '600px',
-                        maxWidth: '600px'
+                        width: '600px',
+                        maxWidth: '90%'
                     }
                 }}
             >
-                <div style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1, borderBottom: '1px solid #ccc', paddingBottom: '10px', height: '50px', paddingTop: '10px', paddingBottom: '10px', paddingLeft: '10px', }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h2 className='text-xl font-semibold' style={{ margin: 0 }}>{name}({stock})</h2>
-                        <button onClick={saveChanges} className="rounded-md" style={{ border: 'none', cursor: 'pointer', fontSize: '0.9em', padding: '5px 10px', backgroundColor: '#007BFF', color: 'white' }}>保存</button>
-
+                <div className="sticky top-0 bg-white z-10 border-b border-gray-200 p-4">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-semibold">{name}({stock})</h2>
+                        <button onClick={saveChanges} className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition-colors">
+                            保存
+                        </button>
                     </div>
                 </div>
-                <ul style={{ padding: 0, listStyleType: 'none' }}>
+                <ul className="p-4 space-y-4">
                     {editedMemos
                         .slice(1)
                         .sort((a, b) => a.order - b.order)
-                        .map((memo, index) => (
-                            <li
-                                key={memo.id}
-                                style={{
-                                    marginBottom: '10px',
-                                    marginTop: index === 0 ? '20px' : '0'
-                                }}
-                            >
+                        .map((memo) => (
+                            <li key={memo.id} className="flex items-center space-x-2">
                                 <input
                                     type="text"
                                     value={memo.memo_title}
                                     onChange={(e) => handleInputChange(memo.id, e.target.value)}
-                                    style={{ width: '100%', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}
+                                    className="flex-1 border border-gray-300 p-2 rounded-md"
                                 />
-                                <button onClick={() => deleteMemoTitle(memo)} className="rounded-md" style={{ border: 'none', cursor: 'pointer', fontSize: '0.9em', padding: '5px 10px', backgroundColor: '#007BFF', color: 'white' }}>削除</button>
+                                <button 
+                                    onClick={() => deleteMemoTitle(memo)} 
+                                    className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition-colors"
+                                >
+                                    削除
+                                </button>
                             </li>
                         ))}
                 </ul>
