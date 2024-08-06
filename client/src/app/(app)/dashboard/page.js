@@ -264,15 +264,15 @@ const Dashboard = () => {
                                 return categoryList.map((category, index) => {
                                     return (
                                         <div key={index}>
-                                            <li className="list-none flex justify-between block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
-                                                <a href={`dashboard/Category/${encodeURIComponent(category)}`} className="block w-full h-full">
+                                            <li className="list-none flex justify-between block w-full h-full border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                                <a href={`dashboard/Category/${encodeURIComponent(category)}`} className={`block w-full h-full px-3 py-2`}>
                                                     {category}
                                                 </a>
                                                 {category !== '未分類' && (
-                                                    <span className="flex items-center border border-gray-200 rounded-lg pr-1 pl-1 hover:bg-white">
+                                                    <span className="flex items-center pr-1 pl-1 hover:bg-white">
                                                         <span className="mr-1 ml-1 flex items-center hover:text-gray-500 cursor-pointer">
                                                             <FaEdit className="text-gray-200 hover:text-black cursor-pointer " onClick={() => handleEditCategoryList(category)} />
-                                                        </span >
+                                                        </span>
                                                         <span className="text-gray-200 mr-1 ml-1 hover:text-black cursor-pointer" onClick={() => handleDeleteCategoryList(category)}>✕</span>
                                                     </span>
                                                 )}
