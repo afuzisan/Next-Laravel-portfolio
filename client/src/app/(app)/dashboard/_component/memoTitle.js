@@ -24,6 +24,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
     const [minOrder, setMinOrder] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editedMemos, setEditedMemos] = useState([]); // 初期値を空配列に変更
+    const [deleteMemo, setDeleteMemo] = useState([]); // 初期値を空配列に変更
 
 
 
@@ -64,6 +65,21 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
             });
         } catch (error) {
             console.error('Error saving changes:', error);
+        } finally {
+            setMemoRefreshKey(prevKey => prevKey + 1);
+            closeModal();
+        }
+    }
+    const deleteMemoTitle = async (memo) => {
+        try {
+            await laravelAxios.post(`${apiUrl}/api/dashboard/memoTitle/delete`, {
+
+                memo_title: memo.memo_title,
+                stock_id: memo.stock_id
+
+            });
+        } catch (error) {
+            console.error('Error deleting memo:', error);
         } finally {
             setMemoRefreshKey(prevKey => prevKey + 1);
             closeModal();
@@ -189,15 +205,16 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
                         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
                         borderRadius: '8px',
                         border: 'none',
-                        minWidth:'600px',
-                        maxWidth:'600px'
+                        minWidth: '600px',
+                        maxWidth: '600px'
                     }
                 }}
             >
-                <div style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1, borderBottom: '1px solid #ccc', paddingBottom: '10px', height: '50px', paddingTop:'10px',paddingBottom:'10px', paddingLeft:'10px',}}>
+                <div style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1, borderBottom: '1px solid #ccc', paddingBottom: '10px', height: '50px', paddingTop: '10px', paddingBottom: '10px', paddingLeft: '10px', }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h2 className='text-xl font-semibold' style={{ margin: 0 }}>{name}({stock})</h2>
                         <button onClick={saveChanges} className="rounded-md" style={{ border: 'none', cursor: 'pointer', fontSize: '0.9em', padding: '5px 10px', backgroundColor: '#007BFF', color: 'white' }}>保存</button>
+
                     </div>
                 </div>
                 <ul style={{ padding: 0, listStyleType: 'none' }}>
@@ -218,6 +235,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
                                     onChange={(e) => handleInputChange(memo.id, e.target.value)}
                                     style={{ width: '100%', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}
                                 />
+                                <button onClick={() => deleteMemoTitle(memo)} className="rounded-md" style={{ border: 'none', cursor: 'pointer', fontSize: '0.9em', padding: '5px 10px', backgroundColor: '#007BFF', color: 'white' }}>削除</button>
                             </li>
                         ))}
                 </ul>

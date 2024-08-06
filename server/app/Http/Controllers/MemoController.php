@@ -183,6 +183,19 @@ class MemoController extends Controller
 
         return response()->json(['message' => 'Memo titles updated successfully']);
     }
+
+    public function memoTitleDelete(Request $request)
+    {
+        $memo_title = $request->input('memo_title');
+        $stock_id = $request->input('stock_id');
+        // Log::info('Received memo_title:', ['memo_title' => $memo_title]);
+        // Log::info('Received stock_id:', ['stock_id' => $stock_id]);
+        $userId = Auth::id();
+        Memo::where('memo_title', $memo_title)
+            ->where('stock_id', $stock_id)
+            ->where('user_id', $userId)
+            ->forceDelete();
+    }
     /**
      * 銘柄の削除
      */
@@ -325,7 +338,7 @@ class MemoController extends Controller
     public function PhantomJS()
     {
         $key = env('PHANTOMJS_API_KEY');
-        $url = 'http://PhantomJScloud.com/api/browser/v2/'.$key.'/';
+        $url = 'http://PhantomJScloud.com/api/browser/v2/' . $key . '/';
         $payload = [
             'url' => 'https://nikkeiyosoku.com/stock/all/',
             'renderType' => 'html',
@@ -340,13 +353,13 @@ class MemoController extends Controller
 
             if ($response->successful()) {
                 $result = $response->json();
-                
+
                 // HTMLコンテンツ取得方法変更
                 $htmlContent = $result['content']['data'] ?? '';
-                
+
                 if (is_string($htmlContent)) {
                     Log::info('受信HTMLコンテンツ', ['content' => substr($htmlContent, 0, 1000)]);
-                    
+
                     $dom = new \DOMDocument();
                     @$dom->loadHTML($htmlContent);
                     $xpath = new \DOMXPath($dom);
@@ -367,7 +380,7 @@ class MemoController extends Controller
                     foreach ($tdElements as $index => $td) {
                         $key = $index % 4;
                         $value = trim($td->textContent);
-                        
+
                         if ($key == 0) {
                             $stockData[] = [
                                 'stock_code' => $value,

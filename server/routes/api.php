@@ -19,6 +19,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('dashboard/memo', [MemoController::class, 'memo']);
     Route::post('dashboard/memoUpdate', [MemoController::class, 'memoUpdate']);
     Route::post('dashboard/memoEdit', [MemoController::class, 'memoEdit']);
+    Route::post('dashboard/memoTitle/delete', [MemoController::class, 'memoTitleDelete']);
     Route::post('dashboard/memoTitle/update', [MemoController::class, 'memoTitleUpdate']);
     Route::post('dashboard/stockStore', [MemoController::class, 'stockStore']);
     Route::post('dashboard/stockDelete', [MemoController::class, 'stockDelete']);
