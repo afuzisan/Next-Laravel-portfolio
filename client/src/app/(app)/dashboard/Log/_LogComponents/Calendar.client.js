@@ -234,9 +234,9 @@ const Calendar = () => {
     };
     console.log(eventsData);
     return (
-        <div className="flex justify-center h-screen w-full p-4">
-            <div className="grid grid-cols-[200px_300px_1fr] gap-5 w-full h-4/5">
-                <div className='overflow-auto w-full'>
+        <div className="flex justify-center h-[calc(100vh-100px)] w-full p-4">
+            <div className="grid grid-cols-[200px_300px_1fr] gap-5 w-full ">
+                <div className='overflow-hidden w-full h-[calc(100vh-100px)]'>
                     <div className='w-full h-full'>
                         {Array.from(new Set(Object.keys(eventsData))).map((date, index) => (
                             <div
@@ -269,7 +269,7 @@ const Calendar = () => {
                         )
                     }
                 </div>
-                <div className="overflow-auto">
+                <div className="overflow-auto w-full h-[calc(100vh-200px)]">
                     <div className="whitespace-pre-line">{content}</div>
                 </div>
             </div>
