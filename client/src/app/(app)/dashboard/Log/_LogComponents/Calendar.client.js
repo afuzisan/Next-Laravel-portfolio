@@ -145,19 +145,20 @@ const Calendar = () => {
                             }
                             console.log(event);
                             return (
-                                <div className='flex justify-between'>
+                                <div className={`flex justify-between ${index !== events.length - 1 ? 'border-b' : ''}`}>
                                     <img
-                                        className={`flex w-[50%] h-[200px] my-auto object-cover rounded cursor-pointer`}
+                                        className={`flex w-[500px] h-[200px] my-auto object-cover rounded cursor-pointer p-4 `}
                                         src={`https://www.kabudragon.com/chart/s=${event.stock_id}/e=${formatDate(localUpdatedAt, '-', 2)}`}
-                                    // onClick={(e) => { e.stopPropagation(); handleImageClick(getStockInfo().stock_code, imageFormattedDate, 1, log.memo_title, false, selectedDates[`${getStockInfo().stock_code}-${imageFormattedDate}-${log.memo_title}`]?.replace(/-/g, '').slice(2) || calendarFormattedDate); }}
                                     />
-                                    <div key={index} className={`w-[50%] p-2 grid grid-cols-[100px_2fr] gap-2 break-words overflow-hidden ${index !== events.length - 1 ? 'border-b' : ''}`}>
+                                    <div key={index} className={`w-[50%] pl-2 pt-2 pb-2 grid grid-cols-[70px_2fr] gap-2 break-words overflow-hidden`}>
                                         <p><strong>銘柄名</strong></p>
                                         <p className="break-words">{event.stock_name}({event.stock_id})</p>
                                         <p><strong>タイトル:</strong></p>
                                         <p className="break-words">{event.memo_title}</p>
                                         <p><strong>メモ:</strong></p>
-                                        <div className="break-words"><Editor editorState={editorState} readOnly={true} /></div>
+                                        <div className="break-words overflow-y-auto max-h-[300px] flex-1 w-[360px] scrollbar-radius">
+                                            <Editor editorState={editorState} readOnly={true} />
+                                        </div>
                                         <p><strong>作成日時:</strong></p>
                                         <p className="break-words">{localUpdatedAt}</p>
                                     </div>
@@ -218,13 +219,14 @@ const Calendar = () => {
             const formattedDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString().split('T')[0];
             if (eventsData[formattedDate]) {
                 return (
-                    <span
-                        className="text-red-500"
-                        onMouseEnter={(e) => showTooltip(e, eventsData[formattedDate])}
-                        onMouseLeave={hideTooltip}
-                    >
-                        ●
-                    </span>
+                    <div className="relative w-full h-full flex items-center justify-center">
+                        <span className="absolute text-red-100 font-bold text-6xl bottom-0 opacity-20"
+                            onMouseEnter={(e) => showTooltip(e, eventsData[formattedDate])}
+                            onMouseLeave={hideTooltip}
+                        >
+                            ●
+                        </span>
+                    </div>
                 );
             }
         }
