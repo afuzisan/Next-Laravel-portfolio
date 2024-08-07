@@ -16,6 +16,7 @@ class ExternalLink extends Model
     protected $fillable = [
         'url',
         'site_name',
+        'user_id'
     ];
 
     public function user()

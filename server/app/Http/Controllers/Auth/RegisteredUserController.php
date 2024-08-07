@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+
 use App\Http\Controllers\Controller;
+use App\Models\CategoriesList;
+use App\Models\ExternalLink;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -32,11 +35,27 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->string('password')),
         ]);
 
+
         event(new Registered($user));
 
         Auth::login($user);
 
-        // return response()->json(['redirect' => '/dashboard']);
-        return response()->noContent();
+        CategoriesList::create(
+            [
+                'name' => '未分類',
+                'order' => 0,
+                'user_id' => $user->id
+            ]
+        );
+
+
+
+        ExternalLink::create([
+            'url' => 'https://kabutan.jp/stock/finance?code=[code]',
+            'site_name' => '株探(決算)',
+            'user_id' => $user->id
+        ]);
+
+        return response()->json(['message' => 'ユーザー登録成功']);
     }
 }
