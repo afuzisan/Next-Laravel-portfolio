@@ -63,10 +63,11 @@ const Dashboard = () => {
         // ２バイト数字１バイト数字に変換
         const normalizedInput = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
         const stockNumber = parseInt(normalizedInput, 10); // 入力値を整数に変換
-        // if (isNaN(stockNumber) || stockNumber < 1000 || stockNumber > 9999) { // 4桁の整数かどうか確認
-        //     setErrorMessage("正しい証券コードを入力してください。");
-        //     return;
-        // }
+
+        if (!stockNumber || isNaN(stockNumber)) {
+            setErrorMessage('有効な証券コードを入力してください');
+            return;
+        }
 
         laravelAxios.post(`${apiUrl}/api/dashboard/stockStore`, { "stockNumber": stockNumber })
             .then(() => {
@@ -87,13 +88,13 @@ const Dashboard = () => {
             return;
         }
         laravelAxios.post(`${apiUrl}/api/Categories/AddCategoryList`, { "categoryName": normalizedInput })
-            .then(() => {
-                router.refresh({ keepCache: true });
+            .then((response) => {
+                setCategoryList(prevList => [...prevList, normalizedInput]);
                 setInputValue('');
-                setErrorMessage(''); // 成功時にエラーメッセージをクリア
+                setErrorMessage('');
             })
             .catch((error) => {
-                setErrorMessage(error.response.data.message);
+                setErrorMessage(error.response?.data?.message || 'エラーが発生しました');
             });
     };
 
@@ -109,7 +110,7 @@ const Dashboard = () => {
         if (window.confirm(`${category}を削除してもよろしいですか？`)) {
             laravelAxios.delete(`${apiUrl}/api/Categories/deleteCategoryList/${category}`)
                 .then(() => {
-                    router.refresh({ keepCache: true });
+                    setCategoryList(prevList => prevList.filter(c => c !== category));
                     setErrorMessage('');
                 })
                 .catch(() => {
@@ -200,7 +201,7 @@ const Dashboard = () => {
                                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'codeAsc' ? 'bg-gray-100' : 'bg-white'}`}
                                 onClick={() => handleSort('codeAsc')}
                             >
-                                証券コード (小さい順)
+                                証券コード (小さい��)
                             </button>
                         </div>
                         <ul className="inline-flex -space-x-px items-center">

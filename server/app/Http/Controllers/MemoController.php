@@ -11,12 +11,9 @@ use App\Models\User;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Throwable;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 class MemoController extends Controller
 {
@@ -37,7 +34,7 @@ class MemoController extends Controller
         }, 'links', 'categoriesLists'])->where('id', $user_id)->first();
 
         if (!$user || $user->stocks->isEmpty()) {
-            return response()->json(['message' => 'Stocks not found']);
+            return response()->json(['message' => '銘柄が見つかりません']);
         }
 
         // 全体のstocksの数を取得
@@ -59,10 +56,10 @@ class MemoController extends Controller
         if ($id) {
             $memo = Memo::find($id); // プライマリーキーに一致する行をすべて取得
             if (!$memo) {
-                return response()->json(['message' => 'Memo not found'], 404);
+                return response()->json(['message' => 'メモが見つかりません'], 404);
             }
         } else {
-            return response()->json(['message' => 'ID is required'], 400);
+            return response()->json(['message' => 'IDを入力してください'], 400);
         }
 
         return response()->json($memo);
@@ -90,9 +87,9 @@ class MemoController extends Controller
             // フラグをリセット
             Memo::$skipCreatedEvent = true;
 
-            return response()->json(['message' => 'Memo updated successfully', 'memo' => $memo]);
+            return response()->json(['message' => 'メモを更新しました', 'memo' => $memo]);
         } else {
-            return response()->json(['message' => 'Memo not found'], 404);
+            return response()->json(['message' => 'メモが見つかりません'], 404);
         }
     }
 
@@ -111,17 +108,18 @@ class MemoController extends Controller
         $memo = mb_convert_kana($request->input('memo', ''), 'a');
         $memoTitle = mb_convert_kana($request->input('memo_title', ''), 'a');
 
-        Log::info('Received memo:', ['memo' => $memo]);
-        Log::info('Received memo_title:', ['memo_title' => $memoTitle]);
-
         $stock = Stock::where('stock_code', $request->input('stockNumber'))->first();
+        if (!$stock) {
+            return response()->json(['message' => '指定された証券コードの銘柄が見つかりません'], 404);
+        }
+
         // 既のメモを確認
         $existingMemo = Memo::where('stock_id', $stock->id)
             ->where('user_id', Auth::id())
             ->first();
 
         if ($existingMemo) {
-            return response()->json(['message' => 'Memo already exists for this stock'], 400);
+            return response()->json(['message' => 'この銘柄は既に登録されています'], 400);
         }
 
         $userId = Auth::id();
@@ -150,7 +148,7 @@ class MemoController extends Controller
             'order' => 0
         ]);
 
-        return response()->json(['message' => 'Stock stored successfully', 'memo' => $memo]);
+        return response()->json(['message' => '銘柄は登録されました', 'memo' => $memo]);
     }
     /**
      * メモのタイトルを編集
@@ -165,14 +163,12 @@ class MemoController extends Controller
             ->where('user_id', $userId)
             ->get();
 
-        return response()->json(['message' => 'Memo edited successfully', 'memo' => $memo]);
+        return response()->json(['message' => 'メモを編集しました', 'memo' => $memo]);
     }
 
     public function memoTitleUpdate(Request $request)
     {
         $memoData = $request->input('memos');
-        Log::info('Received memo:', ['memos' => $memoData]);
-
         foreach ($memoData as $data) {
             $memo = Memo::find($data['id']);
             if ($memo && $memo->memo_title !== $data['memo_title']) {
@@ -181,15 +177,13 @@ class MemoController extends Controller
             }
         }
 
-        return response()->json(['message' => 'Memo titles updated successfully']);
+        return response()->json(['message' => 'メモのタイトルを更新しました']);
     }
 
     public function memoTitleDelete(Request $request)
     {
         $memo_title = $request->input('memo_title');
         $stock_id = $request->input('stock_id');
-        // Log::info('Received memo_title:', ['memo_title' => $memo_title]);
-        // Log::info('Received stock_id:', ['stock_id' => $stock_id]);
         $userId = Auth::id();
         Memo::where('memo_title', $memo_title)
             ->where('stock_id', $stock_id)
@@ -197,7 +191,7 @@ class MemoController extends Controller
             ->forceDelete();
     }
     /**
-     * 銘柄の削除
+     * 銘の削除
      */
     public function stockDelete(Request $request)
     {
@@ -220,9 +214,9 @@ class MemoController extends Controller
                 ->where('user_id', $userId)
                 ->Delete();
 
-            return response()->json(['message' => 'Stock deleted successfully']);
+            return response()->json(['message' => '銘柄を削除しました']);
         } else {
-            return response()->json(['message' => 'Stock not found'], 404);
+            return response()->json(['message' => '銘柄が見つかりません'], 404);
         }
     }
 
@@ -253,7 +247,7 @@ class MemoController extends Controller
             'memo' => $request->input('memo'), // 修正: リクエストからメモを取得
         ]);
 
-        return response()->json(['message' => 'Memo title created successfully']); // 修: レスンスを追加
+        return response()->json(['message' => 'メモのタイトルを作成しました']); // 修: レスンスを追加
     }
 
     /**
@@ -274,9 +268,9 @@ class MemoController extends Controller
             ->forceDelete();
 
         if ($deletedRows) {
-            return response()->json(['message' => 'Memo deleted successfully']);
+            return response()->json(['message' => 'メモを削除しました']);
         } else {
-            return response()->json(['message' => 'Memo not found'], 404);
+            return response()->json(['message' => 'メモが見つかりません'], 404);
         }
     }
     public function exchange(Request $request)
@@ -314,25 +308,15 @@ class MemoController extends Controller
                     // orderをnewOrder値に書換え
                     $newMemo->order = $newOrder;
 
-                    // 保存前のログ出力
-                    Log::info("Before save: newMemo=" . json_encode($newMemo->toArray()));
-                    Log::info("Before save: oldMemo=" . json_encode($oldMemo->toArray()));
-
                     $newMemo->save();
                     $oldMemo->save(); // コメントを解
-
-                    // 保存後のログ出力
-                    Log::info("After save: newMemo=" . json_encode($newMemo->toArray()));
-                    Log::info("After save: oldMemo=" . json_encode($oldMemo->toArray()));
-
-                    Log::info("Memos exchanged: newMemo={$newMemo->id}, oldMemo={$oldMemo->id}");
                 } else {
-                    Log::warning("Memo not found: newId={$newId}, oldId={$oldId}");
+                    Log::warning("メモが見つかりません: newId={$newId}, oldId={$oldId}");
                 }
             }
         });
 
-        return response()->json(['message' => 'Memos exchanged successfully']);
+        return response()->json(['message' => 'メモを交換しました']);
     }
 
     public function PhantomJS()
@@ -354,11 +338,10 @@ class MemoController extends Controller
             if ($response->successful()) {
                 $result = $response->json();
 
-                // HTMLコンテンツ取得方法変更
+                // HTMLコンテンツ取得方法変��
                 $htmlContent = $result['content']['data'] ?? '';
 
                 if (is_string($htmlContent)) {
-                    Log::info('受信HTMLコンテンツ', ['content' => substr($htmlContent, 0, 1000)]);
 
                     $dom = new \DOMDocument();
                     @$dom->loadHTML($htmlContent);
@@ -371,8 +354,6 @@ class MemoController extends Controller
                     foreach ($elements as $element) {
                         $stockInfo[] = trim($element->textContent);
                     }
-
-                    Log::info('取得データ', ['stockInfo' => $stockInfo]);
 
                     $tdElements = $xpath->query('//table[@class="table table-bordered table-striped"]/tbody//td');
 

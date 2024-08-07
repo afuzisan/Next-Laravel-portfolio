@@ -129,6 +129,9 @@ class Categories extends Controller
     public function AddCategoryList(Request $request)
     {
         $categoryName = $request->categoryName;
+        if (mb_strlen($categoryName) > 50) {
+            return response()->json(['message' => 'カテゴリ名は50文字以内にしてください'], 400);
+        }
         $user_id = Auth::id();
         $category = CategoriesList::create(['name' => $categoryName, 'user_id' => $user_id]);
         return response()->json(['message' => 'カテゴリ「'.$categoryName.'」を追加しました'], 200);
