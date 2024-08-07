@@ -190,6 +190,10 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
 
 
     if (error) {
+        if (error.response && error.response.status === 409) {
+            
+            return <div>メール認証を完了してください</div>;
+        }
         return <div>新しく銘柄を登録してください</div>;
     }
 

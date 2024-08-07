@@ -2,17 +2,14 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Stock; // Stock モデルを使用
+use App\Http\Controllers\MemoController;
 
 class StocksSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        Stock::factory()->count(9999)->create(); 
+        $controller = new MemoController();
+        $controller->PhantomJS();
     }
 }
