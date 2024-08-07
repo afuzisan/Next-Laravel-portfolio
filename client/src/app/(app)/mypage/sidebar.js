@@ -23,7 +23,7 @@ const Sidebar = () => {
                             <div>表示銘柄数の変更</div>
                         </div>
                     </Link>
-                    <Link href="/mypage/" className="flex items-center gap-4 hover:bg-gray-100 transition duration-300 p-2 rounded-lg">
+                    <Link href="/mypage/passwordreset" className="flex items-center gap-4 hover:bg-gray-100 transition duration-300 p-2 rounded-lg">
                         <div className="bg-green-500 text-green-50 rounded-full p-3">
                             <LockIcon className="h-6 w-6" />
                         </div>
