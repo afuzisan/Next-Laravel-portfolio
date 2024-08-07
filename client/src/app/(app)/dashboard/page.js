@@ -121,7 +121,13 @@ const Dashboard = () => {
 
     const handleEditCategoryList = (category) => {
         const newCategory = prompt('新しいカテゴリ名を入力してください');
-        if (newCategory === null || newCategory === '') {
+        if (newCategory === null) return;
+        if (newCategory === '') {
+            setErrorMessage('カテゴリ名を入力してください');
+            return;
+        }
+        if (newCategory.length > 15) {
+            setErrorMessage('カテゴリ名は15文字以内で入力してください');
             return;
         }
         if (category === '未分類') {

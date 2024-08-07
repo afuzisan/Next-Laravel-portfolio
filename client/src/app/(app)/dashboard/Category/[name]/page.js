@@ -121,14 +121,20 @@ const Dashboard = ({ params }) => {
 
     const handleEditCategoryList = (category) => {
         const newCategory = prompt('新しいカテゴリ名を入力してください');
-        if (newCategory === null || newCategory === '') {
+        if (newCategory === null) return;
+        if (newCategory === '') {
+            setErrorMessage('カテゴリ名を入力してください');
+            return;
+        }
+        if (newCategory.length > 15) {
+            setErrorMessage('カテゴリ名は15文字以内で入力してください');
             return;
         }
         if (category === '未分類') {
             setErrorMessage('未分類は編集できません');
             return;
         }
-        laravelAxios.put(`${apiUrl}'/api/Categories/editCategoryList/${newCategory}/${category}`)
+        laravelAxios.put(`${apiUrl}/api/Categories/editCategoryList/${newCategory}/${category}`)
             .then(() => {
                 setCategoryList(prevList => prevList.map(c => c === category ? newCategory : c));
                 setRefreshKey(prevKey => prevKey + 1);
