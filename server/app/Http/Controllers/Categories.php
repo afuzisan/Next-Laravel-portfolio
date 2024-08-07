@@ -129,11 +129,27 @@ class Categories extends Controller
     public function AddCategoryList(Request $request)
     {
         $categoryName = $request->categoryName;
-        if (mb_strlen($categoryName) > 50) {
-            return response()->json(['message' => 'カテゴリ名は50文字以内にしてください'], 400);
-        }
         $user_id = Auth::id();
-        $category = CategoriesList::create(['name' => $categoryName, 'user_id' => $user_id]);
-        return response()->json(['message' => 'カテゴリ「'.$categoryName.'」を追加しました'], 200);
+
+        if (mb_strlen($categoryName) > 15) {
+            return response()->json(['message' => 'カテゴリ名は15文字以内にしてください'], 400);
+        }
+
+        // 既存のカテゴリ名をチェック
+        $existingCategory = CategoriesList::where('user_id', $user_id)
+                                          ->where('name', $categoryName)
+                                          ->first();
+
+        if ($existingCategory) {
+            return response()->json(['message' => 'このカテゴリ名は既に存在します'], 400);
+        }
+
+        try {
+            $category = CategoriesList::create(['name' => $categoryName, 'user_id' => $user_id]);
+            return response()->json(['message' => 'カテゴリ「'.$categoryName.'」を追加しました'], 200);
+        } catch (\Exception $e) {
+            Log::error('カテゴリ追加エラー: ' . $e->getMessage());
+            return response()->json(['message' => 'カテゴリの追加中にエラーが発生しました'], 500);
+        }
     }
 }

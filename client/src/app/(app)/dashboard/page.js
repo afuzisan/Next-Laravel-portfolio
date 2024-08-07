@@ -113,8 +113,8 @@ const Dashboard = () => {
                     setCategoryList(prevList => prevList.filter(c => c !== category));
                     setErrorMessage('');
                 })
-                .catch(() => {
-                    setErrorMessage('エラーが発生しました');
+                .catch((error) => {
+                    setErrorMessage(error.response?.data?.message || 'エラーが発生しました');
                 });
         }
     }
@@ -183,7 +183,7 @@ const Dashboard = () => {
                                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'dateDesc' ? 'bg-gray-100' : 'bg-white'}`}
                                 onClick={() => handleSort('dateDesc')}
                             >
-                                登録日 (新しい)
+                                登録日 (新しい順)
                             </button>
                             <button
                                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'dateAsc' ? 'bg-gray-100' : 'bg-white'}`}
@@ -201,7 +201,7 @@ const Dashboard = () => {
                                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'codeAsc' ? 'bg-gray-100' : 'bg-white'}`}
                                 onClick={() => handleSort('codeAsc')}
                             >
-                                証券コード (小さい��)
+                                証券コード (小さい順)
                             </button>
                         </div>
                         <ul className="inline-flex -space-x-px items-center">
