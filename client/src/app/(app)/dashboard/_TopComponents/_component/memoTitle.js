@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react'
-import MemoList from '@@/(app)/dashboard/_component/memoList'
+import MemoList from '@Dashboard/memoList'
 import {
     DndContext,
     closestCenter,
@@ -35,7 +35,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
             });
             setEditedMemos(response.data.memo);
         } catch (error) {
-            console.error('Error fetching memos:', error);
+            process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
         }
         setIsModalOpen(true);
     }
@@ -51,9 +51,8 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
                     memo.id === id ? { ...memo, memo_title: value } : memo
                 )
             );
-            console.log(editedMemos)
         } catch (error) {
-            console.error('Error fetching memos:', error);
+            process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
         }
 
     }
@@ -64,7 +63,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
                 memos: editedMemos,
             });
         } catch (error) {
-            console.error('Error saving changes:', error);
+            process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
         } finally {
             setMemoRefreshKey(prevKey => prevKey + 1);
             closeModal();
@@ -80,7 +79,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
 
             });
         } catch (error) {
-            console.error('Error deleting memo:', error);
+            process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
         } finally {
             setMemoRefreshKey(prevKey => prevKey + 1);
                 closeModal();
@@ -147,7 +146,7 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
                 });
             }
         } catch (error) {
-            console.error('Error saving order:', error);
+            process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
         } finally {
         }
     }, [items, setMemoRefreshKey]);

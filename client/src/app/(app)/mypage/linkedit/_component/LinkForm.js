@@ -24,7 +24,7 @@ const LinkForm = ({ onRefetch }) => {
             setUrl('');
             setName('');
         } catch (error) {
-            console.error("Error:", error);
+            process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
         }
     }
 

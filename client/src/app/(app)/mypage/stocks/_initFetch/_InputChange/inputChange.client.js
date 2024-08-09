@@ -10,12 +10,10 @@ const InputChange = ({placeholder, initialValue, type}) => {
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
-        console.log(inputValue)
     };
 
     const handleSubmit = async () => {
         try {
-            console.log('inputValue:', inputValue);
             const response = await laravelAxios.post(`${apiUrl}/api/mypage/memo_display_number_update`, { 
                 memo_display_number: inputValue 
             });

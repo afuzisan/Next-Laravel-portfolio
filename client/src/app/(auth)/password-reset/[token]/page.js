@@ -80,7 +80,7 @@ const PasswordReset = () => {
                 {/* Confirm Password */}
                 <div className="mt-4">
                     <Label htmlFor="passwordConfirmation">
-                        Confirm Password
+                        パスワードを認証する
                     </Label>
 
                     <Input

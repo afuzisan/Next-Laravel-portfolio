@@ -9,13 +9,9 @@ const page = () => {
     const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const handleClick = async () => {
         try {
-            const response = await laravelAxios.post(`${apiUrl}/api/dashboard/PhantomJS`);
-            console.log(response.data);
-                console.log(response.data.result);
-                console.log(response.data.result.content);
-                console.log(response.data.result.content.data);
+            await laravelAxios.post(`${apiUrl}/api/dashboard/PhantomJS`);
         } catch (error) {
-            console.error('エラー:', error);
+            process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
         }
     };
 

@@ -52,14 +52,11 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
 
   const initStockLog = async (apiUrl) => {
     try {
-      console.log(modalContent)
-      console.log(modalContent.StockCode)
       const response = await laravelAxios.get(`${apiUrl}/api/log/getStockLog?stockCode=${modalContent.StockCode}`);
       const log = response.data.memo_logs;
-      console.log(log)
       setContent(log);
     } catch (error) {
-      console.error('Error fetching log:', error);
+      process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
     }
   };
 
@@ -110,7 +107,6 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
   };
 
   const handleFormattedDate = (formattedDate, stockCode, imageFormattedDate, memoTitle) => {
-    console.log(formattedDate)
     const key = `${stockCode}-${imageFormattedDate}-${memoTitle}`;
     const currentCount = chartCount[key] || 0;
     setSelectedDates(prevDates => ({ ...prevDates, [key]: formattedDate }));

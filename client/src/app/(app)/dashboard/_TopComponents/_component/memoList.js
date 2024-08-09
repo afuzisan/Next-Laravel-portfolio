@@ -65,10 +65,7 @@ const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, ord
         try {
             setActiveOrder(order);
             setEditor(EditorState.createEmpty(decorator));
-            // setMemoRefreshKey(prev=>prev+1)
-            console.log(id)
             const URL = `${apiUrl}/api/dashboard/memo`;
-            console.log(URL)
             const response = await laravelAxios.post(URL, {
                 id: id,
                 cache: 'no-store'

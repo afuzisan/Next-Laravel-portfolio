@@ -22,11 +22,10 @@ const SearchGet = () => {
         const searchType = searchParams.get('searchType');
             laravelAxios.get(`${apiUrl}/api/search/memo`)
             .then(response => {
-                console.log(search, searchType, response.data);
                 setData(response.data); // stateにデータをセット
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
             });
     }, [searchParams]);
 

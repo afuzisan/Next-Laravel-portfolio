@@ -61,14 +61,12 @@ const Calendar = () => {
         const fetchData = async () => {
             try {
                 const res = await laravelAxios.get(`${apiUrl}/api/log/getAll`, { cache: 'no-store' });
-                console.log(res.data.logs);
                 const formattedData = {};
                 for (const event of res.data.logs) {
                     if (event.updated_at) {
                         const date = new Date(new Date(event.updated_at).getTime() - (9 * 60 * 60 * 1000))
                             .toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' })
                             .replace(/\//g, '-').replace(/-(\d)-/g, '-0$1-').replace(/-(\d)$/, '-0$1');
-                        console.log(date);
                         if (!formattedData[date]) {
                             formattedData[date] = [];
                         }
@@ -83,10 +81,9 @@ const Calendar = () => {
                         });
                     }
                 }
-                console.log(formattedData);
                 setEventsData(formattedData)
             } catch (err) {
-                console.log(err);
+                process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
             }
 
         };
@@ -95,7 +92,6 @@ const Calendar = () => {
     }, []);
     const handleDateClick = (value) => {
         const selectedDate = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate()));
-        console.log('Date clicked:', selectedDate);
         setDate(selectedDate);
         checkIfToday(selectedDate);
         displayContent(selectedDate);
@@ -109,7 +105,6 @@ const Calendar = () => {
     const checkIfToday = (selectedDate) => {
         const today = new Date();
         const isToday = selectedDate.toDateString() === today.toDateString();
-        console.log('Is today:', isToday);
     };
 
     const formatDate = (dateString, type, sliceNumber) => {
@@ -125,7 +120,6 @@ const Calendar = () => {
     };
 
     const displayContent = (selectedDate) => {
-        console.log(eventsData)
         const formattedDate = selectedDate.toISOString().split('T')[0];
         const events = eventsData[formattedDate];
         if (events) {
@@ -137,13 +131,11 @@ const Calendar = () => {
                             let editorState;
                             try {
                                 const contentState = convertFromRaw(event.memo);
-                                console.log(contentState);
                                 editorState = EditorState.createWithContent(contentState, decorator);
                             } catch (error) {
-                                console.error('Invalid JSON in memo:', event.memo);
+                                process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
                                 editorState = EditorState.createEmpty(decorator);
                             }
-                            console.log(event);
                             return (
                                 <div className={`flex justify-between ${index !== events.length - 1 ? 'border-b' : ''}`}>
                                     <img
@@ -184,7 +176,7 @@ const Calendar = () => {
                         const contentState = convertFromRaw(JSON.parse(event.memo));
                         editorState = EditorState.createWithContent(contentState, decorator);
                     } catch (error) {
-                        console.error('Invalid JSON in memo:', event.memo);
+                        process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
                         editorState = EditorState.createEmpty(decorator);
                     }
                     return (
@@ -232,7 +224,6 @@ const Calendar = () => {
         }
         return null;
     };
-    console.log(eventsData);
     return (
         <div className="flex justify-center h-[calc(100vh-100px)] w-full p-4">
             <div className="grid grid-cols-[200px_300px_1fr] gap-5 w-full ">

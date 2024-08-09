@@ -1,10 +1,10 @@
 'use client'
 
 import React, { useEffect, useState, createContext, useContext } from 'react'
-import Memos from '@@/(app)/dashboard/_component/memos.client';
-import LinkComponent from '@@/(app)/dashboard/_component/LinkComponent';
+import Memos from '@Dashboard/memos.client';
+import LinkComponent from '@Dashboard/LinkComponent';
 import laravelAxios from '@/lib/laravelAxios';
-import LogModal from '@@/(app)/dashboard/_component/_MemoFetchComponents/LogModal.client';
+import LogModal from '@Dashboard/_MemoFetchComponents/LogModal.client';
 
 
 function formatDateToISO(date) {
@@ -39,14 +39,10 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
 
     useEffect(() => {
         if (result && onDataResult) {
-            console.log(result)
-            console.log(onDataResult)
             const initialCategories = {};
             result.stocks.forEach(stock => {
                 initialCategories[stock.stock_code] = stock.categories && stock.categories[0] ? stock.categories[0].name : '未分類';
             });
-            console.log(initialCategories)
-            console.log(result)
             setSelectedCategories(initialCategories);
         }
     }, [result, onDataResult]);
@@ -91,7 +87,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                     refreshKey();
                 })
                 .catch(error => {
-                    console.error('Error deleting stock:', error);
+                    process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
                 });
         }
     };
@@ -99,10 +95,9 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         try {
             const response = await laravelAxios.get(`${apiUrl}/api/log/getStockLog?stockCode=${stockCode}`);
             const log = response.data; // ここでレスポンスデータを取得
-            console.log(log);
             setModalContent(log); // モーダルにログを表示
         } catch (error) {
-            console.error('Error fetching log:', error);
+            process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
         }
         setModalIsOpen(true);
     };
@@ -113,7 +108,6 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
 
     const handleCategoryChange = (stockCode, value) => {
         setSelectedCategories(prev => ({ ...prev, [stockCode]: value }));
-        console.log(selectedCategories, stockCode, value)
         laravelAxios.post(`${apiUrl}/api/Categories/update`, {
             "stockCode": stockCode,
             "category": value
@@ -122,7 +116,6 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
 
     const handleDateChange = (e, stockCode) => {
         const newDate = e.target.value;
-        console.log(newDate)
         const key = `${stockCode}-handleDateChange`;
         let DateChange = true;
         setSelectedDates(prevDates => ({ ...prevDates, [key]: newDate }));
@@ -147,18 +140,15 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         const formattedURL = formatDate(new Date(), '', 2);
         setFormattedDate(formattedCalender);
         setInitialChartImage(`https://www.kabudragon.com/chart/s=[code]/e=${formattedURL}.png`);
-        console.log(InitialChartImage)
     }, []);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log(params.name)
-                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage, params,apiUrl);
+                const data = await initFetch(currentPage, itemsPerPage, setTotalStockCount, setItemsPerPage, params, apiUrl);
                 if (data && data.memo_display_number) {
                     setItemsPerPage(data.memo_display_number)
                 }
-                console.log(data)
 
                 // ソート処理を追加
                 if (sortOrder === 'dateDesc') {
@@ -175,7 +165,7 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
                 onDataFetched(data); // 親コンポーネントにデータを渡す
 
             } catch (error) {
-                console.error('Error fetching data:', error);
+                process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
                 setError(error);
             }
 
@@ -251,17 +241,14 @@ const MemoFetch = ({ refreshKey, sortOrder, currentPage, itemsPerPage, setItemsP
         </EditableContext.Provider>
     )
 }
-const initFetch = async (param, itemsPerPage, setTotalStockCount, setItemsPerPage, params,apiUrl) => {
+const initFetch = async (param, itemsPerPage, setTotalStockCount, setItemsPerPage, params, apiUrl) => {
     try {
-        console.log( params.name)
         const result = await laravelAxios.get(`${apiUrl}/api/Categories/index?param=${param}&page=${itemsPerPage}&category=${params.name}`, { cache: 'no-cache' });
         setTotalStockCount(result.data.totalStockCount)
-        console.log(result.data)
-        // setItemsPerPage(result.data.memo_display_number)
         return result.data.user;
     } catch (error) {
-        console.error('Error fetching data:', error);
-        throw error; // エラーを再スローして呼び出し元で処理
+        process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
+        throw error; 
     }
 }
 

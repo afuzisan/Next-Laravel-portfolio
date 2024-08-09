@@ -87,7 +87,7 @@ const Page = () => {
             {/* Confirm Password */}
             <div className="mt-4">
                 <Label htmlFor="passwordConfirmation">
-                    Confirm Password
+                    パスワードを再度入力してください。
                 </Label>
 
                 <Input
@@ -111,10 +111,10 @@ const Page = () => {
                 <Link
                     href="/login"
                     className="underline text-sm text-gray-600 hover:text-gray-900">
-                    Already registered?
+                    既に登録している方は、こちらからログインしてください。
                 </Link>
 
-                <Button className="ml-4">Register</Button>
+                <Button className="ml-4">登録</Button>
             </div>
         </form>
     )

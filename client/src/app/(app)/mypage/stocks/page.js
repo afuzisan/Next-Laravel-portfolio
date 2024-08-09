@@ -1,6 +1,4 @@
 import { siteName } from "@/app/metadata_common.js"
-import InputChange from "@/app/(app)/mypage/stocks/_initFetch/_InputChange/inputChange.client"
-import laravelAxios from "@/lib/laravelAxios"
 import InitFetch from "@/app/(app)/mypage/stocks/_initFetch/InitFetch.client"
 
 export const metadata = {

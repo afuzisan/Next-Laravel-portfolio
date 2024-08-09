@@ -1,13 +1,11 @@
 'use client'
 
-import { React, useState, useEffect, useContext } from 'react'
+import { React, useState} from 'react'
 import Modal from 'react-modal';
-import MemoList from './memoList';
 import MyEditor from '@/components/MyEditor.client'
-import { EditableContext } from './MemoFetch.client';
-import { EditorProvider, useEditorContext, useIndexSave } from './EditorContext.client';
+import { EditorProvider} from '@Dashboard/EditorContext.client';
 import laravelAxios from '@/lib/laravelAxios';
-import MemoTitle from '@/app/(app)/dashboard/_component/memoTitle'
+import MemoTitle from '@Dashboard/memoTitle'
 import Danger from '@/components/Danger';
 
 
@@ -74,7 +72,7 @@ const MemoContent = ({ memos, activeOrder, setActiveOrder, stock, name, setMemoR
             closeModal();
             setMemoRefreshKey(prevKey => prevKey + 1); // ここでステートを更新
         } catch (error) {
-            console.error('Error submitting memo:', error);
+            process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
         }
     }
 

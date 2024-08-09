@@ -3,6 +3,7 @@
     "date-fns": "^3.6.0",
     "moment-timezone": "^0.5.45",
     "next-auth": "^4.24.7",
-    "react-calendar": "^5.0.0"
+    "react-calendar": "^5.0.0",
+    "three": "^0.167.1"
   }
 }

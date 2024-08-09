@@ -1,15 +1,45 @@
 'use client'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/auth'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
+import * as THREE from 'three'
 
 export default function MainContents() {
   const { user } = useAuth({ middleware: 'guest' })
   const [isClient, setIsClient] = useState(false)
+  const canvasRef = useRef(null)
 
   useEffect(() => {
     setIsClient(true)
   }, [])
+
+  useEffect(() => {
+    if (!isClient || !canvasRef.current) return
+
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 2 / window.innerHeight, 0.1, 1000)
+    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, alpha: true })
+    renderer.setSize(window.innerWidth / 2, window.innerHeight)
+
+    const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16)
+    const material = new THREE.MeshNormalMaterial()
+    const torusKnot = new THREE.Mesh(geometry, material)
+    scene.add(torusKnot)
+
+    camera.position.z = 30
+
+    const animate = () => {
+      requestAnimationFrame(animate)
+      torusKnot.rotation.x += 0.01
+      torusKnot.rotation.y += 0.01
+      renderer.render(scene, camera)
+    }
+    animate()
+
+    return () => {
+      renderer.dispose()
+    }
+  }, [isClient])
 
   if (!isClient) {
     return null
@@ -54,21 +84,11 @@ export default function MainContents() {
                 </>
               )}
             </div>
-
-            {/* <button className="bg-primary-foreground text-primary rounded-md px-4 py-2 border-2 border-primary-foreground text-[#4b4b4b] border-color-[#4b4b4b]">ログイン</button>
-            <button className="bg-primary-foreground text-primary rounded-md px-4 py-2 border-2 border-primary-foreground text-[#4b4b4b] border-color-[#4b4b4b]">サインアップ</button> */}
           </div>
         </div>
       </div>
       <div className="relative md:w-1/2 overflow-hidden">
-        <video
-          src="/TopPageVideo.mp4"
-          autoPlay
-          muted
-          loop
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-30" />
+        <canvas ref={canvasRef} className="absolute inset-0" />
       </div>
     </div>
   )

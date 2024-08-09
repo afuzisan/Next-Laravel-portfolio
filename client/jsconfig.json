@@ -3,7 +3,13 @@
         "baseUrl": "src/",
         "paths": {
             "@/*": ["./*"],
-            "@@/*": ["./app/*"]
+            "@@/*": ["./app/*"],
+            "@Dashboard/*": ["./app/(app)/dashboard/_TopComponents/_component/*"],
+            "@Category*": ["./app/(app)/Category/[name]/_components/*"],
+            "@Log*": ["./app/(app)/Log/_LogComponents/*"],
+            "@mypage/linkedit*": ["./app/(app)/mypage/linkedit/_component/*"],
+            "@mypage/passwordreset*": ["./app/(app)/mypage/passwordreset/_components/*"],
+            "@mypage/accountdelete*": ["./app/(app)/mypage/accountdelete/_components/*"],
         }
     }
 }

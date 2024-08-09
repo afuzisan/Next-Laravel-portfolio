@@ -22,7 +22,7 @@ const page = ({ params }) => {
             const log = response.data.memo_logs;
             setContent(log);
         } catch (error) {
-            console.error('Error fetching log:', error);
+            process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
         }
     };
 
@@ -75,13 +75,10 @@ const page = ({ params }) => {
         let newChartImage;
         let newChartLabel;
         setChartCount(prevCount => ({ ...prevCount, [key]: newCount }));
-        console.log(newCount);
-        console.log(currentCount);
 
         if (newCount === 0) {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/e=${newDate}.png`;
             newChartLabel = '日足';
-            console.log('日足 0');
         } else if (newCount === 1) {
             newChartImage = `https://www.kabudragon.com/chart/s=${stockCode}/a=1/e=${newDate}.png`;
             newChartLabel = '週足';
@@ -115,7 +112,6 @@ const page = ({ params }) => {
                     const formattedDate = formatDate(item.updated_at, '-');
                     const imageFormattedDate = formatDate(item.updated_at, '', 2);
                     const calendarFormattedDate = formatDate(item.updated_at, '', 0);
-                    console.log(imageFormattedDate)
 
                     return (
                         <div key={index} className="border mb-4 p-4 rounded shadow grid grid-rows-[auto,50px,auto,auto] gap-2 h-[600px]">

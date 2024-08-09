@@ -30,7 +30,7 @@ import createImagePlugin from '@draft-js-plugins/image';
 import '@draft-js-plugins/image/lib/plugin.css';
 import linkStyles from './linkStyles.module.css';
 import NextLink from 'next/link'; // Next.jsのLinkコンポーネントをインポート
-import { useEditorContext, useIndexSave } from '../app/(app)/dashboard/_component/EditorContext.client';
+import { useEditorContext, useIndexSave } from '@Dashboard/EditorContext.client';
 import laravelAxios from '@/lib/laravelAxios';
 
 
@@ -92,7 +92,7 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, edi
     try {
       editorState = initialText ? JSON.parse(initialText) : {};
     } catch (error) {
-      // console.error('Failed to parse initialText:', error);
+      process.env.NODE_ENV === 'development' ? console.error('Error editorState:', error) : '';
       editorState = {};
     }
 
@@ -119,7 +119,7 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, edi
 
     try {
 
-      const response = await laravelAxios.post(url, JSON.stringify({
+      await laravelAxios.post(url, JSON.stringify({
         memo: JSON.stringify(raw),
         memo_id: initId,
         order: indexSaveState
@@ -129,13 +129,10 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, edi
         },
         withCredentials: true,
       });
-
-      const responseData = response.data;
-      console.log('Saved successfully:', responseData);
     } catch (error) {
-      console.error('Failed to save content:', error);
+      process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
       if (error.response) {
-        console.error('Error data:', error.response.data);
+        process.env.NODE_ENV === 'development' ? console.error('Error data:', error.response.data) : '';
       }
     }finally{
       setMemoRefreshKey(prevKey => prevKey + 1);
@@ -203,12 +200,11 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, edi
         },
         withCredentials: true,
       });
-      console.log('Deleted successfully:', response.data);
       setMemoRefreshKey(prev => prev + 1);
     } catch (error) {
-      console.error('Failed to delete memo:', error);
+      process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
       if (error.response) {
-        console.error('Error data:', error.response.data);
+        process.env.NODE_ENV === 'development' ? console.error('Error data:', error.response.data) : '';
       }
     }
   };
@@ -222,7 +218,6 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, edi
               <button onClick={() => {
                 setReadOnly(false);
                 if (!indexSaveState) {
-                  console.log(initId)
                   setIndexSave(activeOrder);
                 }
               }} className="text-black p-2">

@@ -58,7 +58,7 @@ const ItemList = () => {
         // 新しい順序のアイテムリストをサーバーに送信
         await axios.post('/api/items/reorder', { items: reorderedItems });
       } catch (error) {
-        console.error('Error saving order:', error);
+        process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
       }
     }
   };

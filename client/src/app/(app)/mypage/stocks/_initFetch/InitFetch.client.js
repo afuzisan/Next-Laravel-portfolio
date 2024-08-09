@@ -11,7 +11,7 @@ async function getData() {
         const response = await laravelAxios.get(`${apiUrl}/api/mypage/memo_display_number`, { cache: 'no-cache' })
         data.memo_display_number = response.data.memo_display_number 
     } catch (error) {
-        console.error('Error fetching data:', error.response ? error.response.data : error.message)
+        process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error.response ? error.response.data : error.message) : '';
     }
     return data.memo_display_number
 }

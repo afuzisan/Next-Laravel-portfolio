@@ -2,14 +2,14 @@
 
 import { siteName } from "@/app/metadata_common.js"
 import laravelAxios from "@/lib/laravelAxios";
-import MemoFetch from '@@/(app)/dashboard/Category/[name]/_components/MemoFetch.client';
+import MemoFetch from '@Dashboard/MemoFetch.client';
 import { useReducer, useState, useEffect } from 'react';
 import Danger from '@/components/Danger'
 import '@/app/global.css'
 import { useRouter } from 'next/navigation';
 import { FaEdit } from "react-icons/fa";
 
-const Dashboard = ({ params }) => {
+const Dashboard = () => {
     const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [inputValue, setInputValue] = useState("");
     const [refreshKey, setRefreshKey] = useState(0);
@@ -29,7 +29,6 @@ const Dashboard = ({ params }) => {
         return localStorage.getItem('activeTab') || 'stockList';
     });
     const [categoryList, setCategoryList] = useState([]);
-    const [showAllCategory, setShowAllCategory] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
@@ -51,11 +50,10 @@ const Dashboard = ({ params }) => {
     useEffect(() => {
         laravelAxios.get(`${apiUrl}/api/Categories/getCategoryList`)
             .then(response => {
-                console.log(response.data)
                 setCategoryList(response.data);
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
             });
     }, []);
 
@@ -64,10 +62,11 @@ const Dashboard = ({ params }) => {
         // ２バイト数字１バイト数字に変換
         const normalizedInput = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
         const stockNumber = parseInt(normalizedInput, 10); // 入力値を整数に変換
-        // if (isNaN(stockNumber) || stockNumber < 1000 || stockNumber > 9999) { // 4桁の整数かどうか確認
-        //     setErrorMessage("正しい証券コードを入力してください。");
-        //     return;
-        // }
+
+        if (!stockNumber || isNaN(stockNumber)) {
+            setErrorMessage('有効な証券コードを入力してください');
+            return;
+        }
 
         laravelAxios.post(`${apiUrl}/api/dashboard/stockStore`, { "stockNumber": stockNumber })
             .then(() => {
@@ -76,7 +75,7 @@ const Dashboard = ({ params }) => {
                 setErrorMessage(''); // 成功時にエラーメッセージをクリア
             })
             .catch((error) => {
-                console.error("Error:", error.response.data); // エラーメッセージをコンソールに表示
+                process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
                 setErrorMessage(error.response.data.message);
             });
     };
@@ -88,13 +87,13 @@ const Dashboard = ({ params }) => {
             return;
         }
         laravelAxios.post(`${apiUrl}/api/Categories/AddCategoryList`, { "categoryName": normalizedInput })
-            .then(() => {
-                router.refresh({ keepCache: true });
+            .then((response) => {
+                setCategoryList(prevList => [...prevList, normalizedInput]);
                 setInputValue('');
-                setErrorMessage(''); // 成功時にエラーメッセージをクリア
+                setErrorMessage('');
             })
             .catch((error) => {
-                setErrorMessage(error.response.data.message);
+                setErrorMessage(error.response?.data?.message || 'エラーが発生しました');
             });
     };
 
@@ -108,13 +107,13 @@ const Dashboard = ({ params }) => {
             return;
         }
         if (window.confirm(`${category}を削除してもよろしいですか？`)) {
-            laravelAxios.delete(`${apiUrl}'/api/Categories/deleteCategoryList/${category}`)
+            laravelAxios.delete(`${apiUrl}/api/Categories/deleteCategoryList/${category}`)
                 .then(() => {
-                    router.refresh({ keepCache: true });
+                    setCategoryList(prevList => prevList.filter(c => c !== category));
                     setErrorMessage('');
                 })
-                .catch(() => {
-                    setErrorMessage('エラーが発生しました');
+                .catch((error) => {
+                    setErrorMessage(error.response?.data?.message || 'エラーが発生しました');
                 });
         }
     }
@@ -189,7 +188,7 @@ const Dashboard = ({ params }) => {
                                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'dateDesc' ? 'bg-gray-100' : 'bg-white'}`}
                                 onClick={() => handleSort('dateDesc')}
                             >
-                                登録日 (新しい)
+                                登録日 (新しい順)
                             </button>
                             <button
                                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'dateAsc' ? 'bg-gray-100' : 'bg-white'}`}
@@ -260,43 +259,34 @@ const Dashboard = ({ params }) => {
                         <div>
                             {activeTab === 'stockList' && result && <div>{result.stocks.map((stock, index) => {
                                 return (
-                                    <li className={`list-none`}>
-                                        <a href={`#${stock.stock_code}`} key={stock.stock_code} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                    <li key={stock.stock_code} className={`list-none`}>
+                                        <a href={`#${stock.stock_code}`} className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
                                             {stock.stock_name}({stock.stock_code})
                                         </a>
                                     </li>
                                 )
                             })}</div>}
-                            {activeTab === 'tab2' && (() => {
-                                return (
-                                    <>
-                                        {showAllCategory && (
-                                            <li className="list-none flex justify-between w-full h-full border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
-                                                <a href={`http://localhost:3000/dashboard`} className="block w-full h-full px-3 py-2">
-                                                    すべて
+                            {activeTab === 'tab2' && result && (() => {
+                                return categoryList.map((category, index) => {
+                                    return (
+                                        <div key={category}>
+                                            <li className="list-none flex justify-between block w-full h-full border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
+                                                <a href={`./Category/${encodeURIComponent(category)}`} className={`block w-full h-full px-3 py-2`}>
+                                                    {category}
                                                 </a>
-                                            </li>
-                                        )}
-                                        {categoryList.map((category, index) => {
-                                            const isCurrentCategory = decodeURIComponent(params.name) === category;
-                                            return (
-                                                <li className={`list-none flex justify-between w-full h-full border-b-2 border-dotted border-gray-200 ${isCurrentCategory ? 'bg-gray-100' : 'hover:bg-gray-100'}`}>
-                                                    <a href={`${encodeURIComponent(category)}`} className={`block w-full h-full px-3 py-2`}>
-                                                        {category}
-                                                    </a>
-                                                    {category !== '未分類' && (
-                                                        <span className="flex items-center pr-1 pl-1 hover:bg-white">
-                                                            <span className="mr-1 ml-1 flex items-center hover:text-gray-500 cursor-pointer">
-                                                                <FaEdit className="text-gray-200 hover:text-black cursor-pointer " onClick={() => handleEditCategoryList(category)} />
-                                                            </span>
-                                                            <span className="text-gray-200 mr-1 ml-1 hover:text-black cursor-pointer" onClick={() => handleDeleteCategoryList(category)}>✕</span>
+                                                {category !== '未分類' && (
+                                                    <span className="flex items-center pr-1 pl-1 hover:bg-white">
+                                                        <span className="mr-1 ml-1 flex items-center hover:text-gray-500 cursor-pointer">
+                                                            <FaEdit className="text-gray-200 hover:text-black cursor-pointer " onClick={() => handleEditCategoryList(category)} />
                                                         </span>
-                                                    )}
-                                                </li>
-                                            );
-                                        })}
-                                    </>
-                                );
+                                                        <span className="text-gray-200 mr-1 ml-1 hover:text-black cursor-pointer" onClick={() => handleDeleteCategoryList(category)}>✕</span>
+                                                    </span>
+                                                )}
+                                            </li>
+
+                                        </div>
+                                    );
+                                });
                             })()}
                         </div>
                     </div>
@@ -312,7 +302,6 @@ const Dashboard = ({ params }) => {
                             setItemsPerPage={setItemsPerPage}
                             setTotalStockCount={setTotalStockCount}
                             categoryList={categoryList}
-                            params={params}
                         />
                     </div>
                 </div>

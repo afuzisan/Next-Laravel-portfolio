@@ -14,7 +14,7 @@ const DeleteButton = ({ id, onRefetch }) => {
             onRefetch()
                         
         } catch (error) {
-            console.error(error);
+            process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';
         }
     }
 
