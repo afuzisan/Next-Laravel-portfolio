@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, createContext, useContext } from 'react'
+import React, { useEffect, useState, createContext } from 'react'
 import Memos from '@Dashboard/memos.client';
 import LinkComponent from '@Dashboard/LinkComponent';
 import laravelAxios from '@/lib/laravelAxios';
@@ -251,7 +251,6 @@ const initFetch = async (param, itemsPerPage, setTotalStockCount, setItemsPerPag
     try {
         const result = await laravelAxios.get(`${apiUrl}/api/dashboard/reviews?param=${param}&page=${itemsPerPage}`, { cache: 'no-cache' });
         setTotalStockCount(result.data.totalStockCount)
-        // setItemsPerPage(result.data.memo_display_number)
         return result.data.user;
     } catch (error) {
         process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';

@@ -1,13 +1,12 @@
 import {
     EditorState,
-    ContentState,
     CompositeDecorator,
     convertFromRaw
 } from 'draft-js';
 import '@draft-js-plugins/inline-toolbar/lib/plugin.css';
 import '@draft-js-plugins/anchor/lib/plugin.css';
 import '@draft-js-plugins/image/lib/plugin.css';
-import { useEditorContext, useIndexSave } from '../_component/EditorContext.client';
+import { useEditorContext } from '../_component/EditorContext.client';
 import Link from 'next/link'; // Link component imported
 import { useState, useEffect } from 'react';
 import React from 'react';
@@ -16,7 +15,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import laravelAxios from '@/lib/laravelAxios';
 
-const MemoList = ({ title, id, setActiveOrder, activeOrder, index, minOrder, order, setMemoRefreshKey }) => {
+const MemoList = ({ title, id, setActiveOrder, activeOrder, minOrder, order }) => {
     const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [, setEditor] = useEditorContext()
     const [loading, setLoading] = useState(false);

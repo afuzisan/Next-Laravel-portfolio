@@ -9,7 +9,6 @@ import {
     useSensors
 } from '@dnd-kit/core';
 import {
-    arrayMove,
     SortableContext,
     sortableKeyboardCoordinates,
     verticalListSortingStrategy
@@ -24,7 +23,6 @@ const MemoTitle = ({ memos, handleClick, setActiveOrder, activeOrder, setMemoRef
     const [minOrder, setMinOrder] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editedMemos, setEditedMemos] = useState([]); // 初期値を空配列に変更
-    const [deleteMemo, setDeleteMemo] = useState([]); // 初期値を空配列に変更
 
 
 

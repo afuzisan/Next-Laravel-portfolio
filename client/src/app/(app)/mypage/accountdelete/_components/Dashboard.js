@@ -2,12 +2,10 @@
 "use client"
 
 import laravelAxios from "@/lib/laravelAxios"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 const Component = () => {
     const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-    const [data, setData] = useState(null)
-    const [fetchTrigger, setFetchTrigger] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false) // モーダルの状態
 
     const fetchData = async () => {

@@ -19,7 +19,6 @@ const SearchGet = () => {
 
     useEffect(() => {
         setSearch(searchParams.get('search'));
-        const searchType = searchParams.get('searchType');
             laravelAxios.get(`${apiUrl}/api/search/memo`)
             .then(response => {
                 setData(response.data); // stateにデータをセット

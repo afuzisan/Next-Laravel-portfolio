@@ -1,9 +1,8 @@
 "use client";
 
-import { siteName } from "@/app/metadata_common.js"
 import laravelAxios from "@/lib/laravelAxios";
 import MemoFetch from '@Dashboard/MemoFetch.client';
-import { useReducer, useState, useEffect } from 'react';
+import {useState, useEffect } from 'react';
 import Danger from '@/components/Danger'
 import '@/app/global.css'
 import { useRouter } from 'next/navigation';

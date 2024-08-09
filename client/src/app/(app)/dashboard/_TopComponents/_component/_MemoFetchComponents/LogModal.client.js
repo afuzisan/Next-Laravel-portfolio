@@ -7,7 +7,7 @@ import { FaExpand } from 'react-icons/fa';
 
 const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
   const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-  const [content, setContent] = useState(null);
+  const [, setContent] = useState(null);
   const [chartCount, setChartCount] = useState(0);
   const [chartImages, setChartImages] = useState({});
   const [chartLabels, setChartLabels] = useState({});

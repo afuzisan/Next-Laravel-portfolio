@@ -61,17 +61,13 @@ const Dashboard = ({ params }) => {
 
         // ２バイト数字１バイト数字に変換
         const normalizedInput = inputValue.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-        const stockNumber = parseInt(normalizedInput, 10); // 入力値を整数に変換
-        // if (isNaN(stockNumber) || stockNumber < 1000 || stockNumber > 9999) { // 4桁の整数かどうか確認
-        //     setErrorMessage("正しい証券コードを入力してください。");
-        //     return;
-        // }
+        const stockNumber = parseInt(normalizedInput, 10);
 
         laravelAxios.post(`${apiUrl}/api/dashboard/stockStore`, { "stockNumber": stockNumber })
             .then(() => {
                 setRefreshKey(prevKey => prevKey + 1);
                 setInputValue('');
-                setErrorMessage(''); // 成功時にエラーメッセージをクリア
+                setErrorMessage('');
             })
             .catch((error) => {
                 process.env.NODE_ENV === 'development' ? console.error('Error fetching data:', error) : '';

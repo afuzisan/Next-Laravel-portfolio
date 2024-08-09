@@ -1,15 +1,11 @@
 "use client"
 
-import Select from "@@/(app)/mypage/linkedit/_component/Select"
-import LinkForm from "@@/(app)/mypage/linkedit/_component/LinkForm"
-import YouLinks from "@@/(app)/mypage/linkedit/_component/YouLinks"
 import laravelAxios from "@/lib/laravelAxios"
-import { useEffect, useState } from "react"
+import {useState } from "react"
 
 const Component = () => {
     const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [data, setData] = useState(null)
-    const [fetchTrigger, setFetchTrigger] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false) // モーダルの状態
 
     const fetchData = async (data) => {

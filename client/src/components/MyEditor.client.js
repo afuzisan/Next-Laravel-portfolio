@@ -45,7 +45,7 @@ const Link = (props) => {
   );
 };
 
-const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, editorKey, setEditorKey, activeOrder }) => {
+const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, activeOrder }) => {
     const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 
@@ -191,9 +191,9 @@ const MyEditor = ({ initMemo, initId, stock, setMemoRefreshKey, memosLength, edi
     );
   }
 
-  const deleteMemo = async (memoId) => {
+  const deleteMemo = async () => {
     try {
-      const response = await laravelAxios.delete(`${apiUrl}/api/dashboard/memoDelete`, {
+      await laravelAxios.delete(`${apiUrl}/api/dashboard/memoDelete`, {
         data: {
           stockNumber: stock,
           memoNumber: initId

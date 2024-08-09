@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState,useRef } from "react"
 import laravelAxios from "@/lib/laravelAxios";
 
 const InputChange = ({placeholder, initialValue, type}) => {

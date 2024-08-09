@@ -1,6 +1,5 @@
 import { siteName } from "@/app/metadata_common.js"
 import InputChange from "./stocks/_initFetch/_InputChange/inputChange.client.js/index.js"
-import Link from 'next/link'
 import Sidebar from '@@/(app)/mypage/sidebar.js'
 
 export const metadata = {
