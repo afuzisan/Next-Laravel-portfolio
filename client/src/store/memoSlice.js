@@ -1,16 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit'
 
 const memoSlice = createSlice({
   name: 'memo',
   initialState: {
-    memoList: []
+    memoList: [],
   },
   reducers: {
     setMemoList: (state, action) => {
-      state.memoList = action.payload;
-    }
-  }
-});
+      state.memoList = action.payload
+    },
+  },
+})
 
-export const { setMemoList } = memoSlice.actions;
-export default memoSlice.reducer;
+export const { setMemoList } = memoSlice.actions
+export default memoSlice.reducer

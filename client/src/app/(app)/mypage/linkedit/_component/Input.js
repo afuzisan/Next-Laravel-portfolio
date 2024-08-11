@@ -8,5 +8,5 @@ export function Input({ id, type, placeholder, className, onChange, value }) {
       onChange={onChange}
       value={value}
     />
-  );
+  )
 }

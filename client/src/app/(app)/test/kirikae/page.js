@@ -5,11 +5,11 @@ import Layout1 from './Layout1'
 import Layout2 from './Layout2'
 
 const Page = () => {
-  const [layout, setLayout] = useState('layout1');
+  const [layout, setLayout] = useState('layout1')
 
   const toggleLayout = () => {
-    setLayout((prevLayout) => (prevLayout === 'layout1' ? 'layout2' : 'layout1'));
-  };
+    setLayout(prevLayout => (prevLayout === 'layout1' ? 'layout2' : 'layout1'))
+  }
 
   return (
     <div>

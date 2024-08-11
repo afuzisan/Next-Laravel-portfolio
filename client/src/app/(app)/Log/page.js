@@ -1,19 +1,16 @@
-import Calendar from '@Log/Calendar.client';
-const env = (key) => process.env[key] || '';
+import Calendar from '@Log/Calendar.client'
+const env = key => process.env[key] || ''
 
 export const metadata = {
-    title: `Log | ${env('SITE_NAME')}`,
-    description: `Log |  ${env('SITE_DESCRIPTION')}`,
+  title: `Log | ${env('SITE_NAME')}`,
+  description: `Log |  ${env('SITE_DESCRIPTION')}`,
 }
 const Log = () => {
-
-
   return (
     <div>
-        <Calendar />
+      <Calendar />
     </div>
+  )
+}
 
-  );
-};
-
-export default Log;
+export default Log

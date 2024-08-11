@@ -4,7 +4,7 @@ services:
     db:
         build:
             context: ./db
-            dockerfile: Dockerfile 
+            dockerfile: Dockerfile
         ports:
             - "33306:3306"
         environment:
@@ -13,7 +13,7 @@ services:
             MYSQL_PASSWORD: root
             MYSQL_DATABASE: test
             TZ: 'Asia/Tokyo'
-        volumes: 
+        volumes:
             - ./db/data:/var/lib/mysql
             - ./db/initdb.d:/docker-entrypoint-initdb.d
         networks:
@@ -36,7 +36,7 @@ services:
             - ./client:/var/www/client
         ports:
             - "3000:3000"
-        depends_on: 
+        depends_on:
             - server
         command: sh -c "npm install && npm run dev"
         networks:
@@ -45,10 +45,10 @@ services:
         image: mailhog/mailhog
         ports:
             - "8025:8025"
-            - "1025:1025" 
+            - "1025:1025"
         networks:
             - default
 
 networks:
-  default:
-    driver: bridge
+    default:
+        driver: bridge

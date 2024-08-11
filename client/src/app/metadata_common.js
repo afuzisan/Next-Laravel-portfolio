@@ -1,7 +1,7 @@
 export const siteName = '銘柄管理ツール'
 
 const metadata = () => ({
-    siteName
-});
+  siteName,
+})
 
-export default metadata;
+export default metadata

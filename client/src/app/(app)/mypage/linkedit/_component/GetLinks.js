@@ -1,9 +1,7 @@
 import React from 'react'
 
 const GetLinks = () => {
-  return (
-    <div>GetLinks</div>
-  )
+  return <div>GetLinks</div>
 }
 
 export default GetLinks
