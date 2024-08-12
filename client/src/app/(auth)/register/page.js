@@ -4,8 +4,8 @@ import Button from '@/components/Button'
 import Input from '@/components/Input'
 import InputError from '@/components/InputError'
 import Label from '@/components/Label'
-import Link from 'next/link'
 import { useAuth } from '@/hooks/auth'
+import Link from 'next/link'
 import { useState } from 'react'
 
 const Page = () => {
@@ -105,8 +105,7 @@ const Page = () => {
       <div className="flex items-center justify-end mt-4">
         <Link
           href="/login"
-          className="underline text-sm text-gray-600 hover:text-gray-900"
-        >
+          className="underline text-sm text-gray-600 hover:text-gray-900">
           既に登録している方は、こちらからログインしてください。
         </Link>
 

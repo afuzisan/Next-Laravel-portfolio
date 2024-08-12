@@ -1,4 +1,3 @@
-import React from 'react'
 const env = key => process.env[key] || ''
 
 export const metadata = {

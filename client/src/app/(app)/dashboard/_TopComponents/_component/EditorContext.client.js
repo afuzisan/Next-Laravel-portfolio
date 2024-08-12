@@ -1,6 +1,7 @@
 'use client'
-
+/* eslint-disable no-unused-vars */
 import React, { createContext, useState, useContext } from 'react'
+/* eslint-enable no-unused-vars */
 import { EditorState } from 'draft-js'
 
 const EditorContext = createContext()

@@ -1,54 +1,56 @@
-version: '3.8'
+version: "3.8"
 
 services:
-    db:
-        build:
-            context: ./db
-            dockerfile: Dockerfile
-        ports:
-            - "33306:3306"
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_USER: root
-            MYSQL_PASSWORD: root
-            MYSQL_DATABASE: test
-            TZ: 'Asia/Tokyo'
-        volumes:
-            - ./db/data:/var/lib/mysql
-            - ./db/initdb.d:/docker-entrypoint-initdb.d
-        networks:
-            - default
-    server:
-        build: ./server
-        ports:
-            - "8080:80"
-        volumes:
-            - ./server:/var/www
-        depends_on:
-            - db
-        networks:
-            - default
-    client:
-        build:
-            context: ./client
-            dockerfile: Dockerfile.prod
-        volumes:
-            - ./client:/var/www/client
-        ports:
-            - "3000:3000"
-        depends_on:
-            - server
-        # command: sh -c "npm install && npm run build"
-        networks:
-            - default
-    mail:
-        image: mailhog/mailhog
-        ports:
-            - "8025:8025"
-            - "1025:1025"
-        networks:
-            - default
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    ports:
+      - "33306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: test
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
+    networks:
+      - default
+  server:
+    build: ./server
+    ports:
+      - "8080:80"
+    volumes:
+      - ./server:/var/www
+    depends_on:
+      - db
+    networks:
+      - default
+    environment:
+      - SERVER_NAME=example.com
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/var/www/client
+    depends_on:
+      - server
+    command: sh -c "npm install && npm run build && npm start"
+    networks:
+      - default
+  mail:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - default
 
 networks:
-    default:
-        driver: bridge
+  default:
+    driver: bridge

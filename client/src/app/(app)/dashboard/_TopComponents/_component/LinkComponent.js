@@ -1,4 +1,4 @@
-import React from 'react'
+import Image from 'next/image' // 追加: next/imageからImageをインポート
 import Link from 'next/link' // Next.jsのLinkをインポート
 
 const replace = (links, stock) => {
@@ -21,12 +21,13 @@ const LinkComponent = ({ links, stock }) => {
           href={link.url}
           target="_blank"
           rel="noopener noreferrer"
-          key={link.id}
-        >
+          key={link.id}>
           <li className="p-2 transition hover:bg-red-100 flex items-center rounded-lg">
-            <img
+            <Image
               src={`http://www.google.com/s2/favicons?domain=${link.url}`}
               alt={link.site_name}
+              width={16} // 適切な幅を指定
+              height={16} // 適切な高さを指定
               className="mr-2 flex-shrink-0"
             />
             <span className="break-words flex-1 overflow-hidden">

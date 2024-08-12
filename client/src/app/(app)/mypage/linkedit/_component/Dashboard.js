@@ -1,9 +1,10 @@
 'use client'
 
-import Select from '@@/(app)/mypage/linkedit/_component/Select'
-import LinkForm from '@@/(app)/mypage/linkedit/_component/LinkForm'
-import YouLinks from '@@/(app)/mypage/linkedit/_component/YouLinks'
 import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
+import LinkForm from '@@/(app)/mypage/linkedit/_component/LinkForm'
+import Select from '@@/(app)/mypage/linkedit/_component/Select'
+import YouLinks from '@@/(app)/mypage/linkedit/_component/YouLinks'
 import { useEffect, useState } from 'react'
 
 const Component = () => {
@@ -18,9 +19,7 @@ const Component = () => {
         setData(response.data)
       })
       .catch(error => {
-        process.env.NODE_ENV === 'development'
-          ? console.error('Error fetching data:', error)
-          : ''
+        logError(error)
       })
   }
 

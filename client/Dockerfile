@@ -15,8 +15,6 @@ RUN apt-get update && apt-get install -y git
 # Yarnをインストール
 RUN npm install -g yarn
 
-# nodemonをインストール
-# RUN npm install -g nodemon
 
 # 作業ディレクトリを設定
 WORKDIR /var/www/client
@@ -36,4 +34,5 @@ ENV NODE_ENV development
 # アプリケーションの起動コマンド
 CMD ["npm", "run", "dev"]
 
-
+# @babel/preset-reactのインストール
+RUN npm install --save-dev @babel/preset-react

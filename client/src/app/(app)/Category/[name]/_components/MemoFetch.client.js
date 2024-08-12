@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useEffect, useState, createContext, useContext } from 'react'
-import Memos from '@Dashboard/memos.client'
-import LinkComponent from '@Dashboard/LinkComponent'
 import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
 import LogModal from '@Dashboard/_MemoFetchComponents/LogModal.client'
+import LinkComponent from '@Dashboard/LinkComponent'
+import Memos from '@Dashboard/memos.client'
+import { createContext, useEffect, useState } from 'react'
 
 function formatDateToISO(date) {
   const pad = num => String(num).padStart(2, '0')
@@ -60,7 +61,6 @@ const MemoFetch = ({
   }, [result, onDataResult])
 
   const handleImageClick = (stockCode, DateChange, newDate) => {
-    const key = `${stockCode}-handleDateChange`
     const selectedDate = formatDate(newDate, '', 2)
 
     const newCount = DateChange ? chartCount : (chartCount + 1) % 3
@@ -103,9 +103,7 @@ const MemoFetch = ({
           refreshKey()
         })
         .catch(error => {
-          process.env.NODE_ENV === 'development'
-            ? console.error('Error fetching data:', error)
-            : ''
+          logError(error)
         })
     }
   }
@@ -117,9 +115,7 @@ const MemoFetch = ({
       const log = response.data // ここでレスポンスデータを取得
       setModalContent(log) // モーダルにログを表示
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
+      logError(error)
     }
     setModalIsOpen(true)
   }
@@ -138,10 +134,8 @@ const MemoFetch = ({
 
   const handleDateChange = (e, stockCode) => {
     const newDate = e.target.value
-    const key = `${stockCode}-handleDateChange`
-    let DateChange = true
-    setSelectedDates(prevDates => ({ ...prevDates, [key]: newDate }))
-    handleImageClick(stockCode, DateChange, newDate)
+    setSelectedDates(prevDates => ({ ...prevDates, [stockCode]: newDate }))
+    handleImageClick(stockCode, false, newDate)
   }
 
   const formatDate = (dateString, type, sliceNumber) => {
@@ -155,7 +149,6 @@ const MemoFetch = ({
     return `${year}${month}${day}`
   }
   useEffect(() => {
-    // const newDate = new Date();
     const formattedCalender = formatDate(new Date(), '-', 2)
     const formattedURL = formatDate(new Date(), '', 2)
     setFormattedDate(formattedCalender)
@@ -198,15 +191,14 @@ const MemoFetch = ({
 
         setResult(data)
         onDataFetched(data) // 親コンポーネントにデータを渡す
+        onDataResult(data)
       } catch (error) {
-        process.env.NODE_ENV === 'development'
-          ? console.error('Error fetching data:', error)
-          : ''
+        logError(error)
         setError(error)
       }
     }
     fetchData()
-  }, [MemoRefreshKey, sortOrder, currentPage, param]) // paramを依存に追加
+  }, [MemoRefreshKey, sortOrder, currentPage, param])
 
   if (error) {
     return <div>カテゴリに登録された銘柄はありません</div>
@@ -226,7 +218,7 @@ const MemoFetch = ({
       />
 
       {result && result.stocks && result.stocks.length > 0 ? (
-        result.stocks.map((stock, index) => {
+        result.stocks.map(stock => {
           return (
             <div key={stock.stock_code} id={stock.stock_code}>
               <div className="grid grid-cols-6 border px-3 py-2">
@@ -246,29 +238,25 @@ const MemoFetch = ({
                     value={selectedCategories[stock.stock_code] || '未分類'}
                     onChange={e =>
                       handleCategoryChange(stock.stock_code, e.target.value)
-                    }
-                  >
+                    }>
                     {categoryList &&
                       categoryList.map((category, index) => (
                         <option
                           className="bg-white text-gray-700"
                           value={category}
-                          key={index}
-                        >
+                          key={index}>
                           {category}{' '}
                         </option>
                       ))}
                   </select>
                   <button
                     className="pr-4 pl-4 hover:bg-red-100 bg-gray-100"
-                    onClick={() => handleLog(stock.stock_code)}
-                  >
+                    onClick={() => handleLog(stock.stock_code)}>
                     編集履歴
                   </button>
                   <button
                     className="bg-red-500 text-white px-4 py-2 hover:bg-red-700"
-                    onClick={() => handleDelete(stock.stock_code)}
-                  >
+                    onClick={() => handleDelete(stock.stock_code)}>
                     {stock.stock_code}を削除
                   </button>
                 </div>
@@ -296,6 +284,7 @@ const MemoFetch = ({
                       chartImages[stock.stock_code] ||
                       InitialChartImage.replace('[code]', stock.stock_code)
                     }
+                    alt={`${stock.stock_code} chart`}
                     className="h-full w-full object-scale-down border-r cursor-pointer"
                     onClick={() => handleImageClick(stock.stock_code, false)}
                   />
@@ -303,7 +292,7 @@ const MemoFetch = ({
                     type="date"
                     id="start"
                     name="trip-start"
-                    value={`${selectedDates[`${stock.stock_code}-handleDateChange`] || formatDate(new Date(), '-', 0)}`}
+                    value={`${selectedDates[stock.stock_code] || formatDate(new Date(), '-', 0)}`}
                     min="2018-01-01"
                     onChange={e => handleDateChange(e, stock.stock_code)}
                     className="border rounded p-1 absolute top-2 right-2 text-black bg-white p-1"
@@ -335,9 +324,7 @@ const initFetch = async (
     setTotalStockCount(result.data.totalStockCount)
     return result.data.user
   } catch (error) {
-    process.env.NODE_ENV === 'development'
-      ? console.error('Error fetching data:', error)
-      : ''
+    logError(error)
     throw error
   }
 }

@@ -1,37 +1,36 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
+import { useEditorContext, useIndexSave } from '@Dashboard/EditorContext.client'
+import createLinkPlugin from '@draft-js-plugins/anchor'
+import '@draft-js-plugins/anchor/lib/plugin.css'
 import {
-  EditorState,
-  convertFromRaw,
-  convertToRaw,
-  AtomicBlockUtils,
-  ContentState,
-  Modifier,
-  Entity,
-  CompositeDecorator,
-} from 'draft-js'
+  BoldButton,
+  HeadlineOneButton,
+  HeadlineThreeButton,
+  HeadlineTwoButton,
+  ItalicButton,
+  UnderlineButton,
+} from '@draft-js-plugins/buttons'
 import Editor from '@draft-js-plugins/editor'
+import createImagePlugin from '@draft-js-plugins/image'
+import '@draft-js-plugins/image/lib/plugin.css'
 import createInlineToolbarPlugin, {
   Separator,
 } from '@draft-js-plugins/inline-toolbar'
 import '@draft-js-plugins/inline-toolbar/lib/plugin.css'
 import {
-  ItalicButton,
-  BoldButton,
-  UnderlineButton,
-  HeadlineOneButton,
-  HeadlineTwoButton,
-  HeadlineThreeButton,
-} from '@draft-js-plugins/buttons'
-import createLinkPlugin from '@draft-js-plugins/anchor'
-import '@draft-js-plugins/anchor/lib/plugin.css'
-import createImagePlugin from '@draft-js-plugins/image'
-import '@draft-js-plugins/image/lib/plugin.css'
-import linkStyles from './linkStyles.module.css'
+  AtomicBlockUtils,
+  CompositeDecorator,
+  EditorState,
+  convertFromRaw,
+  convertToRaw,
+} from 'draft-js'
 import NextLink from 'next/link' // Next.jsのLinkコンポーネントをインポート
-import { useEditorContext, useIndexSave } from '@Dashboard/EditorContext.client'
-import laravelAxios from '@/lib/laravelAxios'
+import { useEffect, useMemo, useState } from 'react'
+import linkStyles from './linkStyles.module.css'
+import PropTypes from 'prop-types'
 
 const Link = props => {
   const { url } = props.contentState.getEntity(props.entityKey).getData()
@@ -40,6 +39,12 @@ const Link = props => {
       {props.children}
     </NextLink>
   )
+}
+
+Link.propTypes = {
+  contentState: PropTypes.object.isRequired,
+  entityKey: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
 }
 
 const MyEditor = ({
@@ -54,36 +59,34 @@ const MyEditor = ({
   const [indexSaveState, setIndexSave] = useIndexSave()
 
   const [editor, setEditor] = useEditorContext()
-  const [plugins, InlineToolbar, LinkButton, linkPlugin, decorator] =
-    useMemo(() => {
-      const linkPlugin = createLinkPlugin({
-        theme: linkStyles,
-        placeholder: 'https://...',
-      })
-      const imagePlugin = createImagePlugin()
-      const inlineToolbarPlugin = createInlineToolbarPlugin({
-        structure: [
-          BoldButton,
-          ItalicButton,
-          UnderlineButton,
-          linkPlugin.LinkButton,
-        ],
-      })
-      const decorator = new CompositeDecorator([
-        {
-          strategy: findLinkEntities,
-          component: Link,
-        },
-        // 他のデコレータ設定があればここに追加
-      ])
-      return [
-        [inlineToolbarPlugin, linkPlugin, imagePlugin],
-        inlineToolbarPlugin.InlineToolbar,
+  const [plugins, InlineToolbar, LinkButton, decorator] = useMemo(() => {
+    const linkPlugin = createLinkPlugin({
+      theme: linkStyles,
+      placeholder: 'https://...',
+    })
+    const imagePlugin = createImagePlugin()
+    const inlineToolbarPlugin = createInlineToolbarPlugin({
+      structure: [
+        BoldButton,
+        ItalicButton,
+        UnderlineButton,
         linkPlugin.LinkButton,
-        linkPlugin,
-        decorator,
-      ]
-    }, [])
+      ],
+    })
+    const decorator = new CompositeDecorator([
+      {
+        strategy: findLinkEntities,
+        component: Link,
+      },
+      // 他のデコレータ設定があればここに追加
+    ])
+    return [
+      [inlineToolbarPlugin, linkPlugin, imagePlugin],
+      inlineToolbarPlugin.InlineToolbar,
+      linkPlugin.LinkButton,
+      decorator, // 修正: linkPluginを削除し、decoratorを返す
+    ]
+  }, [])
 
   const [readonly, setReadOnly] = useState(true)
 
@@ -98,9 +101,7 @@ const MyEditor = ({
     try {
       editorState = initialText ? JSON.parse(initialText) : {}
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error editorState:', error)
-        : ''
+      logError(error)
       editorState = {}
     }
 
@@ -141,41 +142,23 @@ const MyEditor = ({
         },
       )
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
-      if (error.response) {
-        process.env.NODE_ENV === 'development'
-          ? console.error('Error data:', error.response.data)
-          : ''
-      }
+      logError(error)
     } finally {
       setMemoRefreshKey(prevKey => prevKey + 1)
     }
   }
 
   const onChange = value => {
-    // エディタの状態が空でない場合のみ更新
     if (value.getCurrentContent().getPlainText() !== '') {
-      // if (value.getCurrentContent().getPlainText() !== '' && editor !== value) {
       setEditor(value)
     }
-  }
-
-  const replaceEditorContent = newText => {
-    const contentState = ContentState.createFromText(newText)
-    const newEditorState = EditorState.createWithContent(
-      contentState,
-      decorator,
-    )
-    setEditor(newEditorState)
   }
 
   /***********************************
    * TODO:ファイルのパスを取得してくる
    * TODO:files
    *************************************/
-  const handleDroppedFiles = (selection, files) => {
+  const handleDroppedFiles = () => {
     insertImage('logo192.png')
   }
 
@@ -214,14 +197,7 @@ const MyEditor = ({
       })
       setMemoRefreshKey(prev => prev + 1)
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
-      if (error.response) {
-        process.env.NODE_ENV === 'development'
-          ? console.error('Error data:', error.response.data)
-          : ''
-      }
+      logError(error)
     }
   }
 
@@ -238,8 +214,7 @@ const MyEditor = ({
                     setIndexSave(activeOrder)
                   }
                 }}
-                className="text-black p-2"
-              >
+                className="text-black p-2">
                 メモを編集
               </button>
               {/* <button onClick={() => replaceEditorContent("新しいエディタの内容")}>テンプレート</button> */}
@@ -254,8 +229,7 @@ const MyEditor = ({
                 }
                 await deleteMemo(indexSaveState)
               }}
-              className="text-black p-2"
-            >
+              className="text-black p-2">
               削除
             </button>
           </>
@@ -267,8 +241,7 @@ const MyEditor = ({
                   saveContent()
                   setReadOnly(true)
                 }}
-                className="text-black p-2"
-              >
+                className="text-black p-2">
                 保存
               </button>
             </div>
@@ -301,6 +274,14 @@ const MyEditor = ({
       </div>
     </div>
   )
+}
+
+MyEditor.propTypes = {
+  initMemo: PropTypes.string.isRequired,
+  initId: PropTypes.string.isRequired,
+  stock: PropTypes.number.isRequired,
+  setMemoRefreshKey: PropTypes.func.isRequired,
+  activeOrder: PropTypes.number.isRequired,
 }
 
 export default MyEditor

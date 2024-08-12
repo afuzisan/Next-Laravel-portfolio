@@ -1,6 +1,6 @@
-import React from 'react'
-import { Button } from '@@/(app)/mypage/linkedit/_component/Button'
 import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
+import { Button } from '@@/(app)/mypage/linkedit/_component/Button'
 
 const DeleteButton = ({ id, onRefetch }) => {
   const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL
@@ -11,9 +11,7 @@ const DeleteButton = ({ id, onRefetch }) => {
       })
       onRefetch()
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
+      logError(error)
     }
   }
 
@@ -22,8 +20,7 @@ const DeleteButton = ({ id, onRefetch }) => {
       variant="ghost"
       size="icon"
       onClick={handleDelete}
-      className="text-muted-foreground ml-auto flex-shrink-0 hover:bg-gray-200"
-    >
+      className="text-muted-foreground ml-auto flex-shrink-0 hover:bg-gray-200">
       <TrashIcon className="w-5 h-5" />
       <span className="sr-only">Delete</span>
     </Button>
@@ -43,8 +40,7 @@ function TrashIcon(props) {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+      strokeLinejoin="round">
       <path d="M3 6h18" />
       <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
       <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />

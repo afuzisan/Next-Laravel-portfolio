@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react'
+import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
 import MemoList from '@Dashboard/memoList'
 import {
-  DndContext,
   closestCenter,
+  DndContext,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -13,7 +14,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import laravelAxios from '@/lib/laravelAxios'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Modal from 'react-modal'
 
 const MemoTitle = ({
@@ -22,8 +23,6 @@ const MemoTitle = ({
   setActiveOrder,
   activeOrder,
   setMemoRefreshKey,
-  MemoTitleRefreshKey,
-  setEditorKey,
   stock,
   name,
 }) => {
@@ -43,9 +42,7 @@ const MemoTitle = ({
       )
       setEditedMemos(response.data.memo)
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
+      logError(error)
     }
     setIsModalOpen(true)
   }
@@ -62,9 +59,7 @@ const MemoTitle = ({
         ),
       )
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
+      logError(error)
     }
   }
 
@@ -74,9 +69,7 @@ const MemoTitle = ({
         memos: editedMemos,
       })
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
+      logError(error)
     } finally {
       setMemoRefreshKey(prevKey => prevKey + 1)
       closeModal()
@@ -90,9 +83,7 @@ const MemoTitle = ({
           stock_id: memo.stock_id,
         })
       } catch (error) {
-        process.env.NODE_ENV === 'development'
-          ? console.error('Error fetching data:', error)
-          : ''
+        logError(error)
       } finally {
         setMemoRefreshKey(prevKey => prevKey + 1)
         closeModal()
@@ -162,10 +153,7 @@ const MemoTitle = ({
           })
         }
       } catch (error) {
-        process.env.NODE_ENV === 'development'
-          ? console.error('Error fetching data:', error)
-          : ''
-      } finally {
+        logError(error)
       }
     },
     [items, setMemoRefreshKey],
@@ -196,16 +184,13 @@ const MemoTitle = ({
     <DndContext
       sensors={sensors}
       pointerWithin={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
+      onDragEnd={handleDragEnd}>
       <SortableContext
         items={items.map(item => item.id)} // idを使用
-        strategy={verticalListSortingStrategy}
-      >
+        strategy={verticalListSortingStrategy}>
         <div
           key={setMemoRefreshKey}
-          className="break-words overflow-y-auto h-80 border-l border-r w-full break-all"
-        >
+          className="break-words overflow-y-auto h-80 border-l border-r w-full break-all">
           <div className="border-b-2 pr-1 pl-1 sticky top-0 bg-white flex justify-center">
             <button onClick={handleClick} className="text-black p-2">
               追加
@@ -238,8 +223,7 @@ const MemoTitle = ({
             width: '600px',
             maxWidth: '90%',
           },
-        }}
-      >
+        }}>
         <div className="sticky top-0 bg-white z-10 border-b border-gray-200 p-4">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">
@@ -247,8 +231,7 @@ const MemoTitle = ({
             </h2>
             <button
               onClick={saveChanges}
-              className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition-colors"
-            >
+              className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition-colors">
               保存
             </button>
           </div>
@@ -267,8 +250,7 @@ const MemoTitle = ({
                 />
                 <button
                   onClick={() => deleteMemoTitle(memo)}
-                  className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition-colors"
-                >
+                  className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition-colors">
                   削除
                 </button>
               </li>

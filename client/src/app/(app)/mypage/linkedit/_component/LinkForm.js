@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
-import { Label } from '@@/(app)/mypage/linkedit/_component/Label'
-import { Input } from '@@/(app)/mypage/linkedit/_component/Input'
-import { Button } from '@@/(app)/mypage/linkedit/_component/Button'
 import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
+import { Button } from '@@/(app)/mypage/linkedit/_component/Button'
+import { Input } from '@@/(app)/mypage/linkedit/_component/Input'
+import { Label } from '@@/(app)/mypage/linkedit/_component/Label'
+import { useState } from 'react'
 
 const LinkForm = ({ onRefetch }) => {
   const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL
@@ -26,9 +27,7 @@ const LinkForm = ({ onRefetch }) => {
       setUrl('')
       setName('')
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
+      logError(error)
     }
   }
 

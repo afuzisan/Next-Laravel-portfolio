@@ -1,13 +1,13 @@
 'use client'
 
-import laravelAxios from '@/lib/laravelAxios'
-import MemoFetch from '@Category/MemoFetch.client'
-import { useState, useEffect } from 'react'
-import Danger from '@/components/Danger'
 import '@/app/global.css'
+import Danger from '@/components/Danger'
+import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
+import MemoFetch from '@Category/MemoFetch.client'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { FaEdit } from 'react-icons/fa'
-
 const Dashboard = ({ params }) => {
   const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL
   const [inputValue, setInputValue] = useState('')
@@ -28,7 +28,7 @@ const Dashboard = ({ params }) => {
     return localStorage.getItem('activeTab') || 'stockList'
   })
   const [categoryList, setCategoryList] = useState([])
-  const [showAllCategory, setShowAllCategory] = useState(true)
+  const [showAllCategory] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
@@ -54,9 +54,7 @@ const Dashboard = ({ params }) => {
         setCategoryList(response.data)
       })
       .catch(error => {
-        process.env.NODE_ENV === 'development'
-          ? console.error('Error fetching data:', error)
-          : ''
+        logError(error)
       })
   }, [])
 
@@ -75,9 +73,7 @@ const Dashboard = ({ params }) => {
         setErrorMessage('')
       })
       .catch(error => {
-        process.env.NODE_ENV === 'development'
-          ? console.error('Error fetching data:', error)
-          : ''
+        logError(error)
         setErrorMessage(error.response.data.message)
       })
   }
@@ -130,7 +126,7 @@ const Dashboard = ({ params }) => {
     const newCategory = prompt('新しいカテゴリ名を入力してください')
     if (newCategory === null) return
     if (newCategory === '') {
-      setErrorMessage('カテゴリ名を入力してください')
+      setErrorMessage('カテゴリ名を入力してくさい')
       return
     }
     if (newCategory.length > 15) {
@@ -163,8 +159,7 @@ const Dashboard = ({ params }) => {
         <div className="grid grid-cols-2 h-full gap-2">
           <nav
             aria-label="Page navigation"
-            className="col-span-2 flex justify-between pr-6"
-          >
+            className="col-span-2 flex justify-between pr-6">
             <div className="flex items-center pl-6 relative">
               <input
                 type="text"
@@ -186,14 +181,12 @@ const Dashboard = ({ params }) => {
               />
               <button
                 className="px-3 py-2 leading-tight text-white bg-blue-500 border border-blue-500 hover:bg-blue-600 hover:border-blue-600"
-                onClick={() => handleRegisterClick(inputValue)}
-              >
+                onClick={() => handleRegisterClick(inputValue)}>
                 銘柄登録
               </button>
               <button
                 className="px-3 py-2 leading-tight text-white bg-green-800 border border-green-800 hover:bg-green-900 hover:border-green-900"
-                onClick={() => handleCategoryRegisterClick(inputValue)}
-              >
+                onClick={() => handleCategoryRegisterClick(inputValue)}>
                 カテゴリ登録
               </button>
               {errorMessage && (
@@ -207,26 +200,22 @@ const Dashboard = ({ params }) => {
             <div className="flex items-center">
               <button
                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'dateDesc' ? 'bg-gray-100' : 'bg-white'}`}
-                onClick={() => handleSort('dateDesc')}
-              >
+                onClick={() => handleSort('dateDesc')}>
                 登録日 (新しい)
               </button>
               <button
                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'dateAsc' ? 'bg-gray-100' : 'bg-white'}`}
-                onClick={() => handleSort('dateAsc')}
-              >
+                onClick={() => handleSort('dateAsc')}>
                 登録日 (古い順)
               </button>
               <button
                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'codeDesc' ? 'bg-gray-100' : 'bg-white'}`}
-                onClick={() => handleSort('codeDesc')}
-              >
+                onClick={() => handleSort('codeDesc')}>
                 証券コード (大きい順)
               </button>
               <button
                 className={`px-3 py-2 leading-tight text-gray-500 border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 ${sortOrder === 'codeAsc' ? 'bg-gray-100' : 'bg-white'}`}
-                onClick={() => handleSort('codeAsc')}
-              >
+                onClick={() => handleSort('codeAsc')}>
                 証券コード (小さい順)
               </button>
             </div>
@@ -240,15 +229,13 @@ const Dashboard = ({ params }) => {
                         : Math.ceil(totalStockCount / itemsPerPage) - 1,
                     )
                   }}
-                  className="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-red-100 hover:text-gray-700"
-                >
+                  className="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-red-100 hover:text-gray-700">
                   ＜
                 </button>
               </li>
               <li>
                 <button
-                  className={`px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-red-100 hover:text-gray-700 ${currentPage + 1 === currentPage ? 'bg-gray-100' : 'bg-white'}`}
-                >
+                  className={`px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-red-100 hover:text-gray-700 ${currentPage + 1 === currentPage ? 'bg-gray-100' : 'bg-white'}`}>
                   {currentPage + 1}
                 </button>
               </li>
@@ -261,8 +248,7 @@ const Dashboard = ({ params }) => {
                         : 0,
                     )
                   }}
-                  className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-red-100 hover:text-gray-700"
-                >
+                  className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-red-100 hover:text-gray-700">
                   ＞
                 </button>
               </li>
@@ -274,14 +260,12 @@ const Dashboard = ({ params }) => {
             <div className="flex bg-white border-b border-gray-200">
               <button
                 className={`px-3 py-2 w-[50%]  ${activeTab === 'stockList' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
-                onClick={() => setActiveTab('stockList')}
-              >
+                onClick={() => setActiveTab('stockList')}>
                 銘柄リスト
               </button>
               <button
                 className={`px-3 py-2 w-[50%] ${activeTab === 'tab2' ? 'bg-green-800 text-white' : 'bg-gray-100 text-gray-700'}`}
-                onClick={() => setActiveTab('tab2')}
-              >
+                onClick={() => setActiveTab('tab2')}>
                 カテゴリ
               </button>
             </div>
@@ -290,12 +274,11 @@ const Dashboard = ({ params }) => {
                 <div>
                   {result.stocks.map((stock, index) => {
                     return (
-                      <li className={`list-none`}>
+                      <li className={`list-none`} key={index}>
                         <a
                           href={`#${stock.stock_code}`}
                           key={stock.stock_code}
-                          className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100"
-                        >
+                          className="block w-full h-full px-3 py-2 border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
                           {stock.stock_name}({stock.stock_code})
                         </a>
                       </li>
@@ -310,9 +293,8 @@ const Dashboard = ({ params }) => {
                       {showAllCategory && (
                         <li className="list-none flex justify-between w-full h-full border-b-2 border-dotted border-gray-200 hover:bg-gray-100">
                           <a
-                            href={`http://localhost:3000/dashboard`}
-                            className="block w-full h-full px-3 py-2"
-                          >
+                            href={`/dashboard`}
+                            className="block w-full h-full px-3 py-2">
                             すべて
                           </a>
                         </li>
@@ -322,12 +304,11 @@ const Dashboard = ({ params }) => {
                           decodeURIComponent(params.name) === category
                         return (
                           <li
-                            className={`list-none flex justify-between w-full h-full border-b-2 border-dotted border-gray-200 ${isCurrentCategory ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
-                          >
+                            key={index}
+                            className={`list-none flex justify-between w-full h-full border-b-2 border-dotted border-gray-200 ${isCurrentCategory ? 'bg-gray-100' : 'hover:bg-gray-100'}`}>
                             <a
                               href={`${encodeURIComponent(category)}`}
-                              className={`block w-full h-full px-3 py-2`}
-                            >
+                              className={`block w-full h-full px-3 py-2`}>
                               {category}
                             </a>
                             {category !== '未分類' && (
@@ -344,8 +325,7 @@ const Dashboard = ({ params }) => {
                                   className="text-gray-200 mr-1 ml-1 hover:text-black cursor-pointer"
                                   onClick={() =>
                                     handleDeleteCategoryList(category)
-                                  }
-                                >
+                                  }>
                                   ✕
                                 </span>
                               </span>

@@ -1,13 +1,13 @@
 'use client'
-import React, { useEffect, useState } from 'react'
 import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
 import {
+  CompositeDecorator,
   Editor,
   EditorState,
   convertFromRaw,
-  CompositeDecorator,
 } from 'draft-js'
-// import Calendar from '@/app/(app)/stocks/[stock]/_LogComponent/Calendar.client';
+import { useEffect, useState } from 'react'
 
 const page = ({ params }) => {
   const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL
@@ -29,9 +29,7 @@ const page = ({ params }) => {
       const log = response.data.memo_logs
       setContent(log)
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
+      logError(error)
     }
   }
 
@@ -57,8 +55,7 @@ const page = ({ params }) => {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: 'blue' }}
-            >
+              style={{ color: 'blue' }}>
               {props.children}
             </a>
           )
@@ -153,8 +150,7 @@ const page = ({ params }) => {
             return (
               <div
                 key={index}
-                className="border mb-4 p-4 rounded shadow grid grid-rows-[auto,50px,auto,auto] gap-2 h-[600px]"
-              >
+                className="border mb-4 p-4 rounded shadow grid grid-rows-[auto,50px,auto,auto] gap-2 h-[600px]">
                 <div className="relative">
                   <img
                     className="w-full h-auto mt-8"

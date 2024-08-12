@@ -1,12 +1,13 @@
 'use client'
 
-import { React, useState } from 'react'
-import Modal from 'react-modal'
-import MyEditor from '@/components/MyEditor.client'
-import { EditorProvider } from '@Dashboard/EditorContext.client'
-import laravelAxios from '@/lib/laravelAxios'
-import MemoTitle from '@Dashboard/memoTitle'
 import Danger from '@/components/Danger'
+import MyEditor from '@/components/MyEditor.client'
+import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
+import { EditorProvider } from '@Dashboard/EditorContext.client'
+import MemoTitle from '@Dashboard/memoTitle'
+import { useState } from 'react'
+import Modal from 'react-modal'
 
 const Memos = ({ memos, stock, name, setMemoRefreshKey }) => {
   const sortedItems = [...memos].sort((a, b) => a.order - b.order)
@@ -39,7 +40,6 @@ const MemoContent = ({
   name,
   setMemoRefreshKey,
   MemoTitleRefreshKey,
-  setMemoTitleRefreshKey,
 }) => {
   const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -80,9 +80,7 @@ const MemoContent = ({
       closeModal()
       setMemoRefreshKey(prevKey => prevKey + 1) // ここでステートを更新
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
+      logError(error)
     }
   }
 
@@ -136,8 +134,7 @@ const MemoContent = ({
         isOpen={isModalOpen}
         onRequestClose={closeModal}
         className="bg-white p-6 rounded-lg shadow-2xl max-w-md w-full relative"
-        overlayClassName="fixed inset-0 flex justify-center items-center bg-white bg-opacity-75"
-      >
+        overlayClassName="fixed inset-0 flex justify-center items-center bg-white bg-opacity-75">
         <div className="flex justify-between items-center mb-4">
           <div className="text-xl font-semibold">
             {name}({stock})にメモを追加します。
@@ -151,8 +148,7 @@ const MemoContent = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-            }}
-          >
+            }}>
             &times;
           </div>
         </div>
@@ -166,8 +162,7 @@ const MemoContent = ({
           />
           <button
             onClick={handleSubmit}
-            className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700"
-          >
+            className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">
             保存
           </button>
         </div>

@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
 import DeleteButton from '@@/(app)/mypage/linkedit/_component/DeleteButton'
+import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
 
 const YouLinks = ({ data, onRefetch }) => {
   const [inputValue, setInputValue] = useState(7203)
@@ -31,12 +32,13 @@ const YouLinks = ({ data, onRefetch }) => {
                       href={linkReplace(item.url)}
                       title={linkReplace(item.url)}
                       target="_blank"
-                      className="hover:bg-gray-100 break-all transition duration-300 p-2 rounded-lg"
-                    >
+                      className="hover:bg-gray-100 break-all transition duration-300 p-2 rounded-lg">
                       <div className="flex items-center">
-                        <img
+                        <Image
                           src={`http://www.google.com/s2/favicons?domain=${item.url}`}
                           alt={item.site_name}
+                          width={16}
+                          height={16}
                           className="w-4 h-4 mr-2"
                         />
                         <div>{item.site_name}</div>

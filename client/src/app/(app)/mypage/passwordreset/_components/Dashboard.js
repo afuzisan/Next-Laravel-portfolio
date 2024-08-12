@@ -1,6 +1,7 @@
 'use client'
 
 import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
 import { useState } from 'react'
 
 const Component = () => {
@@ -20,10 +21,7 @@ const Component = () => {
         throw new Error('パスワードの変更に失敗しました。')
       }
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
-      throw message
+      logError(error)
     }
   }
 
@@ -32,17 +30,14 @@ const Component = () => {
       await fetchData(data)
       alert('パスワードが変更されました。')
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
+      logError(error)
       alert('パスワード変更に失敗しました。')
     }
   }
   return (
     <div
       id="delete-account-button"
-      className="flex flex-col items-center justify-start bg-background min-h-screen p-4 mt-16"
-    >
+      className="flex flex-col items-center justify-start bg-background min-h-screen p-4 mt-16">
       <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
         <p className="mb-4 text-center text-gray-700">
           パスワードの変更をします。
@@ -70,8 +65,7 @@ const Component = () => {
               setIsModalOpen(true)
             }
           }}
-          className="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 transition duration-300 flex items-center justify-center"
-        >
+          className="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 transition duration-300 flex items-center justify-center">
           パスワード変更
         </button>
       </div>
@@ -82,14 +76,12 @@ const Component = () => {
 
             <button
               onClick={() => setIsModalOpen(false)}
-              className="bg-gray-500 text-white py-2 px-4 rounded m-2"
-            >
+              className="bg-gray-500 text-white py-2 px-4 rounded m-2">
               キャンセル
             </button>
             <button
               onClick={handlePasswordReset}
-              className="bg-red-500 text-white py-2 px-4 rounded m-2"
-            >
+              className="bg-red-500 text-white py-2 px-4 rounded m-2">
               変更
             </button>
           </div>

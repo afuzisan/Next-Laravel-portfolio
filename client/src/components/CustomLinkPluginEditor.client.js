@@ -1,19 +1,14 @@
 'use client'
 
-import React, { Component } from 'react'
-import Editor, { createEditorStateWithText } from '@draft-js-plugins/editor'
-import createInlineToolbarPlugin from '@draft-js-plugins/inline-toolbar'
 import createLinkPlugin from '@draft-js-plugins/anchor'
 import {
-  ItalicButton,
   BoldButton,
+  ItalicButton,
   UnderlineButton,
 } from '@draft-js-plugins/buttons'
-import { stateToHTML } from 'draft-js-export-html'
-
-function editorStateToHtml(editorState) {
-  return stateToHTML(editorState.getCurrentContent())
-}
+import Editor, { createEditorStateWithText } from '@draft-js-plugins/editor'
+import createInlineToolbarPlugin from '@draft-js-plugins/inline-toolbar'
+import { Component } from 'react'
 
 const linkPlugin = createLinkPlugin({
   placeholder: 'http://…',

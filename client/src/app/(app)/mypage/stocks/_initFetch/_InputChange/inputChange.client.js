@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
 import laravelAxios from '@/lib/laravelAxios'
+import { useRef, useState } from 'react'
 
 const InputChange = ({ placeholder, initialValue, type }) => {
   const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL
@@ -56,8 +56,7 @@ const InputChange = ({ placeholder, initialValue, type }) => {
       />
       <button
         onClick={handleSubmit}
-        className="bg-blue-500 text-white px-4 py-2 cursor-pointer border-color-blue-500 w-full mt-2"
-      >
+        className="bg-blue-500 text-white px-4 py-2 cursor-pointer border-color-blue-500 w-full mt-2">
         変更
       </button>
     </div>

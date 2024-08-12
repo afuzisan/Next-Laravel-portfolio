@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
 import { Editor, EditorState, convertFromRaw, convertToRaw } from 'draft-js'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const convertMemoToText = memo => {
   const contentState = convertFromRaw(JSON.parse(memo))
@@ -25,9 +26,7 @@ const SearchGet = () => {
         setData(response.data) // stateにデータをセット
       })
       .catch(error => {
-        process.env.NODE_ENV === 'development'
-          ? console.error('Error fetching data:', error)
-          : ''
+        logError(error)
       })
   }, [searchParams])
 
@@ -42,8 +41,7 @@ const SearchGet = () => {
           {filteredData.map((item, index) => (
             <div
               key={index}
-              className="border mb-4 p-4 rounded shadow grid grid-rows-[auto,auto,200px,1fr] gap-2 h-[600px]"
-            >
+              className="border mb-4 p-4 rounded shadow grid grid-rows-[auto,auto,200px,1fr] gap-2 h-[600px]">
               <div className="mb-2">
                 <span className="font-bold">
                   {item.stock.stock_name}({item.stock.stock_code})

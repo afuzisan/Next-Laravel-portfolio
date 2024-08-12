@@ -20,4 +20,4 @@ const rawContent = {
 }
 
 const contentState = convertFromRaw(rawContent)
-const editorState = EditorState.createWithContent(contentState)
+EditorState.createWithContent(contentState)

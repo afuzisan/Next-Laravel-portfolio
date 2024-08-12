@@ -1,14 +1,15 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import Modal from 'react-modal'
 import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
 import {
+  CompositeDecorator,
   Editor,
   EditorState,
   convertFromRaw,
-  CompositeDecorator,
 } from 'draft-js'
+import { useEffect, useState } from 'react'
 import { FaExpand } from 'react-icons/fa'
+import Modal from 'react-modal'
 
 const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
   const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL
@@ -42,8 +43,7 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: 'blue' }}
-            >
+              style={{ color: 'blue' }}>
               {props.children}
             </a>
           )
@@ -66,9 +66,7 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
       const log = response.data.memo_logs
       setContent(log)
     } catch (error) {
-      process.env.NODE_ENV === 'development'
-        ? console.error('Error fetching data:', error)
-        : ''
+      logError(error)
     }
   }
 
@@ -195,13 +193,11 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
       isOpen={modalIsOpen}
       onRequestClose={closeModal}
       contentLabel="Stock Code Modal"
-      ariaHideApp={false}
-    >
+      ariaHideApp={false}>
       <div className="flex justify-end items-center">
         <button
           onClick={closeModal}
-          className="bg-none border-none text-2xl cursor-pointer"
-        >
+          className="bg-none border-none text-2xl cursor-pointer">
           ×
         </button>
       </div>
@@ -214,8 +210,7 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
             return (
               <div
                 key={index}
-                className={`border mb-4 p-4 w-[400px] rounded shadow grid grid-rows-[200px,50px,50px,auto] gap-2 h-[600px] mx-2 flex-grow-0 flex-shrink-0 basis-[calc(100%-1rem)] sm:basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-1rem)] ${isFullScreen && fullScreenLog === log ? 'fixed top-0 left-0 w-full h-full bg-white z-50 grid-rows-[300px,50px,50px,auto] justify-center p-6' : ''}`}
-              >
+                className={`border mb-4 p-4 w-[400px] rounded shadow grid grid-rows-[200px,50px,50px,auto] gap-2 h-[600px] mx-2 flex-grow-0 flex-shrink-0 basis-[calc(100%-1rem)] sm:basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-1rem)] ${isFullScreen && fullScreenLog === log ? 'fixed top-0 left-0 w-full h-full bg-white z-50 grid-rows-[300px,50px,50px,auto] justify-center p-6' : ''}`}>
                 <div className="relative">
                   <img
                     className={`w-full h-[200px] mt-8 object-cover rounded cursor-pointer ${isFullScreen && fullScreenLog === log ? 'w-[800px] h-[300px] mt-8 object-cover rounded cursor-pointer object-contain' : ''}`}
@@ -252,14 +247,12 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
                   </span>
                   <button
                     className={`absolute top-1 right-1 bg-none border-none text-gray-500 cursor-pointer ${isFullScreen && fullScreenLog === log ? 'hidden' : ''}`}
-                    onClick={() => handleCardClick(log)}
-                  >
+                    onClick={() => handleCardClick(log)}>
                     <FaExpand />
                   </button>
                 </div>
                 <div
-                  className={`flex justify-between items-center mt-10 ${isFullScreen && fullScreenLog === log ? 'w-[800px] mt-12' : ''}`}
-                >
+                  className={`flex justify-between items-center mt-10 ${isFullScreen && fullScreenLog === log ? 'w-[800px] mt-12' : ''}`}>
                   <div className="flex items-center">
                     <span className="text-lg">編集日：</span>
                     <button
@@ -271,8 +264,7 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
                           imageFormattedDate,
                           log.memo_title,
                         )
-                      }
-                    >
+                      }>
                       {formattedDate}
                     </button>
                   </div>
@@ -300,8 +292,7 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
                   />
                 </div>
                 <div
-                  className={`mt-2 mb-2 break-words overflow-hidden flex items-center ${isFullScreen && fullScreenLog === log ? 'w-[800px] mt-6' : ''}`}
-                >
+                  className={`mt-2 mb-2 break-words overflow-hidden flex items-center ${isFullScreen && fullScreenLog === log ? 'w-[800px] mt-6' : ''}`}>
                   <span className="font-bold text-lg">{log.memo_title}</span>
                 </div>
                 <div className="mb-2 flex-grow overflow-y-scroll">
@@ -315,8 +306,7 @@ const LogModal = ({ modalIsOpen, closeModal, modalContent, resultStocks }) => {
       {isFullScreen && (
         <button
           onClick={handleCloseFullScreen}
-          className="fixed top-4 right-4 bg-none border-none text-2xl cursor-pointer z-50"
-        >
+          className="fixed top-4 right-4 bg-none border-none text-2xl cursor-pointer z-50">
           ×
         </button>
       )}

@@ -14,8 +14,17 @@ RUN apt-get update && apt-get install -y git
 # Yarnをインストール
 RUN npm install -g yarn
 
-# nodemonをインストール
-# RUN npm install -g nodemon
+# @babel/coreをインストール
+RUN yarn add --dev @babel/core
+
+# @babel/preset-reactのインストール
+RUN yarn add --dev @babel/preset-react
+
+# tailwindcssをインストール
+RUN yarn add tailwindcss
+
+# autoprefixerをインストール
+RUN yarn add autoprefixer
 
 # 作業ディレクトリを設定
 WORKDIR /var/www/client
@@ -25,16 +34,30 @@ RUN chmod +x /
 # ポートの公開
 EXPOSE 3000
 
+# 必要な依存関係をインストール
+RUN yarn add @babel/core@^7.25.2 \
+    @babel/eslint-parser@^7.12.1 \
+    @babel/preset-react@^7.24.7 \
+    @next/eslint-plugin-next@^14.2.3 \
+    @tailwindcss/forms@^0.5.2 \
+    autoprefixer@^10.4.2 \
+    eslint@^8.27.0 \
+    eslint-config-next@^14.0.3 \
+    eslint-config-prettier@^7.2.0 \
+    postcss@^8.4.6 \
+    prettier@^3.3.3 \
+    tailwindcss@^3.4.3
+
 # ソースコードをコピー
 COPY . .
 
+# 環境変数の設定
+ENV NODE_ENV production
+
+# 必要な依存関係を再インストール
 RUN yarn install
 
 # ビルドを実行
-RUN npm run build
+RUN yarn build
 
-# 環境変数の設定
-ENV NODE_ENV development
-
-# アプリケーションの起動コマンド
-CMD ["npm", "run", "start"]
+CMD ["npm", "start"]

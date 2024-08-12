@@ -1,14 +1,19 @@
 'use client'
 
 import laravelAxios from '@/lib/laravelAxios'
-import React, { useState, useEffect } from 'react'
-import CalendarComponent from 'react-calendar'
-import 'react-calendar/dist/Calendar.css'
-import { Editor, EditorState, convertFromRaw } from 'draft-js'
+import { logError } from '@/lib/logError'
 import createLinkPlugin from '@draft-js-plugins/anchor'
 import '@draft-js-plugins/anchor/lib/plugin.css'
+import {
+  CompositeDecorator,
+  Editor,
+  EditorState,
+  convertFromRaw,
+} from 'draft-js'
 import NextLink from 'next/link'
-import { CompositeDecorator } from 'draft-js'
+import { useEffect, useState } from 'react'
+import CalendarComponent from 'react-calendar'
+import 'react-calendar/dist/Calendar.css'
 
 const Link = props => {
   const { url } = props.contentState.getEntity(props.entityKey).getData()
@@ -36,15 +41,13 @@ const decorator = new CompositeDecorator([
   },
 ])
 
-const linkPlugin = createLinkPlugin({
+createLinkPlugin({
   linkComponent: props => (
     <NextLink href={props.href}>
       <a {...props}>{props.children}</a>
     </NextLink>
   ),
 })
-
-const plugins = [linkPlugin] // 必要なプラグインを追加
 
 const Calendar = () => {
   const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL
@@ -95,9 +98,7 @@ const Calendar = () => {
         }
         setEventsData(formattedData)
       } catch (err) {
-        process.env.NODE_ENV === 'development'
-          ? console.error('Error fetching data:', error)
-          : ''
+        logError(err)
       }
     }
     fetchData()
@@ -107,7 +108,6 @@ const Calendar = () => {
       Date.UTC(value.getFullYear(), value.getMonth(), value.getDate()),
     )
     setDate(selectedDate)
-    checkIfToday(selectedDate)
     displayContent(selectedDate)
     setActiveStartDate(
       new Date(Date.UTC(value.getFullYear(), value.getMonth(), 1)),
@@ -116,11 +116,6 @@ const Calendar = () => {
 
   const handleActiveStartDateChange = ({ activeStartDate }) => {
     setActiveStartDate(activeStartDate)
-  }
-
-  const checkIfToday = selectedDate => {
-    const today = new Date()
-    const isToday = selectedDate.toDateString() === today.toDateString()
   }
 
   const formatDate = (dateString, type, sliceNumber) => {
@@ -156,23 +151,21 @@ const Calendar = () => {
                   decorator,
                 )
               } catch (error) {
-                process.env.NODE_ENV === 'development'
-                  ? console.error('Error fetching data:', error)
-                  : ''
+                logError(error)
                 editorState = EditorState.createEmpty(decorator)
               }
               return (
                 <div
-                  className={`flex justify-between ${index !== events.length - 1 ? 'border-b' : ''}`}
-                >
+                  key={index}
+                  className={`flex justify-between ${index !== events.length - 1 ? 'border-b' : ''}`}>
                   <img
                     className={`flex w-[500px] h-[200px] my-auto object-cover rounded cursor-pointer p-4 `}
                     src={`https://www.kabudragon.com/chart/s=${event.stock_id}/e=${formatDate(localUpdatedAt, '-', 2)}`}
+                    alt={`Chart for ${event.stock_name}`}
                   />
                   <div
                     key={index}
-                    className={`w-[50%] pl-2 pt-2 pb-2 grid grid-cols-[70px_2fr] gap-2 break-words overflow-hidden`}
-                  >
+                    className={`w-[50%] pl-2 pt-2 pb-2 grid grid-cols-[70px_2fr] gap-2 break-words overflow-hidden`}>
                     <p>
                       <strong>銘柄名</strong>
                     </p>
@@ -220,16 +213,13 @@ const Calendar = () => {
             const contentState = convertFromRaw(JSON.parse(event.memo))
             editorState = EditorState.createWithContent(contentState, decorator)
           } catch (error) {
-            process.env.NODE_ENV === 'development'
-              ? console.error('Error fetching data:', error)
-              : ''
+            logError(error)
             editorState = EditorState.createEmpty(decorator)
           }
           return (
             <div
               key={index}
-              className={`p-2 grid grid-cols-[100px_500px] gap-2 break-words overflow-hidden ${index !== content.length - 1 ? 'border-b' : ''}`}
-            >
+              className={`p-2 grid grid-cols-[100px_500px] gap-2 break-words overflow-hidden ${index !== content.length - 1 ? 'border-b' : ''}`}>
               <p>
                 <strong>タイトル:</strong>
               </p>
@@ -278,8 +268,7 @@ const Calendar = () => {
             <span
               className="absolute text-red-100 font-bold text-6xl bottom-0 opacity-20"
               onMouseEnter={e => showTooltip(e, eventsData[formattedDate])}
-              onMouseLeave={hideTooltip}
-            >
+              onMouseLeave={hideTooltip}>
               ●
             </span>
           </div>
@@ -307,8 +296,7 @@ const Calendar = () => {
                       ),
                     ),
                   )
-                }
-              >
+                }>
                 <p className="break-words">
                   {new Date(date)
                     .toLocaleDateString()
@@ -341,8 +329,7 @@ const Calendar = () => {
           {tooltip.visible && (
             <div
               className="absolute bg-white border border-black p-2 z-50"
-              style={{ top: tooltip.y + 10, left: tooltip.x + 10 }}
-            >
+              style={{ top: tooltip.y + 10, left: tooltip.x + 10 }}>
               {tooltip.content}
             </div>
           )}

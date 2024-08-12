@@ -1,7 +1,7 @@
-import useSWR from 'swr'
 import axios from '@/lib/laravelAxios'
-import { useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import useSWR from 'swr'
 
 export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
   const router = useRouter()
@@ -31,9 +31,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
     axios
       .post('/register', props)
-      .then(response => {
-        mutate()
-      })
+      .then(() => mutate())
       .catch(error => {
         if (error.response.status !== 422) throw error
 

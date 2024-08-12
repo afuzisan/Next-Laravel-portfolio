@@ -14,6 +14,7 @@
       "@mypage/accountdelete*": [
         "./app/(app)/mypage/accountdelete/_components/*"
       ]
-    }
+    },
+    "jsx": "react-jsx"
   }
 }

@@ -1,4 +1,3 @@
-import React from 'react'
 import SearchGet from './_components/SearchGet.client'
 
 export async function generateMetadata({ searchParams }) {

@@ -2,6 +2,7 @@
 
 import InputChange from '@/app/(app)/mypage/stocks/_initFetch/_InputChange/inputChange.client'
 import laravelAxios from '@/lib/laravelAxios'
+import { logError } from '@/lib/logError'
 import { useEffect, useState } from 'react'
 
 async function getData() {
@@ -14,13 +15,7 @@ async function getData() {
     )
     data.memo_display_number = response.data.memo_display_number
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
-      console.error(
-        'Error fetching data:',
-        error.response ? error.response.data : error.message,
-      )
-    }
+    logError(error)
   }
   return data.memo_display_number
 }

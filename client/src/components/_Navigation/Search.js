@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 const Search = () => {
   const [search, setSearch] = useState('')
@@ -34,8 +34,7 @@ const Search = () => {
           {search && (
             <button
               className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-red-500"
-              onClick={() => setSearch('')}
-            >
+              onClick={() => setSearch('')}>
               ✕
             </button>
           )}
@@ -47,15 +46,13 @@ const Search = () => {
         </div>
         <select
           className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300"
-          onChange={e => setSearchType(e.target.value)}
-        >
+          onChange={e => setSearchType(e.target.value)}>
           <option value="memo">メモ</option>
           <option value="stock">証券コード</option>
         </select>
         <button
           className="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700"
-          onClick={searchSubmit}
-        >
+          onClick={searchSubmit}>
           検索
         </button>
       </div>

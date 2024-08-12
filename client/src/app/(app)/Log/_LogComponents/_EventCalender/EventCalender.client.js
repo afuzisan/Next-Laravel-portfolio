@@ -1,5 +1,3 @@
-import React from 'react'
-
 const EventCalender = ({ content }) => {
   return (
     <div>

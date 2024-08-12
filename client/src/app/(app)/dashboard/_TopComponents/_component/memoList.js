@@ -1,15 +1,14 @@
-import { EditorState, CompositeDecorator, convertFromRaw } from 'draft-js'
-import '@draft-js-plugins/inline-toolbar/lib/plugin.css'
-import '@draft-js-plugins/anchor/lib/plugin.css'
-import '@draft-js-plugins/image/lib/plugin.css'
-import { useEditorContext } from '../_component/EditorContext.client'
-import Link from 'next/link' // Link component imported
-import { useState, useEffect } from 'react'
-import React from 'react'
 import Loading from '@/app/(app)/Loading' // Loading component imported
+import laravelAxios from '@/lib/laravelAxios'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import laravelAxios from '@/lib/laravelAxios'
+import '@draft-js-plugins/anchor/lib/plugin.css'
+import '@draft-js-plugins/image/lib/plugin.css'
+import '@draft-js-plugins/inline-toolbar/lib/plugin.css'
+import { CompositeDecorator, convertFromRaw, EditorState } from 'draft-js'
+import Link from 'next/link' // Link component imported
+import { useEffect, useState } from 'react'
+import { useEditorContext } from '../_component/EditorContext.client'
 
 const MemoList = ({
   title,
@@ -86,21 +85,18 @@ const MemoList = ({
     <>
       {loading && <Loading />}
       <li
-        className={`flex items-center hover:bg-red-100  ${activeOrder === order ? 'bg-gray-100' : ''}`}
-      >
+        className={`flex items-center hover:bg-red-100  ${activeOrder === order ? 'bg-gray-100' : ''}`}>
         <div className="w-full flex items-center justify-center">
           <div
             ref={setNodeRef}
             style={{ ...style, cursor: 'grab' }}
             {...attributes}
             {...listeners}
-            className="flex items-center w-full"
-          >
+            className="flex items-center w-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 48 48"
-              className="w-6 h-6"
-            >
+              className="w-6 h-6">
               <rect width="48" height="48" fill="none" />
               <line
                 x1="10"
@@ -134,8 +130,7 @@ const MemoList = ({
               className={`flex-1 text-left break-words cursor-pointer p-2`}
               onClick={() => {
                 fetchData()
-              }}
-            >
+              }}>
               {title}
             </div>
           </div>
