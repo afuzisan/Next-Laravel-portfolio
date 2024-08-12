@@ -171,7 +171,6 @@ const MemoFetch = ({
         if (data && data.memo_display_number) {
           setItemsPerPage(data.memo_display_number)
         }
-
         // ソート処理を追加
         if (sortOrder === 'dateDesc') {
           data.stocks.sort(
@@ -191,7 +190,6 @@ const MemoFetch = ({
 
         setResult(data)
         onDataFetched(data) // 親コンポーネントにデータを渡す
-        onDataResult(data)
       } catch (error) {
         logError(error)
         setError(error)

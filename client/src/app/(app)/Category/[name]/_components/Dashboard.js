@@ -111,18 +111,20 @@ const Dashboard = ({ params }) => {
     }
     if (window.confirm(`${category}を削除してもよろしいですか？`)) {
       laravelAxios
-        .delete(`${apiUrl}'/api/Categories/deleteCategoryList/${category}`)
+        .delete(`${apiUrl}/api/Categories/deleteCategoryList/${category}`)
         .then(() => {
-          router.refresh({ keepCache: true })
+          setCategoryList(prevList => prevList.filter(c => c !== category))
           setErrorMessage('')
         })
-        .catch(() => {
-          setErrorMessage('エラーが発生しました')
+        .catch(error => {
+          setErrorMessage(
+            error.response?.data?.message || 'エラーが発生しました',
+          )
         })
     }
   }
 
-  const handleEditCategoryList = category => {
+  const handleEditCategoryList = (category, categoryList) => {
     const newCategory = prompt('新しいカテゴリ名を入力してください')
     if (newCategory === null) return
     if (newCategory === '') {
@@ -137,6 +139,11 @@ const Dashboard = ({ params }) => {
       setErrorMessage('未分類は編集できません')
       return
     }
+    if (categoryList.includes(newCategory)) {
+      setErrorMessage('同一カテゴリ名には変更できません')
+      return
+    }
+
     laravelAxios
       .put(
         `${apiUrl}/api/Categories/editCategoryList/${newCategory}/${category}`,
@@ -317,7 +324,10 @@ const Dashboard = ({ params }) => {
                                   <FaEdit
                                     className="text-gray-200 hover:text-black cursor-pointer "
                                     onClick={() =>
-                                      handleEditCategoryList(category)
+                                      handleEditCategoryList(
+                                        category,
+                                        categoryList,
+                                      )
                                     }
                                   />
                                 </span>
