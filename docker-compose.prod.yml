@@ -30,10 +30,13 @@ services:
       - default
     environment:
       - SERVER_NAME=example.com
+
   client:
     build:
       context: ./client
       dockerfile: Dockerfile.prod
+    environment:
+      - NODE_ENV=production
     ports:
       - "3000:3000"
     volumes:

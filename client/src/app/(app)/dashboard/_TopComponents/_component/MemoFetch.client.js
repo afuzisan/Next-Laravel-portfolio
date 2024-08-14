@@ -45,7 +45,7 @@ const MemoFetch = ({
   const [selectedCategories, setSelectedCategories] = useState({})
   const [chartLabels, setChartLabels] = useState({})
   const [selectedDates, setSelectedDates] = useState({})
-
+  const env = key => process.env[key] || ''
   useEffect(() => {
     if (result && onDataResult) {
       const initialCategories = result.stocks.reduce((acc, stock) => {
@@ -109,7 +109,7 @@ const MemoFetch = ({
   const handleLog = async stockCode => {
     try {
       const response = await laravelAxios.get(
-        `http://localhost:8080/api/log/getStockLog?stockCode=${stockCode}`,
+        `${env('NEXT_PUBLIC_BACKEND_URL')}/api/log/getStockLog?stockCode=${stockCode}`,
       )
       const log = response.data
       setModalContent(log)

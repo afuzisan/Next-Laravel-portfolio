@@ -1,6 +1,8 @@
 # ベースイメージとして公式のUbuntuイメージを使用
 FROM ubuntu:20.04
 
+
+
 # 必要なパッケージをインストール
 RUN apt-get update && apt-get install -y curl gnupg
 
@@ -31,9 +33,6 @@ WORKDIR /var/www/client
 
 RUN chmod +x /
 
-# ポートの公開
-EXPOSE 3000
-
 # 必要な依存関係をインストール
 RUN yarn add @babel/core@^7.25.2 \
     @babel/eslint-parser@^7.12.1 \
@@ -51,13 +50,16 @@ RUN yarn add @babel/core@^7.25.2 \
 # ソースコードをコピー
 COPY . .
 
-# 環境変数の設定
-ENV NODE_ENV production
-
 # 必要な依存関係を再インストール
 RUN yarn install
 
+# 環境変数の設定を再確認
+RUN echo "NODE_ENV is $NODE_ENV"
+
 # ビルドを実行
 RUN yarn build
+
+# ポートの公開
+EXPOSE 3000
 
 CMD ["npm", "start"]
