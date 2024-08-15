@@ -16,11 +16,12 @@ class EnsureEmailIsVerified
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user() ||
-            ($request->user() instanceof MustVerifyEmail &&
-            ! $request->user()->hasVerifiedEmail())) {
-            return response()->json(['message' => 'メール認証が完了していません。'], 409);
-        }
+        // メール確認なし
+        // if (! $request->user() ||
+        //     ($request->user() instanceof MustVerifyEmail &&
+        // /! $request->user()->hasVerifiedEmail())) {
+        //     return response()->json(['message' => 'メール認証が完了していません。'], 409);
+        // }
 
         return $next($request);
     }

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
@@ -36,4 +37,15 @@ Route::get('/storage/{filename}', function ($filename) {
         abort(404);
     }
     return response()->file($path);
+});
+
+
+
+Route::get('/send-test-email', function () {
+    Mail::raw('This is a test email', function ($message) {
+        $message->to('test@example.com')
+                ->subject('Test Email');
+    });
+
+    return 'Test email sent!';
 });

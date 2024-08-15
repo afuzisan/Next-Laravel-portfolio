@@ -47,8 +47,8 @@ RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
 COPY . /var/www/
 
 # パーミッション設定
-RUN chmod -R 775 storage bootstrap/cache \
-    && chown -R www-data:www-data /var/www/storage
+RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 # PHP設定ファイルのコピー
 COPY php.ini /usr/local/etc/php/
