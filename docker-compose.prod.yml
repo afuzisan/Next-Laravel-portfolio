@@ -28,8 +28,10 @@ services:
       - db
     networks:
       - default
-    environment:
-      - SERVER_NAME=example.com
+    command: >
+      sh -c "chmod -R 775 /var/www/storage &&
+             chown -R www-data:www-data /var/www/storage &&
+             apache2-foreground"
 
   client:
     build:

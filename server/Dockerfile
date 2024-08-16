@@ -10,6 +10,11 @@ COPY 000-default.conf /etc/apache2/sites-enabled/
 # Composerのインストール
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Composerの依存関係をインストール
+COPY composer.json composer.lock /var/www/
+WORKDIR /var/www/
+RUN composer install --no-dev --optimize-autoloader
+
 # ミドルウェアインストール
 RUN apt-get update && apt-get install -y \
     git \
@@ -56,6 +61,9 @@ COPY php.ini /usr/local/etc/php/
 # エントリーポイントスクリプト追加
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# マイグレーションの実行
+RUN php artisan migrate --force
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["apache2-foreground"]
