@@ -30,7 +30,7 @@ module.exports = {
     },
   },
   rules: {
-    'no-console': 'error',
+    'no-console': 'off',
     'react/react-in-jsx-scope': 'off',
     semi: ['error', 'never'],
     '@typescript-eslint/explicit-module-boundary-types': 'off',

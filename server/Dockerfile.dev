@@ -10,6 +10,8 @@ COPY 000-default.conf /etc/apache2/sites-enabled/
 # Composerのインストール
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Composerの依存関係をインストール
+COPY composer.json composer.lock /var/www/
 
 
 # ミドルウェアインストール
@@ -48,9 +50,16 @@ RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
 # ソースコードコピー（コメントアウト解除）
 COPY . /var/www/
 
+# 必要なディレクトリを作成
+RUN mkdir -p /var/www/storage/framework/views
+RUN chmod 755 /var/www/storage/framework/views/
+
 # パーミッション設定
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache \
     && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
+# 追加: storage と bootstrap/cache のパーミッションを 777 に設定
+RUN chmod -R 777 /var/www/storage /var/www/bootstrap/cache
 
 # PHP設定ファイルのコピー
 COPY php.ini /usr/local/etc/php/
@@ -59,9 +68,10 @@ COPY php.ini /usr/local/etc/php/
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-
+# WORKDIR /var/www/
 # RUN composer install --no-dev --optimize-autoloader
-# php artisan migrate --force
+# RUN php artisan migrate --force
 
+RUN chmod -R 777 /var/www/storage/
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["apache2-foreground"]

@@ -20,6 +20,7 @@ services:
       - default
   server:
     build: ./server
+    dockerfile: Dockerfile.dev
     ports:
       - "8080:80"
     volumes:
@@ -31,7 +32,7 @@ services:
   client:
     build:
       context: ./client
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     volumes:
       - ./client:/var/www/client
     ports:

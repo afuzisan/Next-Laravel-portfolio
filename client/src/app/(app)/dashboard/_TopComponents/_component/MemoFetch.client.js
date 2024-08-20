@@ -320,6 +320,15 @@ const initFetch = async (
   apiUrl,
 ) => {
   try {
+    console.log('initFetch')
+    console.log(param)
+    console.log(itemsPerPage)
+    console.log(apiUrl)
+    console.log(setTotalStockCount)
+    console.log(setItemsPerPage)
+    console.log(
+      `${apiUrl}/api/dashboard/reviews?param=${param}&page=${itemsPerPage}`,
+    )
     const result = await laravelAxios.get(
       `${apiUrl}/api/dashboard/reviews?param=${param}&page=${itemsPerPage}`,
       { cache: 'no-cache' },
