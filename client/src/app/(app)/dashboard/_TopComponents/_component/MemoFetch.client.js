@@ -202,7 +202,7 @@ const MemoFetch = ({
 
   if (error) {
     if (error.response && error.response.status === 409) {
-      return <div>メール認証を完了してください</div>
+      return <div>メール認証を完了してくださいaaaa</div>
     }
     return <div>新しく銘柄を登録してください</div>
   }
@@ -324,8 +324,6 @@ const initFetch = async (
     console.log(param)
     console.log(itemsPerPage)
     console.log(apiUrl)
-    console.log(setTotalStockCount)
-    console.log(setItemsPerPage)
     console.log(
       `${apiUrl}/api/dashboard/reviews?param=${param}&page=${itemsPerPage}`,
     )
@@ -333,6 +331,7 @@ const initFetch = async (
       `${apiUrl}/api/dashboard/reviews?param=${param}&page=${itemsPerPage}`,
       { cache: 'no-cache' },
     )
+    console.log(result.data)
     setTotalStockCount(result.data.totalStockCount)
     return result.data.user
   } catch (error) {

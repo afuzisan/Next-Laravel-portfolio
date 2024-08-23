@@ -24,7 +24,7 @@ RUN chmod +x /
 # ポートの公開
 EXPOSE 3000
 
-# COPY . .
+COPY . .
 
 RUN yarn install
 

@@ -2,9 +2,10 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
+    ErrorDocument 404 https://google.com
 
     RewriteEngine On
-
+    RewriteBase /
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -18,10 +19,11 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
 </IfModule>
 
 <IfModule mod_headers.c>
-    Header set Access-Control-Allow-Origin "http://ik1-430-47318.vs.sakura.ne.jp:3000/"
+    Header set Access-Control-Allow-Origin "http://localhost:3000/"
     Header set Access-Control-Allow-Methods "GET,POST,OPTIONS,DELETE,PUT"
     Header set Access-Control-Allow-Headers "Content-Type, x-http-method-override"
 </IfModule>

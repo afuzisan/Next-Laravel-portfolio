@@ -18,17 +18,26 @@ services:
       - ./db/initdb.d:/docker-entrypoint-initdb.d
     networks:
       - default
+
   server:
-    build: ./server
-    dockerfile: Dockerfile.dev
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
     ports:
       - "8080:80"
+    environment:
+      - DOCKER_REDIRECT_URL=http://localhost:3000
+      - DOCKER_RewriteCond_URL=http://localhost/
     volumes:
       - ./server:/var/www
+      - ./server/apache-config:/etc/apache2/sites-available
+      - ./server/apache-config/php.ini:/usr/local/etc/php/php.ini
+      - ./server/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
     depends_on:
       - db
     networks:
       - default
+
   client:
     build:
       context: ./client
@@ -39,14 +48,14 @@ services:
       - "3000:3000"
     depends_on:
       - server
-    command: sh -c "npm install && npm run dev"
     networks:
       - default
+
   mail:
     image: mailhog/mailhog
     ports:
-      - "8025:8025"
       - "1025:1025"
+      - "8025:8025"
     networks:
       - default
 

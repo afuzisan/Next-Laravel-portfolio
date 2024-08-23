@@ -12,16 +12,17 @@ class EnsureEmailIsVerified
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function handle(Request $request, Closure $next): Response
     {
         // メール確認なし
-        // if (! $request->user() ||
-        //     ($request->user() instanceof MustVerifyEmail &&
-        // /! $request->user()->hasVerifiedEmail())) {
-        //     return response()->json(['message' => 'メール認証が完了していません。'], 409);
-        // }
+        if (!$request->user() ||
+            ($request->user() instanceof MustVerifyEmail && !$request->user()->hasVerifiedEmail())) {
+            return response()->json(['message' => 'メール認証が完了していません。'], 409);
+        }
 
         return $next($request);
     }

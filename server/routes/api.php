@@ -14,7 +14,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('dashboard/reviews/', [MemoController::class, 'index']);
     Route::post('dashboard/memo', [MemoController::class, 'memo']);
     Route::post('dashboard/memoUpdate', [MemoController::class, 'memoUpdate']);
@@ -26,7 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('dashboard/memoTitleCreate', [MemoController::class, 'memoTitleCreate']);
     Route::post('dashboard/memo/exchange', [MemoController::class, 'exchange']);
     Route::delete('dashboard/memoDelete', [MemoController::class, 'memoDelete']);
-    Route::post('dashboard/PhantomJS',[MemoController::class, 'PhantomJS']);
+    Route::post('dashboard/PhantomJS', [MemoController::class, 'PhantomJS']);
 
     Route::get('mypage/externallinks', [ExternalLinkController::class, 'index']);
     Route::post('mypage/externallinks/create', [ExternalLinkController::class, 'create']);
@@ -42,12 +42,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('log/getStockLog', [LogController::class, 'getStockLog']);
 
     Route::get('Categories/index', [Categories::class, 'index']);
-    Route::post('Categories/update',[Categories::class, 'update']);
-    Route::get('Categories/getCategoryList',[Categories::class, 'getCategoryList']);
-    Route::delete('Categories/deleteCategoryList/{category}',[Categories::class, 'deleteCategoryList']);
-    Route::put('Categories/editCategoryList/{newCategory}/{category}',[Categories::class, 'editCategoryList']);
-    Route::post('Categories/AddCategoryList',[Categories::class, 'AddCategoryList']);
-   
-    
-
+    Route::post('Categories/update', [Categories::class, 'update']);
+    Route::get('Categories/getCategoryList', [Categories::class, 'getCategoryList']);
+    Route::delete('Categories/deleteCategoryList/{category}', [Categories::class, 'deleteCategoryList']);
+    Route::put('Categories/editCategoryList/{newCategory}/{category}', [Categories::class, 'editCategoryList']);
+    Route::post('Categories/AddCategoryList', [Categories::class, 'AddCategoryList']);
 });

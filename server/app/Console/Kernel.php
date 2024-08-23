@@ -5,6 +5,7 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
+
 class Kernel extends ConsoleKernel
 {
     /**
@@ -28,10 +29,18 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }
+
+    /**
+     * アプリケーションのミドルウェア
+     */
+    protected $middleware = [
+        // 既存のミドルウェア
+        \App\Http\Middleware\Normalize::class,
+    ];
 
     /**
      * アプリケーションのミドルウェアグループ
@@ -45,7 +54,8 @@ class Kernel extends ConsoleKernel
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \Illuminate\Session\Middleware\StartSession::class, 
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         ],
     ];
 }
