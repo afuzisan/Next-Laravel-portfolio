@@ -23,6 +23,7 @@ https://github.com/laravel/breeze-next
 
 - **フロントエンド**: Next.js (App Router)、Tailwind CSS
 - **バックエンド**: Laravel、Apache
+- **データベース**: MySQL 
 - **scaffold** Laravel Breeze
 - **インフラ**: sakuraVPS
 - **ツール**: Docker、Git
