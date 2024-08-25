@@ -27,15 +27,20 @@ https://github.com/laravel/breeze-next
 - **インフラ**: sakuraVPS
 - **ツール**: Docker、Git
 - **外部API**: phantom.jsCloud
-- **ライブラリ**:Three.js、draft-js
+- **ライブラリ**:Three.js、draft-js、dnd-kit
 
 ### フロントエンド
 
 
 ### バックエンド
+・Seedingの際にphantom.jsCloudを使いスクレイピングをして日本の上場企業の銘柄情報を証券コードのマスターデータを作成
 
 ## ER 図
 ![スクリーンショット 2024-08-25 213129](https://github.com/user-attachments/assets/0693c131-0ba7-41bc-ac17-d793b925cfe3)
 
 
-## 今後の計画
+## 実装できてない所
+・SSL化
+・ポート番号がない状態でデプロイ
+・Reduxを使ったフロントエンドのリファクタリング
+・テストの実装
