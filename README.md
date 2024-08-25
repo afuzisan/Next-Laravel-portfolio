@@ -7,8 +7,11 @@
 ## 使用技術
 
 - **フロントエンド**: Next.js (App Router)、Tailwind CSS
-- **バックエンド**: Laravel
+- **バックエンド**: Laravel、Apache
 - **インフラ**: sakuraVPS
+- **ツール**: Docker、Git
+- **外部API**: phantom.jsCloud
+- **ライブラリ**:Three.js、draft-js
 
 ### フロントエンド
 
