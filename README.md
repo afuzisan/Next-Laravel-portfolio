@@ -1,6 +1,7 @@
 # 投資家向けメモサイト
 このプロジェクトは、Next.jsのLaravel Breezeアプリケーション/認証スターターキットをCloneして開発を開始しました。
-元のリポジトリはこちらです: https://github.com/laravel/breeze-next
+元のリポジトリはこちらです。
+https://github.com/laravel/breeze-next
 
 ## 概要
 日本株の個別銘柄を簡単に管理し、情報収集を効率化するための投資家向けメモサイトです。
