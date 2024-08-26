@@ -22,7 +22,7 @@ WORKDIR /var/www/client
 RUN chmod +x /
 
 # ポートの公開
-EXPOSE 3000
+EXPOSE 80
 
 COPY . .
 

@@ -34,6 +34,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include \
     && docker-php-ext-install -j$(nproc) gd
 
+# net-toolsのインストール
+RUN apt-get update && apt-get install -y net-tools
+
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /composer
 ENV PATH $PATH:/composer/vendor/bin

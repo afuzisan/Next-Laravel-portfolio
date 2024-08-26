@@ -2,7 +2,6 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
-    ErrorDocument 404 https://google.com
 
     RewriteEngine On
     RewriteBase /
@@ -23,7 +22,7 @@
 </IfModule>
 
 <IfModule mod_headers.c>
-    Header set Access-Control-Allow-Origin "http://localhost:3000/"
+    Header set Access-Control-Allow-Origin "http://localhost:80/"
     Header set Access-Control-Allow-Methods "GET,POST,OPTIONS,DELETE,PUT"
     Header set Access-Control-Allow-Headers "Content-Type, x-http-method-override"
 </IfModule>

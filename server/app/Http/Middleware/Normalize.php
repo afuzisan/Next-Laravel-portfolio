@@ -15,10 +15,6 @@ class Normalize
      */
     public function handle($request, Closure $next)
     {
-        // 修正: HTTP_HOST からスキームを削除
-        if ($_SERVER['HTTP_HOST'] == 'localhost:3000') {
-            return redirect()->to('http://localhost' . $request->getRequestUri(), 301, [], $secure = true);
-        }
 
         $url = $_SERVER['REQUEST_URI']; // PHP 標準のリクエストを使用
         $normalized = $this->normalize($url);
