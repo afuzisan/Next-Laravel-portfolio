@@ -19,6 +19,8 @@ https://github.com/laravel/breeze-next
 
 そこで、私自身が使うことを前提に、銘柄管理に必要だと感じた機能を実装したサイトです。
 
+## アプリケーションの機能紹介
+
 ## 使用技術
 
 - **フロントエンド**: Next.js/14 (App Router)、Tailwind CSS/3.4
@@ -31,18 +33,14 @@ https://github.com/laravel/breeze-next
 - **外部API**: phantom.jsCloud
 - **ライブラリ**:Three.js、draft-js、dnd-kit
 
-### フロントエンド
 
-
-### バックエンド
-・Seedingの際にphantom.jsCloudを使いスクレイピングをして日本の上場企業の銘柄情報を証券コードのマスターデータを作成
 
 ## ER 図
 ![スクリーンショット 2024-08-25 213129](https://github.com/user-attachments/assets/0693c131-0ba7-41bc-ac17-d793b925cfe3)
 
+## インフラ構成図
 
 ## 実装できてない所
 - **SSL化**:
-- **ポート番号がない状態でデプロイ**:
 - **Reduxを使ったフロントエンドのリファクタリング**:
 - **テストの実装**:
