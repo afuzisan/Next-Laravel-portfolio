@@ -4,6 +4,7 @@ FROM php:8.2-apache
 RUN cd /etc/apache2/mods-enabled \
     && ln -s ../mods-available/rewrite.load
 
+
 # 設定ファイルをdockerコンテナ内のPHP、Apacheに読み込ませる
 COPY 000-default.conf /etc/apache2/sites-enabled/
 
@@ -12,7 +13,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Composerの依存関係をインストール
 COPY composer.json composer.lock /var/www/
-
 
 # ミドルウェアインストール
 RUN apt-get update && apt-get install -y \
@@ -27,6 +27,8 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libonig-dev \
     iputils-ping \
+    certbot \
+    python3-certbot-apache \
     && docker-php-ext-install pdo pdo_mysql mysqli zip \
     && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include \
     && docker-php-ext-install -j$(nproc) gd
@@ -65,8 +67,8 @@ RUN chmod -R 777 /var/www/storage /var/www/bootstrap/cache
 COPY php.ini /usr/local/etc/php/
 
 # エントリーポイントスクリプト追加
-COPY docker-entrypoint.prod.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.prod.sh
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # WORKDIR /var/www/
 # RUN composer install --no-dev --optimize-autoloader

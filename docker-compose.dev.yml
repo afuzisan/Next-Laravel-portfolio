@@ -28,6 +28,8 @@ services:
     environment:
       - DOCKER_REDIRECT_URL=http://localhost:80
       - DOCKER_RewriteCond_URL=http://localhost/
+
+      
     volumes:
       - ./server:/var/www
       - ./server/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
