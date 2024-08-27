@@ -28,9 +28,14 @@ class MemoController extends Controller
         Log::info('Received param:' . $pagination * $viewStocks);
 
         $user = User::with(['stocks' => function ($query) use ($user_id, $pagination, $viewStocks) {
-            $query->where('user_id', $user_id)->with(['memos' => function ($query) use ($user_id) {
-                $query->where('user_id', $user_id);
-            }, 'categories'])->skip($pagination * $viewStocks)->take($viewStocks); // categoriesリレーションを追加
+            $query->where('user_id', $user_id)
+                ->with(['memos' => function ($query) use ($user_id) {
+                    $query->where('user_id', $user_id);
+                }, 'categories' => function ($query) use ($user_id) {
+                    $query->where('user_id', $user_id);
+                }])
+                ->skip($pagination * $viewStocks)
+                ->take($viewStocks);
         }, 'links', 'categoriesLists'])->where('id', $user_id)->first();
 
         if (!$user || $user->stocks->isEmpty()) {
